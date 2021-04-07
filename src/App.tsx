@@ -1,26 +1,16 @@
-import React from 'react';
-import logo from './logo.svg';
-import './App.css';
+import React, { FC } from 'react';
+import { CssBaseline } from '@material-ui/core';
+import { BrowserRouter as Router } from 'react-router-dom';
 
-function App() {
+import { AppNavbar } from './common/App-Navbar';
+import { Routes } from './router/Routes';
+
+export const App: FC = () => {
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.tsx</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
+    <Router>
+      <CssBaseline />
+      <AppNavbar />
+      <Routes />
+    </Router>
   );
-}
-
-export default App;
+};
