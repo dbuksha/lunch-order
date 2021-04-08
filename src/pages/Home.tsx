@@ -1,20 +1,65 @@
 import React, { FC, useEffect } from 'react';
-import firebase from 'firebase';
-import firebaseEntity from '../utils/firebase/firebase-init';
+import { useSelector, useDispatch } from 'react-redux';
+import Button from '@material-ui/core/Button';
+import { Link } from 'react-router-dom';
+import { createStyles, makeStyles, Theme, Box } from '@material-ui/core';
+import { RootState } from '../store/store';
 
-type QuerySnapshot<T> = firebase.firestore.QuerySnapshot<T>;
-type DocumentData = firebase.firestore.DocumentData;
+import { fetchDishes } from '../store/dishes';
+
+const useStyles = makeStyles((theme: Theme) =>
+  createStyles({
+    root: {
+      '& .MuiButton-root': {
+        marginTop: theme.spacing(2),
+      },
+    },
+  }),
+);
 
 export const Home: FC = () => {
-  const collectionRef = firebaseEntity.collection('dishes');
+  const classes = useStyles();
+  const dispatch = useDispatch();
+  const dishes = useSelector((state: RootState) => state.dishes.dishes);
 
   useEffect(() => {
-    const mapApi = async (): Promise<void> => {
-      const dishes: QuerySnapshot<DocumentData> = await collectionRef.get();
-      dishes.forEach((d) => console.log(d.data()));
-    };
+    dispatch(fetchDishes());
+  }, [dispatch]);
 
-    mapApi();
-  }, [collectionRef]);
-  return <p>Hello, home page</p>;
+  return (
+    <>
+      <p>{JSON.stringify(dishes)}</p>
+      <Box className={classes.root}>
+        <Button
+          component={Link}
+          to="/about"
+          fullWidth
+          variant="contained"
+          color="primary"
+        >
+          Create order
+        </Button>
+
+        <Button
+          component={Link}
+          to="/about"
+          fullWidth
+          variant="contained"
+          color="primary"
+        >
+          Order List
+        </Button>
+
+        <Button
+          component={Link}
+          to="/order"
+          fullWidth
+          variant="contained"
+          color="primary"
+        >
+          Call for delivery
+        </Button>
+      </Box>
+    </>
+  );
 };
