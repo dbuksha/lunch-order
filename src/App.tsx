@@ -2,7 +2,6 @@ import React, { FC } from 'react';
 import { Container, CssBaseline } from '@material-ui/core';
 import { BrowserRouter as Router } from 'react-router-dom';
 
-// import { AppNavbar } from './common/App-Navbar';
 import { Routes } from './router/Routes';
 
 export const App: FC = () => {

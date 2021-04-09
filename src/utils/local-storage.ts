@@ -1,5 +1,5 @@
 export const getLocalStorageValue = (key: string) => {
-  const data = window.localStorage.getItem(key);
+  const data = window?.localStorage?.getItem(key);
   if (!data) return null;
 
   try {

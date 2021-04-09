@@ -1,10 +1,8 @@
 import React, { FC, useEffect } from 'react';
-import { useSelector, useDispatch } from 'react-redux';
 import Button from '@material-ui/core/Button';
 import { Link } from 'react-router-dom';
 import { createStyles, makeStyles, Theme, Box } from '@material-ui/core';
-import { RootState } from '../store/store';
-
+import { useDispatch } from 'react-redux';
 import { fetchDishes } from '../store/dishes';
 
 const useStyles = makeStyles((theme: Theme) =>
@@ -20,7 +18,6 @@ const useStyles = makeStyles((theme: Theme) =>
 export const Home: FC = () => {
   const classes = useStyles();
   const dispatch = useDispatch();
-  const dishes = useSelector((state: RootState) => state.dishes.dishes);
 
   useEffect(() => {
     dispatch(fetchDishes());
@@ -28,11 +25,10 @@ export const Home: FC = () => {
 
   return (
     <>
-      <p>{JSON.stringify(dishes)}</p>
       <Box className={classes.root}>
         <Button
           component={Link}
-          to="/about"
+          to="/orders/create"
           fullWidth
           variant="contained"
           color="primary"

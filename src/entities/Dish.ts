@@ -1,4 +1,7 @@
 export type Dish = {
-  id?: string | null;
+  id: string;
   name: string;
+  price: number;
+  weight: number;
+  selected?: boolean;
 };

@@ -5,11 +5,11 @@ type DocumentSnapshot<T> = firebase.firestore.DocumentSnapshot<T>;
 
 type DocumentData = firebase.firestore.DocumentData;
 
-export const getCollectionEntries = <T>(
+export const getCollectionEntries = <T extends { id: string }>(
   data: QuerySnapshot<DocumentData>,
 ): T[] => {
   const result: T[] = [];
-  data.forEach((doc) => result.push(doc.data() as T));
+  data.forEach((doc) => result.push({ id: doc.id, ...doc.data() } as T));
 
   return result;
 };

@@ -10,7 +10,7 @@ import { useFormik } from 'formik';
 import * as yup from 'yup';
 import { useDispatch } from 'react-redux';
 
-import { addUser } from '../../store/users';
+import { addUser } from 'store/users';
 
 const validationSchema = yup.object({
   name: yup.string().required('is required'),

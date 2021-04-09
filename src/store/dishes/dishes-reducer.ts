@@ -1,7 +1,7 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 
+import { Dish } from 'entities/Dish';
 import { fetchDishes } from './dishes-actions';
-import { Dish } from '../../entities/Dish';
 
 type DishState = {
   dishes: Dish[];
