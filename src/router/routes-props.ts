@@ -1,6 +1,6 @@
 import { FC, ComponentClass, LazyExoticComponent } from 'react';
-import { Home } from '../pages/Home';
-import Login from '../pages/Login';
+import { Home } from 'pages/Home';
+import Login from 'pages/Login';
 
 export type RouteProp = {
   path: string;

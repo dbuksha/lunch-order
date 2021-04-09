@@ -1,8 +1,8 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
-import { getLocalStorageValue } from '../../utils/local-storage';
+import { getLocalStorageValue } from 'utils/local-storage';
 
+import { User } from 'entities/User';
 import { addUser } from './users-actions';
-import { User } from '../../entities/User';
 
 type UserState = {
   user: User | null;
