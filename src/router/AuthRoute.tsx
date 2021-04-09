@@ -2,7 +2,7 @@ import React, { FC } from 'react';
 
 import { Redirect, Route, RouteProps } from 'react-router-dom';
 import { useSelector } from 'react-redux';
-import { RootState } from '../store/store';
+import { RootState } from 'store/store';
 
 const AuthRoute: FC<RouteProps> = (props) => {
   const currentUser = useSelector((state: RootState) => state.users.user);

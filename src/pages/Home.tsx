@@ -3,9 +3,9 @@ import { useSelector, useDispatch } from 'react-redux';
 import Button from '@material-ui/core/Button';
 import { Link } from 'react-router-dom';
 import { createStyles, makeStyles, Theme, Box } from '@material-ui/core';
-import { RootState } from '../store/store';
+import { RootState } from 'store';
 
-import { fetchDishes } from '../store/dishes';
+import { fetchDishes } from 'store/dishes';
 
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
