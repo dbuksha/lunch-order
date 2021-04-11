@@ -1,4 +1,6 @@
 import React, { Component, ErrorInfo, ReactNode } from 'react';
+import { Alert, AlertTitle } from '@material-ui/lab';
+import { Container } from '@material-ui/core';
 
 type State = {
   error: Error | null;
@@ -27,7 +29,14 @@ class ErrorBoundary extends Component<Props, State> {
 
   render() {
     if (this.state.error) {
-      return <h1>Something went wrong: {this.state.error.message}.</h1>;
+      return (
+        <Container maxWidth="sm">
+          <Alert severity="error">
+            <AlertTitle>Something went wrong</AlertTitle>
+            {this.state.error.message}
+          </Alert>
+        </Container>
+      );
     }
 
     return this.props.children;

@@ -8,6 +8,7 @@ import { Routes } from './router/Routes';
 import { envSchema } from './utils/env-schema';
 
 export const App: FC = () => {
+  // check required credentials
   useEffect(() => {
     Joi.attempt(process.env, envSchema);
   }, []);
