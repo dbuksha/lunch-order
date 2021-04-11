@@ -8,4 +8,4 @@ export const envSchema = Joi.object({
   REACT_APP_MSG_SENDER_ID: Joi.string().required(),
   REACT_APP_APPID: Joi.string().required(),
   REACT_APP_MEASUREMEN_ID: Joi.string().required(),
-});
+}).options({ allowUnknown: true });
