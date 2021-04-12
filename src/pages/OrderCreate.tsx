@@ -7,10 +7,8 @@ import firebaseInstance from 'utils/firebase';
 // store
 import { RootState } from 'store';
 import { fetchLunches, updateSelectedLunches } from 'store/lunches';
-import {
-  calculatedOrderPriceSelector,
-  selectedLunchDishesSelector,
-} from 'store/lunches/lunches-selectors';
+import { selectedLunchDishesSelector } from 'store/lunches/lunches-selectors';
+import { calculatedOrderPriceSelector } from 'store/orders/orders-selectors';
 
 import { addOrder } from 'store/orders';
 // components
@@ -21,10 +19,15 @@ import { Order } from 'entities/Order';
 
 const dayNumber = new Date().getDay();
 
+const initialOrder = {
+  dishes: [],
+};
+
 const OrderCreate: FC = () => {
   const dispatch = useDispatch();
   const history = useHistory();
   const currentUser = useSelector((state: RootState) => state.users.user);
+  const order = useState();
 
   const lunches = useSelector((state: RootState) => state.lunches.lunches);
   const selectedDishes = useSelector(selectedLunchDishesSelector);
