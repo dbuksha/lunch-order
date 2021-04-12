@@ -1,7 +1,7 @@
 import { FC, ComponentClass, LazyExoticComponent } from 'react';
 import { Home } from '../pages/Home';
 import Login from '../pages/Login';
-import CreateOrder from '../pages/CreateOrder';
+import OrderCreate from '../pages/OrderCreate';
 
 export type RouteProp = {
   path: string;
@@ -23,7 +23,7 @@ export const routes: RouteProp[] = [
   },
   {
     path: '/orders/create',
-    component: CreateOrder,
+    component: OrderCreate,
     loginned: true,
   },
 ];
