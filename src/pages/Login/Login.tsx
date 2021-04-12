@@ -7,7 +7,9 @@ import { RootState } from 'store';
 import LoginForm from './LoginForm';
 
 const Login: FC = () => {
-  const currentUser = useSelector((state: RootState) => state.users.user);
+  const currentUser = useSelector(
+    (state: RootState) => state.users.currentUser,
+  );
 
   if (currentUser) {
     return <Redirect to={{ pathname: '/' }} />;

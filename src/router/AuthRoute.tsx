@@ -5,7 +5,9 @@ import { useSelector } from 'react-redux';
 import { RootState } from 'store/store';
 
 const AuthRoute: FC<RouteProps> = (props) => {
-  const currentUser = useSelector((state: RootState) => state.users.user);
+  const currentUser = useSelector(
+    (state: RootState) => state.users.currentUser,
+  );
 
   return (
     <Route

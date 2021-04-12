@@ -1,9 +1,9 @@
 import React, { FC, useEffect } from 'react';
-import { Grid, Button, Box, Typography } from '@material-ui/core';
+import { Grid, Button, Typography } from '@material-ui/core';
 import { useDispatch, useSelector } from 'react-redux';
 import { useHistory } from 'react-router-dom';
 
-import firebaseInstance from 'utils/firebase';
+import firebaseInstance, { Collections } from 'utils/firebase';
 // store
 import { RootState } from 'store';
 import { fetchLunches, updateSelectedLunches } from 'store/lunches';
@@ -26,8 +26,10 @@ const initialOrder = {
 const OrderCreate: FC = () => {
   const dispatch = useDispatch();
   const history = useHistory();
-  const currentUser = useSelector((state: RootState) => state.users.user);
   const order = useState();
+  const currentUser = useSelector(
+    (state: RootState) => state.users.currentUser,
+  );
 
   const lunches = useSelector((state: RootState) => state.lunches.lunches);
   const selectedDishes = useSelector(selectedLunchDishesSelector);
@@ -41,14 +43,14 @@ const OrderCreate: FC = () => {
     if (!currentUser) return;
 
     const preparedDishes = selectedDishes.map((d) => ({
-      dish: firebaseInstance.doc(`dishes/${d.id}`),
+      dish: firebaseInstance.doc(`${Collections.Dishes}/${d.id}`),
       quantity: 1, // TODO: add quantity selection to the form
     }));
 
     const order: Omit<Order, 'id'> = {
       date: new Date(),
       order: preparedDishes,
-      person: firebaseInstance.doc(`persons/${currentUser.id}`),
+      person: firebaseInstance.doc(`${Collections.Users}/${currentUser.id}`),
     };
 
     try {
