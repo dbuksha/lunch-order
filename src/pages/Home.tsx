@@ -33,7 +33,7 @@ export const Home: FC = () => {
           variant="contained"
           color="primary"
         >
-          Create order
+          Сделать Заказ
         </Button>
 
         <Button
@@ -43,7 +43,7 @@ export const Home: FC = () => {
           variant="contained"
           color="primary"
         >
-          Order List
+          Список заказов
         </Button>
 
         <Button
@@ -53,7 +53,7 @@ export const Home: FC = () => {
           variant="contained"
           color="primary"
         >
-          Call for delivery
+          Заказать доставку
         </Button>
       </Box>
     </>
