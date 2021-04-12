@@ -1,14 +1,14 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 
+import { Order } from 'entities/Order';
 import { addOrder } from './orders-actions';
-import { Order } from '../../entities/Order';
 
 type OrderState = {
-  order: Order | null;
+  currentOrder: Order | null;
 };
 
 const initialState: OrderState = {
-  order: null,
+  currentOrder: null,
 };
 
 const usersState = createSlice({
@@ -22,7 +22,7 @@ const usersState = createSlice({
     builder.addCase(
       addOrder.fulfilled,
       (state: OrderState, { payload }: PayloadAction<Order>) => {
-        state.order = payload;
+        state.currentOrder = payload;
       },
     );
   },

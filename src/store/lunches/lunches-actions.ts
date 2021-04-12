@@ -3,9 +3,9 @@ import { createAsyncThunk } from '@reduxjs/toolkit';
 import firebaseInstance, {
   Collections,
   getCollectionEntries,
-} from '../../utils/firebase';
-import { Lunch } from '../../entities/Lunch';
-import { Dish } from '../../entities/Dish';
+} from 'utils/firebase';
+import { Lunch } from 'entities/Lunch';
+import { Dish } from 'entities/Dish';
 
 enum ActionTypes {
   FETCH_LUNCHES = 'dishes/fetchLunches',

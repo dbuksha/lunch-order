@@ -15,10 +15,6 @@ export const addOrder = createAsyncThunk(
     try {
       const result = await collectionRef.add(payload);
 
-      await setTimeout(() => {
-        console.log('----');
-      }, 5000);
-
       // FIXME: prepare user reference before save to state
       const orderData = { ...payload, id: result.id };
 

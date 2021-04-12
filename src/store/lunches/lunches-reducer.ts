@@ -1,9 +1,9 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 import { cloneDeep } from 'lodash/fp';
 
-import { Lunch } from '../../entities/Lunch';
+import { Lunch } from 'entities/Lunch';
+import { Dish } from 'entities/Dish';
 import { fetchLunches } from './lunches-actions';
-import { Dish } from '../../entities/Dish';
 
 type LunchesState = {
   lunches: Lunch[];
