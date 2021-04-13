@@ -4,19 +4,15 @@ import {
   createStyles,
   FormControlLabel,
   FormGroup,
-  Grid,
-  ListSubheader,
   makeStyles,
 } from '@material-ui/core';
 
-import { Lunch } from 'entities/Lunch';
 import { Dish } from 'entities/Dish';
 import { calculateDishesPrice } from 'utils/orders';
 
 type ListDishesProps = {
-  lunch: Lunch;
-  selectDish: (id: string, selected: boolean) => void;
-  selectFullLunch: (selected: boolean) => void;
+  dishes: Dish[];
+  selectDish: (selected: boolean, id?: string) => void;
 };
 
 const useStyles = makeStyles(() =>
@@ -34,11 +30,7 @@ const useStyles = makeStyles(() =>
   }),
 );
 
-const ListDishes: FC<ListDishesProps> = ({
-  lunch: { dishes, name },
-  selectFullLunch,
-  selectDish,
-}) => {
+const ListDishes: FC<ListDishesProps> = ({ dishes, selectDish }) => {
   const classes = useStyles();
   const [selectedAll, setSelectedAll] = useState(() =>
     dishes.every((d) => d.selected),
@@ -47,12 +39,11 @@ const ListDishes: FC<ListDishesProps> = ({
 
   const handleSelectedAll = (e: ChangeEvent<HTMLInputElement>) => {
     setSelectedAll(e.target.checked);
-    selectFullLunch(e.target.checked);
+    selectDish(e.target.checked);
   };
 
   return (
-    <Grid item xs={12} sm={6}>
-      <ListSubheader component="div">{name}</ListSubheader>
+    <>
       <FormGroup className={classes.root}>
         <FormControlLabel
           control={
@@ -76,7 +67,7 @@ const ListDishes: FC<ListDishesProps> = ({
             control={
               <Checkbox
                 checked={dish.selected}
-                onChange={(e) => selectDish(dish.id, e.target.checked)}
+                onChange={(e) => selectDish(e.target.checked, dish.id)}
                 disabled={selectedAll}
                 name={dish.name}
               />
@@ -89,7 +80,7 @@ const ListDishes: FC<ListDishesProps> = ({
           />
         ))}
       </FormGroup>
-    </Grid>
+    </>
   );
 };
 

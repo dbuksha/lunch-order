@@ -1,5 +1,5 @@
 import React, { FC, useEffect, useState } from 'react';
-import { Grid, Button, Typography } from '@material-ui/core';
+import { Grid, Button, Typography, ListSubheader } from '@material-ui/core';
 import { useDispatch, useSelector } from 'react-redux';
 import { useHistory } from 'react-router-dom';
 import firebase from 'firebase/app';
@@ -35,6 +35,9 @@ const toggleDishesSelection = (
   );
 };
 
+const findLunchById = (lunches: Lunch[], lunchId: string): Lunch | null =>
+  lunches.find((lunch: Lunch) => lunch.id === lunchId) || null;
+
 const OrderCreate: FC = () => {
   const dispatch = useDispatch();
   const history = useHistory();
@@ -51,6 +54,7 @@ const OrderCreate: FC = () => {
   const [preparedSelectedDishes, setPreparedSelectedDishes] = useState<
     Lunch[] | null
   >(null);
+
   // FIXME: calculated price
   const [calculatedPrice, setCalculatedPrice] = useState<number>(0);
 
@@ -135,16 +139,15 @@ const OrderCreate: FC = () => {
     // }
   };
 
-  // TODO: add to preparedOrder and recalculate the property
-  const onDishSelect = (lunchId: string, dishId: string, selected: boolean) => {
+  const onDishSelect = (
+    lunchId: string,
+    selected: boolean,
+    dishId?: string,
+  ) => {
     if (!preparedSelectedDishes) return;
-
     const orderToUpdate: Lunch[] = [...preparedSelectedDishes];
-
     // FIXME: Do I need write the type here?
-    const selectedLunch = orderToUpdate.find(
-      (lunch: Lunch) => lunch.id === lunchId,
-    );
+    const selectedLunch = findLunchById(orderToUpdate, lunchId);
     if (!selectedLunch) return;
 
     selectedLunch.dishes = toggleDishesSelection(
@@ -156,37 +159,20 @@ const OrderCreate: FC = () => {
     setPreparedSelectedDishes(orderToUpdate);
   };
 
-  const onSelectFullLunch = (lunchId: string, selected: boolean) => {
-    if (!preparedSelectedDishes) return;
-
-    const orderToUpdate: Lunch[] = [...preparedSelectedDishes];
-
-    // FIXME: Do I need write the type here?
-    const selectedLunch = orderToUpdate.find(
-      (lunch: Lunch) => lunch.id === lunchId,
-    );
-    if (!selectedLunch) return;
-
-    selectedLunch.dishes = toggleDishesSelection(
-      selectedLunch.dishes,
-      selected,
-    );
-
-    setPreparedSelectedDishes(orderToUpdate);
-  };
-
   return (
     <Grid container spacing={2}>
       {preparedSelectedDishes &&
         preparedSelectedDishes.map((lunch: Lunch) => (
-          <ListDishes
-            key={lunch.name}
-            lunch={lunch}
-            selectFullLunch={(value) => onSelectFullLunch(lunch.id, value)}
-            selectDish={(dishId, value) =>
-              onDishSelect(lunch.id, dishId, value)
-            }
-          />
+          <Grid item xs={12} sm={6} key={lunch.name}>
+            <ListSubheader component="div">{lunch.name}</ListSubheader>
+            <ListDishes
+              key={lunch.name}
+              dishes={lunch.dishes}
+              selectDish={(selected, dishId) =>
+                onDishSelect(lunch.id, selected, dishId)
+              }
+            />
+          </Grid>
         ))}
       <Typography component="h6" variant="h5">
         Общая стоимость заказа: {calculatedPrice}&#8381;
