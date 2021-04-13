@@ -16,7 +16,8 @@ enum ActionTypes {
 // If today is later then 10:30 return condition of getting tomorrow order otherwise today's order
 const isOrderForToday = (date: number) => {
   const currentDate = Date.now();
-  const endLunchOrderTime = new Date().setHours(10, 30, 0, 0);
+  // FIXME: DO NOT PUSH 22! it's need to be 10:30
+  const endLunchOrderTime = new Date().setHours(22, 30, 0, 0);
   const tomorrow = new Date().setHours(24, 0, 0, 0);
 
   return currentDate < endLunchOrderTime

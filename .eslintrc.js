@@ -38,5 +38,6 @@ module.exports = {
     'react/jsx-one-expression-per-line': 'off',
     'react/jsx-props-no-spreading': 'off',
     '@typescript-eslint/no-unused-expressions': 'off',
+    'react-hooks/exhaustive-deps': 'warn', // added "react-hooks/exhaustive-deps"
   },
 };

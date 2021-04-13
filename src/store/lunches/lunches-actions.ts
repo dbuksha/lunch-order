@@ -16,18 +16,14 @@ const dishesCollection = firebaseInstance.collection(Collections.Dishes);
 
 export const fetchLunches = createAsyncThunk(
   ActionTypes.FETCH_LUNCHES,
-  async (_, { getState }) => {
-    const {
-      dishes: { dishes: stateDishes },
-    } = getState() as { dishes: DishesState };
-
+  async () => {
     const data = await collectionRef.get();
     const dishSetCollection = getCollectionEntries<Lunch>(data);
 
     return dishSetCollection.map((lunch) => {
       return {
         ...lunch,
-        dishes: lunch.dishes.map((d) => ({ ...stateDishes[d.id] })),
+        dishes: lunch.dishes.map((d) => d.id),
       };
     });
   },

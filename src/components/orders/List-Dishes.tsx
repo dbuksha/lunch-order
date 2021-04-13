@@ -40,10 +40,10 @@ const ListDishes: FC<ListDishesProps> = ({
   selectDish,
 }) => {
   const classes = useStyles();
-  const [selectedAll, setSelectedAll] = useState(false);
-  const [calculatedPrice] = useState<number>(() => {
-    return calculateDishesPrice(dishes);
-  });
+  const [selectedAll, setSelectedAll] = useState(() =>
+    dishes.every((d) => d.selected),
+  );
+  const [lunchPrice] = useState<number>(() => calculateDishesPrice(dishes));
 
   const handleSelectedAll = (e: ChangeEvent<HTMLInputElement>) => {
     setSelectedAll(e.target.checked);
@@ -66,7 +66,7 @@ const ListDishes: FC<ListDishesProps> = ({
           }
           label={
             <>
-              Полный комплекс <b>{calculatedPrice}&#8381;</b>
+              Полный комплекс <b>{lunchPrice}&#8381;</b>
             </>
           }
         />
