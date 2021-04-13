@@ -38,7 +38,7 @@ export const addOrder = createAsyncThunk(
 
       return {
         id: result.id,
-        date: payload.date.getTime(),
+        date: payload.date.toMillis(),
         dishes: payload.dishes.map(({ quantity, dishRef }) => ({
           ...dishes[dishRef.id],
           quantity,
@@ -52,7 +52,7 @@ export const addOrder = createAsyncThunk(
 
 export const getUserOrder = createAsyncThunk(
   ActionTypes.GET_USER_ORDER,
-  async (payload: Order | null, { getState }) => {
+  async (_, { getState }) => {
     const {
       users: { currentUser },
       dishes: { dishes },
@@ -68,10 +68,11 @@ export const getUserOrder = createAsyncThunk(
         firebaseInstance.doc(`${Collections.Users}/${currentUser.id}`),
       )
       .get();
+
     const orders = getCollectionEntries<OrderFirebase>(result).map(
       ({ person, ...order }) => ({
         ...order,
-        date: order.date.getDate(),
+        date: order.date.toMillis(),
       }),
     );
 

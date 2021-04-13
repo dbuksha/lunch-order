@@ -38,7 +38,7 @@ const OrderCreate: FC = () => {
   const calculatedPrice = useSelector(calculatedOrderPriceSelector);
 
   useEffect(() => {
-    dispatch(getUserOrder(null));
+    dispatch(getUserOrder());
   }, [dispatch]);
 
   useEffect(() => {
@@ -55,7 +55,7 @@ const OrderCreate: FC = () => {
     }));
 
     const order: OrderFirebase = {
-      date: new Date(),
+      date: firebase.firestore.Timestamp.fromDate(new Date()),
       dishes: preparedDishes,
       person: firebaseInstance.doc(`${Collections.Users}/${currentUser.id}`),
     };

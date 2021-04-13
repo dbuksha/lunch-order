@@ -19,5 +19,5 @@ export type OrderFirebase = {
     quantity: number;
   }[];
   person: DocumentReference<DocumentData>;
-  date: Date;
+  date: firebase.firestore.Timestamp;
 };
