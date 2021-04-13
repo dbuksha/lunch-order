@@ -4,4 +4,5 @@ export type Dish = {
   price: number;
   weight: number;
   selected?: boolean;
+  quantity?: number;
 };

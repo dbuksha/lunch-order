@@ -2,6 +2,7 @@ import React, { FC, useEffect } from 'react';
 import { Grid, Button, Typography } from '@material-ui/core';
 import { useDispatch, useSelector } from 'react-redux';
 import { useHistory } from 'react-router-dom';
+import firebase from 'firebase/app';
 
 import firebaseInstance, { Collections } from 'utils/firebase';
 // store
@@ -10,12 +11,13 @@ import { fetchLunches, updateSelectedLunches } from 'store/lunches';
 import { selectedLunchDishesSelector } from 'store/lunches/lunches-selectors';
 import { calculatedOrderPriceSelector } from 'store/orders/orders-selectors';
 
-import { addOrder } from 'store/orders';
+import { addOrder, getUserOrder } from 'store/orders';
+
 // components
 import ListDishes from 'components/orders/List-Dishes';
 // entities
 import { Lunch } from 'entities/Lunch';
-import { Order } from 'entities/Order';
+import { OrderFirebase } from 'entities/Order';
 
 const dayNumber = new Date().getDay();
 
@@ -26,16 +28,21 @@ const initialOrder = {
 const OrderCreate: FC = () => {
   const dispatch = useDispatch();
   const history = useHistory();
-  const order = useState();
   const currentUser = useSelector(
     (state: RootState) => state.users.currentUser,
   );
+  const order = useSelector((state: RootState) => state.orders.currentOrder);
 
   const lunches = useSelector((state: RootState) => state.lunches.lunches);
   const selectedDishes = useSelector(selectedLunchDishesSelector);
   const calculatedPrice = useSelector(calculatedOrderPriceSelector);
 
   useEffect(() => {
+    dispatch(getUserOrder(null));
+  }, [dispatch]);
+
+  useEffect(() => {
+    // FIXME: load lunches on init app
     dispatch(fetchLunches(dayNumber));
   }, [dispatch]);
 
@@ -43,13 +50,13 @@ const OrderCreate: FC = () => {
     if (!currentUser) return;
 
     const preparedDishes = selectedDishes.map((d) => ({
-      dish: firebaseInstance.doc(`${Collections.Dishes}/${d.id}`),
+      dishRef: firebaseInstance.doc(`${Collections.Dishes}/${d.id}`),
       quantity: 1, // TODO: add quantity selection to the form
     }));
 
-    const order: Omit<Order, 'id'> = {
+    const order: OrderFirebase = {
       date: new Date(),
-      order: preparedDishes,
+      dishes: preparedDishes,
       person: firebaseInstance.doc(`${Collections.Users}/${currentUser.id}`),
     };
 
