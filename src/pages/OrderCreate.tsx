@@ -7,7 +7,6 @@ import firebase from 'firebase/app';
 import firebaseInstance, { Collections } from 'utils/firebase';
 // store
 import { RootState } from 'store';
-// import { calculatedOrderPriceSelector } from 'store/orders/orders-selectors';
 import { addOrder, getUserOrder } from 'store/orders';
 
 import { calculateDishesPrice } from 'utils/orders';
@@ -19,11 +18,7 @@ import { Lunch, LunchState } from 'entities/Lunch';
 import { OrderFirebase } from 'entities/Order';
 import { Dish } from '../entities/Dish';
 
-type DocumentData = firebase.firestore.DocumentData;
-type DocumentReference<T> = firebase.firestore.DocumentReference<T>;
-
-// FIXME: get tomorrow menu when the time is over
-const dayNumber = new Date().getDay();
+import { useTodayLunches } from './useTodayLunches';
 
 const toggleDishesSelection = (
   dishes: Dish[],
@@ -44,42 +39,51 @@ const OrderCreate: FC = () => {
   const currentUser = useSelector(
     (state: RootState) => state.users.currentUser,
   );
-  const dishesSelector = useSelector((state: RootState) => state.dishes.dishes);
+  const allDishes = useSelector((state: RootState) => state.dishes.dishes);
   const order = useSelector((state: RootState) => state.orders.currentOrder);
-  const lunches = useSelector((state: RootState) =>
-    state.lunches.lunches.filter((l) => l.dayNumber === dayNumber),
-  );
-  // FIXME: what we need to do if we have no user?
-  // TODO: fix type for selected
-  const [preparedSelectedDishes, setPreparedSelectedDishes] = useState<
-    Lunch[] | null
-  >(null);
 
-  // FIXME: calculated price
+  const todayLunches = useTodayLunches();
+  const [preparedSelectedDishes, setPreparedSelectedDishes] = useState<Lunch[]>(
+    [],
+  );
   const [calculatedPrice, setCalculatedPrice] = useState<number>(0);
+
+  useEffect(() => {
+    const prepOrder: Lunch[] = todayLunches.map((lunch: LunchState) => {
+      const dishes: Dish[] = lunch.dishes.map((i: string) => ({
+        ...allDishes[i],
+        selected: false,
+      }));
+      return { ...lunch, dishes };
+    });
+
+    setPreparedSelectedDishes(prepOrder);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [JSON.stringify(todayLunches)]);
 
   useEffect(() => {
     dispatch(getUserOrder());
   }, [dispatch]);
 
   // FIXME: depths
+  // what we need to do when we don't need to be ifluenced of object we change?
   // calls twice
   useEffect(() => {
+    console.log('useEffect');
     if (order) {
       const selected = order.dishes.map((d) => d.id);
-
-      const prepOrder: Lunch[] = lunches.map((lunch: LunchState) => {
-        const dishes: Dish[] = lunch.dishes.map((i: string) => ({
-          ...dishesSelector[i],
-          selected: selected.indexOf(i) > -1,
+      const prepOrder: Lunch[] = preparedSelectedDishes.map((lunch: Lunch) => {
+        const dishes: Dish[] = lunch.dishes.map((dish) => ({
+          ...dish,
+          selected: selected.indexOf(dish.id) > -1,
         }));
         return { ...lunch, dishes };
       });
 
       setPreparedSelectedDishes(prepOrder);
     }
-    ``;
-  }, [order, dishesSelector]);
+    //  FIXME: array depth
+  }, [order, preparedSelectedDishes]);
 
   // recalculate order sum
   useEffect(() => {
@@ -89,54 +93,40 @@ const OrderCreate: FC = () => {
         .filter((d) => d.selected);
       setCalculatedPrice(calculateDishesPrice(selectedDishes));
     }
-    // FIXME: complex dep
+    // FIXME: complex dept
   }, [JSON.stringify(preparedSelectedDishes)]);
 
-  // updateSelectedLunches(
-  //   state: LunchesState,
-  //   {
-  //     payload: { lunchId, selected, dishId },
-  //   }: PayloadAction<{ lunchId: string; selected: boolean; dishId?: string }>,
-  // ) {
-  //   // ? do not do like that. Use lodash _.deepClone
-  //   const lunches = cloneDeep(state.lunches);
-  //   const selectedLunch = lunches.find(
-  //     (lunch: Lunch) => lunch.id === lunchId,
-  //   );
-  //   if (!selectedLunch) return;
-  //
-  //   selectedLunch.dishes = selectedLunch.dishes.map((dish: Dish) =>
-  //     !dishId || dishId === dish.id ? { ...dish, selected } : dish,
-  //   );
-  //
-  //   state.lunches = lunches;
-  // },
-
-  // TODO: add updating order
   const onCreateOrderSubmit = async () => {
-    return null;
-    // if (!currentUser) return;
+    // FIXME: why we need everytime this checking?
+    if (!currentUser || !preparedSelectedDishes) return;
 
-    // const preparedDishes = selectedDishes.map((d) => ({
-    //   dishRef: firebaseInstance.doc(`${Collections.Dishes}/${d.id}`),
-    //   quantity: 1, // TODO: add quantity selection to the form
-    // }));
+    // get selected dishes
+    const selectedDishes = preparedSelectedDishes
+      .flatMap((l) => l.dishes)
+      .filter((d) => d.selected);
 
-    // const order: OrderFirebase = {
-    //   date: firebase.firestore.Timestamp.fromDate(new Date()),
-    //   dishes: preparedDishes,
-    //   person: firebaseInstance.doc(`${Collections.Users}/${currentUser.id}`),
-    // };
+    // convert for firebase
+    const preparedDishes = selectedDishes.map((d) => ({
+      dishRef: firebaseInstance.doc(`${Collections.Dishes}/${d.id}`),
+      quantity: 1, // TODO: add quantity selection to the form
+    }));
 
-    // TODO: Send prepared order!
+    // TODO: add date by condition: if not for today: set date tomorrow (8 a.m.)
+    const orderData: OrderFirebase = {
+      date: firebase.firestore.Timestamp.fromDate(new Date()),
+      dishes: preparedDishes,
+      person: firebaseInstance.doc(`${Collections.Users}/${currentUser.id}`),
+    };
 
-    // try {
-    //   await dispatch(addOrder(order));
-    //   history.push('/');
-    // } catch (e) {
-    //   // TODO: handle an error
-    //   console.log(e);
-    // }
+    if (order) orderData.id = order.id;
+
+    try {
+      await dispatch(addOrder(orderData));
+      history.push('/');
+    } catch (e) {
+      // TODO: handle an error
+      console.log(e);
+    }
   };
 
   const onDishSelect = (
@@ -146,7 +136,6 @@ const OrderCreate: FC = () => {
   ) => {
     if (!preparedSelectedDishes) return;
     const orderToUpdate: Lunch[] = [...preparedSelectedDishes];
-    // FIXME: Do I need write the type here?
     const selectedLunch = findLunchById(orderToUpdate, lunchId);
     if (!selectedLunch) return;
 

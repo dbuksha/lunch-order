@@ -1,4 +1,5 @@
 import { createAsyncThunk } from '@reduxjs/toolkit';
+import firebase from 'firebase/app';
 import firebaseInstance, {
   Collections,
   getCollectionEntries,
@@ -7,6 +8,9 @@ import firebaseInstance, {
 import { Order, OrderFirebase } from 'entities/Order';
 import { UsersState } from '../users/users-reducer';
 import { DishesState } from '../dishes/dishes-reducer';
+import { isTimeForTodayLunch } from '../../utils/time-helper';
+
+type DocumentReference = firebase.firestore.DocumentReference;
 
 enum ActionTypes {
   ADD_ORDER = 'orders/addOrder',
@@ -15,30 +19,32 @@ enum ActionTypes {
 
 // If today is later then 10:30 return condition of getting tomorrow order otherwise today's order
 const isOrderForToday = (date: number) => {
-  const currentDate = Date.now();
+  const today = Date.now();
   // FIXME: DO NOT PUSH 22! it's need to be 10:30
-  const endLunchOrderTime = new Date().setHours(22, 30, 0, 0);
   const tomorrow = new Date().setHours(24, 0, 0, 0);
 
-  return currentDate < endLunchOrderTime
-    ? date <= currentDate
-    : date >= tomorrow;
+  return isTimeForTodayLunch() ? date <= today : date >= tomorrow;
 };
 
 const collectionRef = firebaseInstance.collection(Collections.Orders);
 
 export const addOrder = createAsyncThunk(
   ActionTypes.ADD_ORDER,
-  async (payload: OrderFirebase, { rejectWithValue, getState }) => {
+  async ({ id, ...payload }: OrderFirebase, { rejectWithValue, getState }) => {
     const {
       dishes: { dishes },
     } = getState() as { dishes: DishesState };
 
     try {
-      const result = await collectionRef.add(payload);
+      // FIXME: how can I handle it without null?
+      let result: DocumentReference | null = null;
+      if (id) {
+        await collectionRef.doc(id).update(payload);
+      }
+      result = await collectionRef.add(payload);
 
       return {
-        id: result.id,
+        id: result?.id || id,
         date: payload.date.toMillis(),
         dishes: payload.dishes.map(({ quantity, dishRef }) => ({
           ...dishes[dishRef.id],
@@ -77,6 +83,7 @@ export const getUserOrder = createAsyncThunk(
       }),
     );
 
+    // FIXME: check date condition
     const selectedOrder = orders.find((order) => isOrderForToday(order.date));
     if (!selectedOrder) return null;
 
