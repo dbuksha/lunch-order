@@ -5,7 +5,6 @@ import firebaseInstance, {
   getCollectionEntries,
 } from 'utils/firebase';
 import { Lunch } from 'entities/Lunch';
-import { DishesState } from '../dishes/dishes-reducer';
 import { Dish } from '../../entities/Dish';
 
 enum ActionTypes {
@@ -21,14 +20,6 @@ const fetchAllDishes = async () => {
   return getCollectionEntries<Dish>(data);
 };
 
-// const dishesMap: Record<string, Dish> = payload.reduce(
-//   (acc: Record<string, Dish>, dish) => {
-//     acc[dish.id] = dish;
-//     return acc;
-//   },
-//   {},
-// );
-
 export const fetchLunches = createAsyncThunk(
   ActionTypes.FETCH_LUNCHES,
   async () => {
@@ -37,7 +28,7 @@ export const fetchLunches = createAsyncThunk(
     const lunches = getCollectionEntries<Lunch>(data);
 
     const dishesMap = dishes.reduce((acc: Record<string, Dish>, dish) => {
-      acc[dish.id] = dish;
+      acc[dish.id] = { ...dish, selected: false };
       return acc;
     }, {});
 

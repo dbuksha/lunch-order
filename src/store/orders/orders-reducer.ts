@@ -20,12 +20,12 @@ const usersState = createSlice({
 
   extraReducers: (builder) => {
     builder
-      // .addCase(
-      //   addOrder.fulfilled,
-      //   (state: OrderState, { payload }: PayloadAction<Order>) => {
-      //     state.currentOrder = payload;
-      //   },
-      // )
+      .addCase(
+        addOrder.fulfilled,
+        (state: OrderState, { payload }: PayloadAction<Order>) => {
+          state.currentOrder = payload;
+        },
+      )
       .addCase(getUserOrder.fulfilled, (state: OrderState, action) => {
         if (action.payload) state.currentOrder = action.payload;
       });

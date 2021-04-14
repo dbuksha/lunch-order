@@ -7,7 +7,6 @@ import firebaseInstance, {
 
 import { Order, OrderFirebase } from 'entities/Order';
 import { UsersState } from '../users/users-reducer';
-import { DishesState } from '../dishes/dishes-reducer';
 import { isTimeForTodayLunch } from '../../utils/time-helper';
 
 type DocumentReference = firebase.firestore.DocumentReference;
@@ -20,7 +19,6 @@ enum ActionTypes {
 // If today is later then 10:30 return condition of getting tomorrow order otherwise today's order
 const isOrderForToday = (date: number) => {
   const today = Date.now();
-  // FIXME: DO NOT PUSH 22! it's need to be 10:30
   const tomorrow = new Date().setHours(24, 0, 0, 0);
 
   return isTimeForTodayLunch() ? date <= today : date >= tomorrow;
@@ -30,11 +28,7 @@ const collectionRef = firebaseInstance.collection(Collections.Orders);
 
 export const addOrder = createAsyncThunk(
   ActionTypes.ADD_ORDER,
-  async ({ id, ...payload }: OrderFirebase, { rejectWithValue, getState }) => {
-    const {
-      dishes: { dishes },
-    } = getState() as { dishes: DishesState };
-
+  async ({ id, ...payload }: OrderFirebase, { rejectWithValue }) => {
     try {
       // FIXME: how can I handle it without null?
       let result: DocumentReference | null = null;
@@ -47,7 +41,7 @@ export const addOrder = createAsyncThunk(
         id: result?.id || id,
         date: payload.date.toMillis(),
         dishes: payload.dishes.map(({ quantity, dishRef }) => ({
-          ...dishes[dishRef.id],
+          id: dishRef.id,
           quantity,
         })),
       } as Order;
@@ -62,8 +56,7 @@ export const getUserOrder = createAsyncThunk(
   async (_, { getState }) => {
     const {
       users: { currentUser },
-      dishes: { dishes },
-    } = getState() as { users: UsersState; dishes: DishesState };
+    } = getState() as { users: UsersState };
 
     // FIXME: should I show an error message?
     if (!currentUser) return null;
@@ -83,14 +76,14 @@ export const getUserOrder = createAsyncThunk(
       }),
     );
 
-    // FIXME: check date condition
+    // TODO: check date condition
     const selectedOrder = orders.find((order) => isOrderForToday(order.date));
     if (!selectedOrder) return null;
 
     return {
       ...selectedOrder,
       dishes: selectedOrder.dishes.map((d) => ({
-        ...dishes[d.dishRef.id],
+        id: d.dishRef.id,
         quantity: d.quantity,
       })),
     } as Order;

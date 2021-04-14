@@ -12,16 +12,17 @@ const AuthRoute: FC<RouteProps> = (props) => {
   const currentUser = useSelector(
     (state: RootState) => state.users.currentUser,
   );
-  const [isDataPreloaded, setIsDataPreloaded] = useState<boolean>(false);
+  const isDataPreloaded = useSelector(
+    (state: RootState) => state.lunches.isPreloaded,
+  );
 
   useEffect(() => {
     async function preloadData() {
       await dispatch(fetchLunches());
-      setIsDataPreloaded(true);
     }
 
-    preloadData();
-  }, [dispatch]);
+    if (!isDataPreloaded) preloadData();
+  }, [dispatch, isDataPreloaded]);
 
   if (!isDataPreloaded) return <CircularProgress />;
 

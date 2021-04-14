@@ -2,15 +2,16 @@ import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 import { cloneDeep } from 'lodash/fp';
 
 import { Lunch } from 'entities/Lunch';
-import { Dish } from 'entities/Dish';
 import { fetchLunches } from './lunches-actions';
 
-type LunchesState = {
+export type LunchesState = {
   lunches: Lunch[];
+  isPreloaded: boolean;
 };
 
 const initialState: LunchesState = {
   lunches: [],
+  isPreloaded: false,
 };
 
 const lunchesSlice = createSlice({
@@ -19,25 +20,28 @@ const lunchesSlice = createSlice({
   initialState,
 
   reducers: {
-    // updateSelectedLunches(
-    //   state: LunchesState,
-    //   {
-    //     payload: { lunchId, selected, dishId },
-    //   }: PayloadAction<{ lunchId: string; selected: boolean; dishId?: string }>,
-    // ) {
-    //   // ? do not do like that. Use lodash _.deepClone
-    //   const lunches = cloneDeep(state.lunches);
-    //   const selectedLunch = lunches.find(
-    //     (lunch: Lunch) => lunch.id === lunchId,
-    //   );
-    //   if (!selectedLunch) return;
-    //
-    //   selectedLunch.dishes = selectedLunch.dishes.map((dish: Dish) =>
-    //     !dishId || dishId === dish.id ? { ...dish, selected } : dish,
-    //   );
-    //
-    //   state.lunches = lunches;
-    // },
+    updateSelectedLunches(
+      state: LunchesState,
+      {
+        payload: { lunchIds, selected, dishIds },
+      }: PayloadAction<{
+        lunchIds: string[];
+        selected: boolean;
+        dishIds: string[];
+      }>,
+    ) {
+      const lunches = cloneDeep(state.lunches);
+
+      lunches.forEach((lunch) => {
+        if (lunchIds.indexOf(lunch.id) > -1) {
+          lunch.dishes = lunch.dishes.map((dish) =>
+            dishIds.indexOf(dish.id) > -1 ? { ...dish, selected } : dish,
+          );
+        }
+      });
+
+      state.lunches = lunches;
+    },
   },
 
   extraReducers: (builder) => {
@@ -45,10 +49,11 @@ const lunchesSlice = createSlice({
       fetchLunches.fulfilled,
       (state: LunchesState, { payload }: PayloadAction<Lunch[]>) => {
         state.lunches = payload;
+        state.isPreloaded = true;
       },
     );
   },
 });
 
-// export const { updateSelectedLunches } = lunchesSlice.actions;
+export const { updateSelectedLunches } = lunchesSlice.actions;
 export default lunchesSlice.reducer;

@@ -8,27 +8,20 @@ import firebaseInstance, { Collections } from 'utils/firebase';
 // store
 import { RootState } from 'store';
 import { addOrder, getUserOrder } from 'store/orders';
+import {
+  updateSelectedLunches,
+  selectedLunchDishesSelector,
+} from 'store/lunches';
 
 import { calculateDishesPrice } from 'utils/orders';
 
 // components
 import ListDishes from 'components/orders/List-Dishes';
 // entities
-import { Lunch, LunchState } from 'entities/Lunch';
+import { Lunch } from 'entities/Lunch';
 import { OrderFirebase } from 'entities/Order';
-import { Dish } from '../entities/Dish';
-
 import { useTodayLunches } from './useTodayLunches';
-
-const toggleDishesSelection = (
-  dishes: Dish[],
-  selected: boolean,
-  dishId?: string,
-): Dish[] => {
-  return dishes.map((dish: Dish) =>
-    !dishId || dishId === dish.id ? { ...dish, selected } : dish,
-  );
-};
+import { isTimeForTodayLunch } from '../utils/time-helper';
 
 const findLunchById = (lunches: Lunch[], lunchId: string): Lunch | null =>
   lunches.find((lunch: Lunch) => lunch.id === lunchId) || null;
@@ -39,81 +32,55 @@ const OrderCreate: FC = () => {
   const currentUser = useSelector(
     (state: RootState) => state.users.currentUser,
   );
-  const allDishes = useSelector((state: RootState) => state.dishes.dishes);
-  const order = useSelector((state: RootState) => state.orders.currentOrder);
-
   const todayLunches = useTodayLunches();
-  const [preparedSelectedDishes, setPreparedSelectedDishes] = useState<Lunch[]>(
-    [],
-  );
+  const order = useSelector((state: RootState) => state.orders.currentOrder);
+  const selectedDishes = useSelector(selectedLunchDishesSelector);
+
   const [calculatedPrice, setCalculatedPrice] = useState<number>(0);
-
-  useEffect(() => {
-    const prepOrder: Lunch[] = todayLunches.map((lunch: LunchState) => {
-      const dishes: Dish[] = lunch.dishes.map((i: string) => ({
-        ...allDishes[i],
-        selected: false,
-      }));
-      return { ...lunch, dishes };
-    });
-
-    setPreparedSelectedDishes(prepOrder);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [JSON.stringify(todayLunches)]);
 
   useEffect(() => {
     dispatch(getUserOrder());
   }, [dispatch]);
 
-  // FIXME: depths
-  // what we need to do when we don't need to be ifluenced of object we change?
-  // calls twice
   useEffect(() => {
-    console.log('useEffect');
     if (order) {
-      const selected = order.dishes.map((d) => d.id);
-      const prepOrder: Lunch[] = preparedSelectedDishes.map((lunch: Lunch) => {
-        const dishes: Dish[] = lunch.dishes.map((dish) => ({
-          ...dish,
-          selected: selected.indexOf(dish.id) > -1,
-        }));
-        return { ...lunch, dishes };
-      });
+      const dishIds = order.dishes.map(
+        (d: { id: string; quantity: number }) => d.id,
+      );
+      const lunchIds = todayLunches.map((l) => l.id);
 
-      setPreparedSelectedDishes(prepOrder);
+      dispatch(updateSelectedLunches({ lunchIds, selected: true, dishIds }));
     }
     //  FIXME: array depth
-  }, [order, preparedSelectedDishes]);
+    // it required todayLunches, but I don't need it
+  }, [dispatch, order]);
 
   // recalculate order sum
   useEffect(() => {
-    if (preparedSelectedDishes) {
-      const selectedDishes = preparedSelectedDishes
-        .flatMap((l) => l.dishes)
-        .filter((d) => d.selected);
+    if (selectedDishes) {
       setCalculatedPrice(calculateDishesPrice(selectedDishes));
     }
+
     // FIXME: complex dept
-  }, [JSON.stringify(preparedSelectedDishes)]);
+  }, [selectedDishes]);
 
   const onCreateOrderSubmit = async () => {
-    // FIXME: why we need everytime this checking?
-    if (!currentUser || !preparedSelectedDishes) return;
+    // TODO: show an error popup
+    if (!currentUser || !selectedDishes.length) return;
 
-    // get selected dishes
-    const selectedDishes = preparedSelectedDishes
-      .flatMap((l) => l.dishes)
-      .filter((d) => d.selected);
-
-    // convert for firebase
+    // convert dishIds to refs for firebase
     const preparedDishes = selectedDishes.map((d) => ({
       dishRef: firebaseInstance.doc(`${Collections.Dishes}/${d.id}`),
       quantity: 1, // TODO: add quantity selection to the form
     }));
 
-    // TODO: add date by condition: if not for today: set date tomorrow (8 a.m.)
+    // if lunch not for today: set tomorrow (8 a.m.)
+    const time = isTimeForTodayLunch()
+      ? new Date()
+      : new Date(new Date().setHours(32, 0, 0, 0));
+
     const orderData: OrderFirebase = {
-      date: firebase.firestore.Timestamp.fromDate(new Date()),
+      date: firebase.firestore.Timestamp.fromDate(time),
       dishes: preparedDishes,
       person: firebaseInstance.doc(`${Collections.Users}/${currentUser.id}`),
     };
@@ -134,24 +101,23 @@ const OrderCreate: FC = () => {
     selected: boolean,
     dishId?: string,
   ) => {
-    if (!preparedSelectedDishes) return;
-    const orderToUpdate: Lunch[] = [...preparedSelectedDishes];
-    const selectedLunch = findLunchById(orderToUpdate, lunchId);
-    if (!selectedLunch) return;
+    let dishIds = [];
 
-    selectedLunch.dishes = toggleDishesSelection(
-      selectedLunch.dishes,
-      selected,
-      dishId,
-    );
+    if (!dishId) {
+      const selectedLunch = findLunchById(todayLunches, lunchId);
+      if (!selectedLunch) return;
+      dishIds = selectedLunch.dishes.map((d) => d.id);
+    } else {
+      dishIds = [dishId];
+    }
 
-    setPreparedSelectedDishes(orderToUpdate);
+    dispatch(updateSelectedLunches({ lunchIds: [lunchId], selected, dishIds }));
   };
 
   return (
     <Grid container spacing={2}>
-      {preparedSelectedDishes &&
-        preparedSelectedDishes.map((lunch: Lunch) => (
+      {todayLunches &&
+        todayLunches.map((lunch: Lunch) => (
           <Grid item xs={12} sm={6} key={lunch.name}>
             <ListSubheader component="div">{lunch.name}</ListSubheader>
             <ListDishes
