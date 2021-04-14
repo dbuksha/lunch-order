@@ -1,4 +1,4 @@
-import React, { FC, useEffect } from 'react';
+import React, { FC } from 'react';
 import Button from '@material-ui/core/Button';
 import { Link } from 'react-router-dom';
 import { createStyles, makeStyles, Theme, Box } from '@material-ui/core';
@@ -31,7 +31,7 @@ export const Home: FC = () => {
 
         <Button
           component={Link}
-          to="/about"
+          to="/orders"
           fullWidth
           variant="contained"
           color="primary"

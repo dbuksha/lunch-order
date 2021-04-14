@@ -6,12 +6,15 @@ import firebaseInstance, {
 } from 'utils/firebase';
 
 import { Order, OrderFirebase } from 'entities/Order';
+import { isTimeForTodayLunch } from 'utils/time-helper';
+import { User } from 'entities/User';
 import { UsersState } from '../users/users-reducer';
-import { isTimeForTodayLunch } from '../../utils/time-helper';
+import { DishesState } from '../dishes';
 
 type DocumentReference = firebase.firestore.DocumentReference;
 
 enum ActionTypes {
+  FETCH_ORDERS = 'orders/fetchOrders',
   ADD_ORDER = 'orders/addOrder',
   GET_USER_ORDER = 'orders/getUserOrder',
 }
@@ -87,5 +90,50 @@ export const getUserOrder = createAsyncThunk(
         quantity: d.quantity,
       })),
     } as Order;
+  },
+);
+
+export const fetchOrders = createAsyncThunk(
+  ActionTypes.FETCH_ORDERS,
+  async (_, { getState }) => {
+    const {
+      dishes: { dishesMap },
+      users: { currentUser },
+    } = getState() as { users: UsersState; dishes: DishesState };
+
+    // FIXME: should I show an error message?
+    if (!currentUser) return null;
+
+    const startTime = new Date(new Date().setHours(8, 0, 0, 0));
+    const endTime = new Date(new Date().setHours(10, 30, 0, 0));
+
+    const result = await collectionRef
+      .where('date', '>=', startTime)
+      .where('date', '<=', endTime)
+      .get();
+
+    const orders = getCollectionEntries<OrderFirebase>(result);
+
+    const usersCollection = firebaseInstance.collection(Collections.Users);
+    const usersResult = getCollectionEntries<User>(await usersCollection.get());
+    console.log(
+      orders.map((order) => {
+        const person = usersResult.find((u) => u.id === order.person.id);
+        const dishes = order.dishes.map(({ quantity, dishRef }) => ({
+          quantity,
+          dish: dishesMap[dishRef.id],
+        }));
+        return { ...order, date: order.date.toMillis(), dishes, person };
+      }),
+    );
+
+    return orders.map((order) => {
+      const person = usersResult.find((u) => u.id === order.person.id);
+      const dishes = order.dishes.map(({ quantity, dishRef }) => ({
+        quantity,
+        dish: dishesMap[dishRef.id],
+      }));
+      return { ...order, date: order.date.toMillis(), dishes, person };
+    });
   },
 );

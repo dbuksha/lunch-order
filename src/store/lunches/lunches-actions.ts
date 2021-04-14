@@ -5,32 +5,23 @@ import firebaseInstance, {
   getCollectionEntries,
 } from 'utils/firebase';
 import { Lunch } from 'entities/Lunch';
-import { Dish } from '../../entities/Dish';
+import { DishesState } from '../dishes';
 
 enum ActionTypes {
   FETCH_LUNCHES = 'dishes/fetchLunches',
 }
 
-const lunchesColleaction = firebaseInstance.collection(Collections.Lunches);
-const dishesCollection = firebaseInstance.collection(Collections.Dishes);
-
-const fetchAllDishes = async () => {
-  const data = await dishesCollection.get();
-
-  return getCollectionEntries<Dish>(data);
-};
+const lunchesCollection = firebaseInstance.collection(Collections.Lunches);
 
 export const fetchLunches = createAsyncThunk(
   ActionTypes.FETCH_LUNCHES,
-  async () => {
-    const dishes = await fetchAllDishes();
-    const data = await lunchesColleaction.get();
-    const lunches = getCollectionEntries<Lunch>(data);
+  async (_, { getState }) => {
+    const {
+      dishes: { dishesMap },
+    } = getState() as { dishes: DishesState };
 
-    const dishesMap = dishes.reduce((acc: Record<string, Dish>, dish) => {
-      acc[dish.id] = { ...dish, selected: false };
-      return acc;
-    }, {});
+    const data = await lunchesCollection.get();
+    const lunches = getCollectionEntries<Lunch>(data);
 
     return lunches.map((lunch) => {
       return { ...lunch, dishes: lunch.dishes.map((d) => dishesMap[d.id]) };
