@@ -20,8 +20,8 @@ import ListDishes from 'components/orders/List-Dishes';
 // entities
 import { Lunch } from 'entities/Lunch';
 import { OrderFirebase } from 'entities/Order';
-import { useTodayLunches } from './useTodayLunches';
 import { isTimeForTodayLunch } from 'utils/time-helper';
+import { useTodayLunches } from './useTodayLunches';
 
 const findLunchById = (lunches: Lunch[], lunchId: string): Lunch | null =>
   lunches.find((lunch: Lunch) => lunch.id === lunchId) || null;
