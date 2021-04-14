@@ -5,7 +5,6 @@ import { useDispatch, useSelector } from 'react-redux';
 import { CircularProgress } from '@material-ui/core';
 
 import { RootState } from 'store/store';
-import { fetchDishes } from 'store/dishes';
 import { fetchLunches } from '../store/lunches';
 
 const AuthRoute: FC<RouteProps> = (props) => {
@@ -17,7 +16,6 @@ const AuthRoute: FC<RouteProps> = (props) => {
 
   useEffect(() => {
     async function preloadData() {
-      await dispatch(fetchDishes());
       await dispatch(fetchLunches());
       setIsDataPreloaded(true);
     }

@@ -1,12 +1,12 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 import { cloneDeep } from 'lodash/fp';
 
-import { Lunch, LunchState } from 'entities/Lunch';
+import { Lunch } from 'entities/Lunch';
 import { Dish } from 'entities/Dish';
 import { fetchLunches } from './lunches-actions';
 
 type LunchesState = {
-  lunches: LunchState[];
+  lunches: Lunch[];
 };
 
 const initialState: LunchesState = {
@@ -43,7 +43,7 @@ const lunchesSlice = createSlice({
   extraReducers: (builder) => {
     builder.addCase(
       fetchLunches.fulfilled,
-      (state: LunchesState, { payload }: PayloadAction<LunchState[]>) => {
+      (state: LunchesState, { payload }: PayloadAction<Lunch[]>) => {
         state.lunches = payload;
       },
     );

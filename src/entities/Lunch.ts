@@ -6,10 +6,3 @@ export type Lunch = {
   name: string;
   dishes: Dish[];
 };
-
-export type LunchState = {
-  id: string;
-  dayNumber: number;
-  name: string;
-  dishes: string[];
-};
