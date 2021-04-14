@@ -1,7 +1,7 @@
 import { useSelector } from 'react-redux';
-import { RootState } from '../store';
-import { Lunch } from '../entities/Lunch';
-import { isTimeForTodayLunch } from '../utils/time-helper';
+import { RootState } from 'store';
+import { Lunch } from 'entities/Lunch';
+import { isTimeForTodayLunch } from 'utils/time-helper';
 
 export const useTodayLunches = (): Lunch[] => {
   const today = new Date().getDay();

@@ -21,7 +21,7 @@ import ListDishes from 'components/orders/List-Dishes';
 import { Lunch } from 'entities/Lunch';
 import { OrderFirebase } from 'entities/Order';
 import { useTodayLunches } from './useTodayLunches';
-import { isTimeForTodayLunch } from '../utils/time-helper';
+import { isTimeForTodayLunch } from 'utils/time-helper';
 
 const findLunchById = (lunches: Lunch[], lunchId: string): Lunch | null =>
   lunches.find((lunch: Lunch) => lunch.id === lunchId) || null;
@@ -53,6 +53,7 @@ const OrderCreate: FC = () => {
     }
     //  FIXME: array depth
     // it required todayLunches, but I don't need it
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [dispatch, order]);
 
   // recalculate order sum
