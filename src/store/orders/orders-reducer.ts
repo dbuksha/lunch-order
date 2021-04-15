@@ -1,5 +1,4 @@
-import { createSlice, PayloadAction } from '@reduxjs/toolkit';
-import { cloneDeep } from 'lodash/fp';
+import { createSlice, PayloadAction, current } from '@reduxjs/toolkit';
 
 import { Order } from 'entities/Order';
 import { Dish } from 'entities/Dish';
@@ -10,7 +9,7 @@ const initOrder = {
 };
 
 type OrderState = {
-  currentOrder: Order | null;
+  currentOrder: Order;
 };
 
 const initialState: OrderState = {
@@ -32,7 +31,7 @@ const ordersSlice = createSlice({
         selected: boolean;
       }>,
     ) {
-      const order = cloneDeep(state.currentOrder);
+      const order = { ...current(state.currentOrder) };
       if (!order) return;
 
       const dishesMap: Map<string, Dish> = new Map(

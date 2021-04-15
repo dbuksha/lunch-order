@@ -1,5 +1,4 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
-import { cloneDeep } from 'lodash/fp';
 
 import { Lunch } from 'entities/Lunch';
 import { fetchLunches } from './lunches-actions';
