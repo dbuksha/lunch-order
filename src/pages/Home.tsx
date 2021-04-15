@@ -1,11 +1,7 @@
-import React, { FC, useEffect } from 'react';
-import { useSelector, useDispatch } from 'react-redux';
+import React, { FC } from 'react';
 import Button from '@material-ui/core/Button';
 import { Link } from 'react-router-dom';
 import { createStyles, makeStyles, Theme, Box } from '@material-ui/core';
-import { RootState } from 'store';
-
-import { fetchDishes } from 'store/dishes';
 
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
@@ -19,25 +15,18 @@ const useStyles = makeStyles((theme: Theme) =>
 
 export const Home: FC = () => {
   const classes = useStyles();
-  const dispatch = useDispatch();
-  const dishes = useSelector((state: RootState) => state.dishes.dishes);
-
-  useEffect(() => {
-    dispatch(fetchDishes());
-  }, [dispatch]);
 
   return (
     <>
-      <p>{JSON.stringify(dishes)}</p>
       <Box className={classes.root}>
         <Button
           component={Link}
-          to="/about"
+          to="/orders/new"
           fullWidth
           variant="contained"
           color="primary"
         >
-          Create order
+          Сделать Заказ
         </Button>
 
         <Button
@@ -47,7 +36,7 @@ export const Home: FC = () => {
           variant="contained"
           color="primary"
         >
-          Order List
+          Список заказов
         </Button>
 
         <Button
@@ -57,7 +46,7 @@ export const Home: FC = () => {
           variant="contained"
           color="primary"
         >
-          Call for delivery
+          Заказать доставку
         </Button>
       </Box>
     </>

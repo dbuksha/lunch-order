@@ -3,13 +3,14 @@ import firebase from 'firebase';
 type QuerySnapshot<T> = firebase.firestore.QuerySnapshot<T>;
 type DocumentSnapshot<T> = firebase.firestore.DocumentSnapshot<T>;
 
-type DocumentData = firebase.firestore.DocumentData;
+export type DocumentData = firebase.firestore.DocumentData;
+export type DocumentReference<T> = firebase.firestore.DocumentReference<T>;
 
-export const getCollectionEntries = <T>(
+export const getCollectionEntries = <T extends { id?: string }>(
   data: QuerySnapshot<DocumentData>,
 ): T[] => {
   const result: T[] = [];
-  data.forEach((doc) => result.push(doc.data() as T));
+  data.forEach((doc) => result.push({ id: doc.id, ...doc.data() } as T));
 
   return result;
 };

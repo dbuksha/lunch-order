@@ -32,7 +32,7 @@ const useStyles = makeStyles((theme: Theme) =>
   }),
 );
 
-const UsersForm: FC = () => {
+const LoginForm: FC = () => {
   const dispatch = useDispatch();
   const classes = useStyles();
 
@@ -72,4 +72,4 @@ const UsersForm: FC = () => {
   );
 };
 
-export default UsersForm;
+export default LoginForm;

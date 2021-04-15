@@ -10,13 +10,17 @@ enum ActionTypes {
   FETCH_DISHES = 'dishes/fetchDishes',
 }
 
-const collectionRef = firebaseInstance.collection(Collections.Dishes);
+const dishesCollection = firebaseInstance.collection(Collections.Dishes);
 
 export const fetchDishes = createAsyncThunk(
   ActionTypes.FETCH_DISHES,
   async () => {
-    const data = await collectionRef.get();
+    const data = await dishesCollection.get();
+    const dishes = getCollectionEntries<Dish>(data);
 
-    return getCollectionEntries<Dish>(data);
+    return dishes.reduce((acc: Record<string, Dish>, dish) => {
+      acc[dish.id] = dish;
+      return acc;
+    }, {});
   },
 );

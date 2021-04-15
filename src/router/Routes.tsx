@@ -8,8 +8,8 @@ import { routes } from './routes-props';
 export const Routes: FC = () => {
   return (
     <Switch>
-      {routes.map(({ component, exact, path, loginned }) => {
-        const Component = loginned ? AuthRoute : Route;
+      {routes.map(({ component, exact, path, auth }) => {
+        const Component = auth ? AuthRoute : Route;
         const Child = component;
 
         return (

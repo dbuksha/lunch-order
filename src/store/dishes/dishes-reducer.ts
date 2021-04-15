@@ -1,14 +1,13 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
-
-import { Dish } from 'entities/Dish';
+import { DishesMap } from 'entities/Dish';
 import { fetchDishes } from './dishes-actions';
 
-type DishState = {
-  dishes: Dish[];
+export type DishesState = {
+  dishesMap: DishesMap;
 };
 
-const initialState: DishState = {
-  dishes: [],
+const initialState: DishesState = {
+  dishesMap: {},
 };
 
 const dishesSlice = createSlice({
@@ -21,8 +20,8 @@ const dishesSlice = createSlice({
   extraReducers: (builder) => {
     builder.addCase(
       fetchDishes.fulfilled,
-      (state: DishState, { payload }: PayloadAction<Dish[]>) => {
-        state.dishes = payload;
+      (state: DishesState, { payload }: PayloadAction<DishesMap>) => {
+        state.dishesMap = payload;
       },
     );
   },

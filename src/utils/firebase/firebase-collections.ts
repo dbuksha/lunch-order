@@ -1,6 +1,6 @@
 export enum Collections {
   Dishes = 'dishes',
   Users = 'persons',
-  Dishsets = 'dishsets',
+  Lunches = 'dishsets',
   Orders = 'orders',
 }

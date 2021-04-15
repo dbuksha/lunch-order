@@ -12,7 +12,7 @@ const collectionRef = firebaseInstance.collection(Collections.Users);
 
 export const addUser = createAsyncThunk(
   ActionTypes.ADD_USER,
-  async (payload: User) => {
+  async (payload: Omit<User, 'id'>) => {
     const result = await collectionRef.add(payload);
     const userData = { ...payload, id: result.id };
     setLocalStorageValue('user', userData);

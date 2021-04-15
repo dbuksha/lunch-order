@@ -4,12 +4,12 @@ import { getLocalStorageValue } from 'utils/local-storage';
 import { User } from 'entities/User';
 import { addUser } from './users-actions';
 
-type UserState = {
-  user: User | null;
+export type UsersState = {
+  currentUser: User | null;
 };
 
-const initialState: UserState = {
-  user: getLocalStorageValue('user'),
+const initialState: UsersState = {
+  currentUser: getLocalStorageValue('user'),
 };
 
 const usersState = createSlice({
@@ -22,8 +22,8 @@ const usersState = createSlice({
   extraReducers: (builder) => {
     builder.addCase(
       addUser.fulfilled,
-      (state: UserState, { payload }: PayloadAction<User>) => {
-        state.user = payload;
+      (state: UsersState, { payload }: PayloadAction<User>) => {
+        state.currentUser = payload;
       },
     );
   },

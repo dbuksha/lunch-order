@@ -1,4 +1,9 @@
 export type Dish = {
-  id?: string | null;
+  id: string;
   name: string;
+  price: number;
+  weight: number;
+  quantity?: number;
 };
+
+export type DishesMap = Record<string, Dish>;
