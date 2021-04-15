@@ -22,7 +22,7 @@ export const routes: RouteProp[] = [
     component: Login,
   },
   {
-    path: '/orders/create',
+    path: '/orders/new',
     component: OrderCreate,
     loginned: true,
   },

@@ -1,9 +1,8 @@
 import firebase from 'firebase/app';
-import { User } from './User';
-import { Dish } from 'entities/Dish';
+import { DocumentData, DocumentReference } from 'utils/firebase';
 
-import DocumentData = firebase.firestore.DocumentData;
-import DocumentReference = firebase.firestore.DocumentReference;
+import { Dish } from './Dish';
+import { User } from './User';
 
 export type Order = {
   id?: string;

@@ -21,7 +21,7 @@ export const Home: FC = () => {
       <Box className={classes.root}>
         <Button
           component={Link}
-          to="/orders/create"
+          to="/orders/new"
           fullWidth
           variant="contained"
           color="primary"

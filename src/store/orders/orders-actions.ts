@@ -1,16 +1,15 @@
 import { createAsyncThunk } from '@reduxjs/toolkit';
-import firebase from 'firebase/app';
 import firebaseInstance, {
   Collections,
   getCollectionEntries,
+  DocumentReference,
+  DocumentData,
 } from 'utils/firebase';
 
 import { Order, OrderFirebase } from 'entities/Order';
 import { isTimeForTodayLunch } from 'utils/time-helper';
 import { DishesState } from 'store/dishes';
 import { UsersState } from '../users/users-reducer';
-
-type DocumentReference = firebase.firestore.DocumentReference;
 
 enum ActionTypes {
   ADD_ORDER = 'orders/addOrder',
@@ -19,10 +18,14 @@ enum ActionTypes {
 
 // If today is later then 10:30 return condition of getting tomorrow order otherwise today's order
 const isOrderForToday = (date: number) => {
-  const today = Date.now();
+  const todayEndTime = new Date().setHours(10, 30, 0, 0);
+  const todayStartTime = new Date().setHours(8, 0, 0, 0);
   const tomorrow = new Date().setHours(24, 0, 0, 0);
 
-  return isTimeForTodayLunch() ? date <= today : date >= tomorrow;
+  // console.log(date >= todayStartTime && date <= today);
+  return isTimeForTodayLunch()
+    ? date >= todayStartTime && date <= todayEndTime
+    : date >= tomorrow;
 };
 
 const collectionRef = firebaseInstance.collection(Collections.Orders);
@@ -35,12 +38,12 @@ export const addOrder = createAsyncThunk(
     } = getState() as { dishes: DishesState };
 
     try {
-      // FIXME: how can I handle it without null?
-      let result: DocumentReference | null = null;
+      let result: DocumentReference<DocumentData> | null = null;
       if (id) {
         await collectionRef.doc(id).update(payload);
+      } else {
+        result = await collectionRef.add(payload);
       }
-      result = await collectionRef.add(payload);
 
       return {
         id: result?.id || id,

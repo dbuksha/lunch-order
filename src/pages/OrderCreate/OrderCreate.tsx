@@ -17,7 +17,7 @@ import ListDishes from 'components/orders/List-Dishes';
 import { Lunch } from 'entities/Lunch';
 import { Dish } from 'entities/Dish';
 import { OrderFirebase } from 'entities/Order';
-import { isTimeForTodayLunch } from 'utils/time-helper';
+import { isTimeForTodayLunch, weekdaysNames } from 'utils/time-helper';
 import { useTodayLunches } from './useTodayLunches';
 
 const findLunchById = (lunches: Lunch[], lunchId: string): Lunch | null =>
@@ -29,7 +29,7 @@ const OrderCreate: FC = () => {
   const currentUser = useSelector(
     (state: RootState) => state.users.currentUser,
   );
-  const todayLunches = useTodayLunches();
+  const [todayNumber, todayLunches] = useTodayLunches();
   const order = useSelector((state: RootState) => state.orders.currentOrder);
   const selectedDishes = useSelector(selectedOrderDishesIdsSet);
 
@@ -94,6 +94,11 @@ const OrderCreate: FC = () => {
 
   return (
     <Grid container spacing={2}>
+      <Grid item sm={12}>
+        <Typography gutterBottom variant="subtitle1">
+          Меню на {weekdaysNames[todayNumber - 1]}
+        </Typography>
+      </Grid>
       {todayLunches &&
         todayLunches.map((lunch: Lunch) => (
           <Grid item xs={12} sm={6} key={lunch.name}>
@@ -118,7 +123,7 @@ const OrderCreate: FC = () => {
         disabled={!calculatedPrice}
         onClick={onCreateOrderSubmit}
       >
-        {order ? 'Обновить заказ' : 'Заказать'}
+        {order && order.id ? 'Обновить заказ' : 'Заказать'}
       </Button>
     </Grid>
   );
