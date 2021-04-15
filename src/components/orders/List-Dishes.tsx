@@ -1,4 +1,5 @@
-import React, { ChangeEvent, FC, useState } from 'react';
+import React, { ChangeEvent, FC, useEffect, useState } from 'react';
+import { isEqual, sortBy } from 'lodash';
 import {
   Checkbox,
   createStyles,
@@ -12,7 +13,8 @@ import { calculateDishesPrice } from 'utils/orders';
 
 type ListDishesProps = {
   dishes: Dish[];
-  selectDish: (selected: boolean, id?: string) => void;
+  selectedDishes: Set<string>;
+  selectDish: (selected: boolean, dish?: Dish) => void;
 };
 
 const useStyles = makeStyles(() =>
@@ -30,12 +32,23 @@ const useStyles = makeStyles(() =>
   }),
 );
 
-const ListDishes: FC<ListDishesProps> = ({ dishes, selectDish }) => {
+const ListDishes: FC<ListDishesProps> = ({
+  dishes,
+  selectDish,
+  selectedDishes,
+}) => {
   const classes = useStyles();
-  const [selectedAll, setSelectedAll] = useState(() =>
-    dishes.every((d) => d.selected),
-  );
+  const [selectedAll, setSelectedAll] = useState(false);
   const [lunchPrice] = useState<number>(() => calculateDishesPrice(dishes));
+
+  // set selectedAll when all lunch dishes were selected one by one or on first load page with existing order
+  useEffect(() => {
+    if (selectedDishes.size && dishes.length) {
+      setSelectedAll(
+        isEqual(sortBy(dishes.map((d) => d.id)), sortBy([...selectedDishes])),
+      );
+    }
+  }, [dishes, selectedDishes]);
 
   const handleSelectedAll = (e: ChangeEvent<HTMLInputElement>) => {
     setSelectedAll(e.target.checked);
@@ -66,8 +79,8 @@ const ListDishes: FC<ListDishesProps> = ({ dishes, selectDish }) => {
             key={dish.id}
             control={
               <Checkbox
-                checked={dish.selected}
-                onChange={(e) => selectDish(e.target.checked, dish.id)}
+                checked={selectedDishes.has(dish.id)}
+                onChange={(e) => selectDish(e.target.checked, dish)}
                 disabled={selectedAll}
                 name={dish.name}
               />

@@ -3,6 +3,7 @@ export type Dish = {
   name: string;
   price: number;
   weight: number;
-  selected?: boolean;
   quantity?: number;
 };
+
+export type DishesMap = Record<string, Dish>;

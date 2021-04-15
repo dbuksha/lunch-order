@@ -19,30 +19,7 @@ const lunchesSlice = createSlice({
 
   initialState,
 
-  reducers: {
-    updateSelectedLunches(
-      state: LunchesState,
-      {
-        payload: { lunchIds, selected, dishIds },
-      }: PayloadAction<{
-        lunchIds: string[];
-        selected: boolean;
-        dishIds: string[];
-      }>,
-    ) {
-      const lunches = cloneDeep(state.lunches);
-
-      lunches.forEach((lunch) => {
-        if (lunchIds.indexOf(lunch.id) > -1) {
-          lunch.dishes = lunch.dishes.map((dish) =>
-            dishIds.indexOf(dish.id) > -1 ? { ...dish, selected } : dish,
-          );
-        }
-      });
-
-      state.lunches = lunches;
-    },
-  },
+  reducers: {},
 
   extraReducers: (builder) => {
     builder.addCase(
@@ -55,5 +32,4 @@ const lunchesSlice = createSlice({
   },
 });
 
-export const { updateSelectedLunches } = lunchesSlice.actions;
 export default lunchesSlice.reducer;

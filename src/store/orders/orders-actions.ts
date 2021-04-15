@@ -6,8 +6,9 @@ import firebaseInstance, {
 } from 'utils/firebase';
 
 import { Order, OrderFirebase } from 'entities/Order';
+import { isTimeForTodayLunch } from 'utils/time-helper';
+import { DishesState } from 'store/dishes';
 import { UsersState } from '../users/users-reducer';
-import { isTimeForTodayLunch } from '../../utils/time-helper';
 
 type DocumentReference = firebase.firestore.DocumentReference;
 
@@ -28,7 +29,11 @@ const collectionRef = firebaseInstance.collection(Collections.Orders);
 
 export const addOrder = createAsyncThunk(
   ActionTypes.ADD_ORDER,
-  async ({ id, ...payload }: OrderFirebase, { rejectWithValue }) => {
+  async ({ id, ...payload }: OrderFirebase, { rejectWithValue, getState }) => {
+    const {
+      dishes: { dishesMap },
+    } = getState() as { dishes: DishesState };
+
     try {
       // FIXME: how can I handle it without null?
       let result: DocumentReference | null = null;
@@ -41,7 +46,7 @@ export const addOrder = createAsyncThunk(
         id: result?.id || id,
         date: payload.date.toMillis(),
         dishes: payload.dishes.map(({ quantity, dishRef }) => ({
-          id: dishRef.id,
+          dish: dishesMap[dishRef.id],
           quantity,
         })),
       } as Order;
@@ -56,7 +61,8 @@ export const getUserOrder = createAsyncThunk(
   async (_, { getState }) => {
     const {
       users: { currentUser },
-    } = getState() as { users: UsersState };
+      dishes: { dishesMap },
+    } = getState() as { users: UsersState; dishes: DishesState };
 
     // FIXME: should I show an error message?
     if (!currentUser) return null;
@@ -83,7 +89,7 @@ export const getUserOrder = createAsyncThunk(
     return {
       ...selectedOrder,
       dishes: selectedOrder.dishes.map((d) => ({
-        id: d.dishRef.id,
+        dish: dishesMap[d.dishRef.id],
         quantity: d.quantity,
       })),
     } as Order;

@@ -7,18 +7,15 @@ import firebase from 'firebase/app';
 import firebaseInstance, { Collections } from 'utils/firebase';
 // store
 import { RootState } from 'store';
-import { addOrder, getUserOrder } from 'store/orders';
-import {
-  updateSelectedLunches,
-  selectedLunchDishesSelector,
-} from 'store/lunches';
-
+import { addOrder, getUserOrder, updateOrder } from 'store/orders';
+import { selectedOrderDishesIdsSet } from 'store/orders/orders-selectors';
 import { calculateDishesPrice } from 'utils/orders';
 
 // components
 import ListDishes from 'components/orders/List-Dishes';
 // entities
 import { Lunch } from 'entities/Lunch';
+import { Dish } from 'entities/Dish';
 import { OrderFirebase } from 'entities/Order';
 import { isTimeForTodayLunch } from 'utils/time-helper';
 import { useTodayLunches } from './useTodayLunches';
@@ -34,7 +31,7 @@ const OrderCreate: FC = () => {
   );
   const todayLunches = useTodayLunches();
   const order = useSelector((state: RootState) => state.orders.currentOrder);
-  const selectedDishes = useSelector(selectedLunchDishesSelector);
+  const selectedDishes = useSelector(selectedOrderDishesIdsSet);
 
   const [calculatedPrice, setCalculatedPrice] = useState<number>(0);
 
@@ -42,36 +39,21 @@ const OrderCreate: FC = () => {
     dispatch(getUserOrder());
   }, [dispatch]);
 
-  useEffect(() => {
-    if (order) {
-      const dishIds = order.dishes.map(
-        (d: { id: string; quantity: number }) => d.id,
-      );
-      const lunchIds = todayLunches.map((l) => l.id);
-
-      dispatch(updateSelectedLunches({ lunchIds, selected: true, dishIds }));
-    }
-    //  FIXME: array depth
-    // it required todayLunches, but I don't need it
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [dispatch, order]);
-
   // recalculate order sum
   useEffect(() => {
-    if (selectedDishes) {
-      setCalculatedPrice(calculateDishesPrice(selectedDishes));
+    if (order && selectedDishes) {
+      const dishes = order.dishes.map((d) => d.dish);
+      setCalculatedPrice(calculateDishesPrice(dishes));
     }
-
-    // FIXME: complex dept
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [selectedDishes]);
 
   const onCreateOrderSubmit = async () => {
     // TODO: show an error popup
-    if (!currentUser || !selectedDishes.length) return;
+    if (!currentUser || !selectedDishes) return;
 
-    // convert dishIds to refs for firebase
-    const preparedDishes = selectedDishes.map((d) => ({
-      dishRef: firebaseInstance.doc(`${Collections.Dishes}/${d.id}`),
+    const preparedDishes = [...selectedDishes].map((id) => ({
+      dishRef: firebaseInstance.doc(`${Collections.Dishes}/${id}`),
       quantity: 1, // TODO: add quantity selection to the form
     }));
 
@@ -97,22 +79,17 @@ const OrderCreate: FC = () => {
     }
   };
 
-  const onDishSelect = (
-    lunchId: string,
-    selected: boolean,
-    dishId?: string,
-  ) => {
-    let dishIds = [];
-
-    if (!dishId) {
+  const onDishSelect = (lunchId: string, selected: boolean, dish?: Dish) => {
+    let dishes = [];
+    if (!dish) {
       const selectedLunch = findLunchById(todayLunches, lunchId);
       if (!selectedLunch) return;
-      dishIds = selectedLunch.dishes.map((d) => d.id);
+      dishes = selectedLunch.dishes;
     } else {
-      dishIds = [dishId];
+      dishes = [dish];
     }
 
-    dispatch(updateSelectedLunches({ lunchIds: [lunchId], selected, dishIds }));
+    dispatch(updateOrder({ dishes, selected }));
   };
 
   return (
@@ -124,8 +101,9 @@ const OrderCreate: FC = () => {
             <ListDishes
               key={lunch.name}
               dishes={lunch.dishes}
-              selectDish={(selected, dishId) =>
-                onDishSelect(lunch.id, selected, dishId)
+              selectedDishes={selectedDishes}
+              selectDish={(selected, dish) =>
+                onDishSelect(lunch.id, selected, dish)
               }
             />
           </Grid>

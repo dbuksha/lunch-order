@@ -1,17 +1,18 @@
 import firebase from 'firebase/app';
 import { User } from './User';
+import { Dish } from 'entities/Dish';
 
 import DocumentData = firebase.firestore.DocumentData;
 import DocumentReference = firebase.firestore.DocumentReference;
 
 export type Order = {
-  id: string;
+  id?: string;
   dishes: {
-    id: string;
+    dish: Dish;
     quantity: number;
   }[];
   person?: User;
-  date: number;
+  date?: number;
 };
 
 export type OrderFirebase = {

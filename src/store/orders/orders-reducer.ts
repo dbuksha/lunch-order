@@ -1,22 +1,61 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
+import { cloneDeep } from 'lodash/fp';
 
 import { Order } from 'entities/Order';
+import { Dish } from 'entities/Dish';
 import { addOrder, getUserOrder } from './orders-actions';
+
+const initOrder = {
+  dishes: [],
+};
 
 type OrderState = {
   currentOrder: Order | null;
 };
 
 const initialState: OrderState = {
-  currentOrder: null,
+  currentOrder: initOrder,
 };
 
-const usersState = createSlice({
+const ordersSlice = createSlice({
   name: 'orders',
 
   initialState,
 
-  reducers: {},
+  reducers: {
+    updateOrder(
+      state: OrderState,
+      {
+        payload: { dishes, selected },
+      }: PayloadAction<{
+        dishes: Dish[];
+        selected: boolean;
+      }>,
+    ) {
+      const order = cloneDeep(state.currentOrder);
+      if (!order) return;
+
+      const dishesMap: Map<string, Dish> = new Map(
+        dishes.map((dish) => [dish.id, dish]),
+      );
+
+      if (selected) {
+        const selectedDishesIds = new Set(order.dishes.map((d) => d.dish.id));
+
+        dishesMap.forEach((dish, dishId) => {
+          if (!selectedDishesIds.has(dishId)) {
+            order.dishes.push({ dish, quantity: 1 });
+          }
+        });
+      } else {
+        order.dishes = order.dishes.filter((dish) => {
+          return !dishesMap.has(dish.dish.id);
+        });
+      }
+
+      state.currentOrder = order;
+    },
+  },
 
   extraReducers: (builder) => {
     builder
@@ -32,4 +71,5 @@ const usersState = createSlice({
   },
 });
 
-export default usersState.reducer;
+export const { updateOrder } = ordersSlice.actions;
+export default ordersSlice.reducer;

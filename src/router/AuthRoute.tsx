@@ -1,11 +1,12 @@
-import React, { FC, useEffect, useState } from 'react';
+import React, { FC, useEffect } from 'react';
 
 import { Redirect, Route, RouteProps } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
 import { CircularProgress } from '@material-ui/core';
 
 import { RootState } from 'store/store';
-import { fetchLunches } from '../store/lunches';
+import { fetchLunches } from 'store/lunches';
+import { fetchDishes } from 'store/dishes';
 
 const AuthRoute: FC<RouteProps> = (props) => {
   const dispatch = useDispatch();
@@ -18,6 +19,7 @@ const AuthRoute: FC<RouteProps> = (props) => {
 
   useEffect(() => {
     async function preloadData() {
+      await dispatch(fetchDishes());
       await dispatch(fetchLunches());
     }
 
