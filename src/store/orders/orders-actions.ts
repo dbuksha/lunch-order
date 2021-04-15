@@ -5,11 +5,17 @@ import firebaseInstance, {
   DocumentReference,
   DocumentData,
 } from 'utils/firebase';
+import dayjs from 'dayjs';
+import isSameOrAfter from 'dayjs/plugin/isSameOrAfter';
+import isBetween from 'dayjs/plugin/isBetween';
 
 import { Order, OrderFirebase } from 'entities/Order';
 import { isTimeForTodayLunch } from 'utils/time-helper';
 import { DishesState } from 'store/dishes';
 import { UsersState } from '../users/users-reducer';
+
+dayjs.extend(isBetween);
+dayjs.extend(isSameOrAfter);
 
 enum ActionTypes {
   ADD_ORDER = 'orders/addOrder',
@@ -17,15 +23,19 @@ enum ActionTypes {
 }
 
 // If today is later then 10:30 return condition of getting tomorrow order otherwise today's order
-const isOrderForToday = (date: number) => {
-  const todayEndTime = new Date().setHours(10, 30, 0, 0);
-  const todayStartTime = new Date().setHours(8, 0, 0, 0);
-  const tomorrow = new Date().setHours(24, 0, 0, 0);
+const isTodayOrTomorrowOrderExists = (date: number) => {
+  const todayEndTime = dayjs().hour(10).minute(30).second(0);
+  const todayStartTime = dayjs().hour(8).startOf('h');
+  const tomorrow = dayjs().add(1, 'd').startOf('d');
 
-  // console.log(date >= todayStartTime && date <= today);
+  if (isTimeForTodayLunch()) {
+    dayjs.extend(isBetween);
+    return dayjs(date).isBetween(todayStartTime, dayjs(todayEndTime));
+  }
+
   return isTimeForTodayLunch()
-    ? date >= todayStartTime && date <= todayEndTime
-    : date >= tomorrow;
+    ? dayjs(date).isBetween(todayStartTime, dayjs(todayEndTime))
+    : dayjs(date).isSameOrAfter(tomorrow);
 };
 
 const collectionRef = firebaseInstance.collection(Collections.Orders);
@@ -85,8 +95,9 @@ export const getUserOrder = createAsyncThunk(
       }),
     );
 
-    // TODO: check date condition
-    const selectedOrder = orders.find((order) => isOrderForToday(order.date));
+    const selectedOrder = orders.find((order) =>
+      isTodayOrTomorrowOrderExists(order.date),
+    );
     if (!selectedOrder) return null;
 
     return {

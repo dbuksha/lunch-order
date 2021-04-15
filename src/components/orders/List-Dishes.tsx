@@ -17,20 +17,16 @@ type ListDishesProps = {
   selectDish: (selected: boolean, dish?: Dish) => void;
 };
 
-const useStyles = makeStyles(() =>
-  createStyles({
-    root: {
-      '& .MuiFormControlLabel-root': {
-        width: '100%',
-      },
-      '& .MuiFormControlLabel-label': {
-        width: '100%',
-        display: 'flex',
-        justifyContent: 'space-between',
-      },
-    },
-  }),
-);
+const useStyles = makeStyles({
+  root: {
+    width: '100%',
+  },
+  label: {
+    width: '100%',
+    display: 'flex',
+    justifyContent: 'space-between',
+  },
+});
 
 const ListDishes: FC<ListDishesProps> = ({
   dishes,
@@ -57,8 +53,9 @@ const ListDishes: FC<ListDishesProps> = ({
 
   return (
     <>
-      <FormGroup className={classes.root}>
+      <FormGroup>
         <FormControlLabel
+          classes={classes}
           control={
             <div>
               <Checkbox
@@ -76,6 +73,7 @@ const ListDishes: FC<ListDishesProps> = ({
         />
         {dishes.map((dish: Dish) => (
           <FormControlLabel
+            classes={classes}
             key={dish.id}
             control={
               <Checkbox

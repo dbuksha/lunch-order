@@ -2,9 +2,10 @@ import { useSelector } from 'react-redux';
 import { RootState } from 'store';
 import { Lunch } from 'entities/Lunch';
 import { isTimeForTodayLunch } from 'utils/time-helper';
+import dayjs from 'dayjs';
 
 export const useTodayLunches = (): [number, Lunch[]] => {
-  const today = new Date().getDay();
+  const today = dayjs().day();
   // TODO: check the sunday, saturday
   const dayNumber = isTimeForTodayLunch() ? today : today + 1;
 

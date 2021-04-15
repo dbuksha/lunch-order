@@ -1,7 +1,8 @@
+import dayjs from 'dayjs';
+
 export const isTimeForTodayLunch = (): boolean => {
-  const currentDate = Date.now();
-  const endLunchOrderTime = new Date().setHours(10, 30, 0, 0);
-  return currentDate < endLunchOrderTime;
+  const endLunchOrderTime = dayjs().hour(10).minute(30).second(0);
+  return dayjs().isBefore(endLunchOrderTime);
 };
 
 export const weekdaysNames = [

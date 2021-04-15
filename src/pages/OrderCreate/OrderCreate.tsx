@@ -3,6 +3,7 @@ import { Grid, Button, Typography, ListSubheader } from '@material-ui/core';
 import { useDispatch, useSelector } from 'react-redux';
 import { useHistory } from 'react-router-dom';
 import firebase from 'firebase/app';
+import dayjs from 'dayjs';
 
 import firebaseInstance, { Collections } from 'utils/firebase';
 // store
@@ -59,11 +60,11 @@ const OrderCreate: FC = () => {
 
     // if lunch not for today: set tomorrow (8 a.m.)
     const time = isTimeForTodayLunch()
-      ? new Date()
-      : new Date(new Date().setHours(32, 0, 0, 0));
+      ? dayjs()
+      : dayjs().add(1, 'day').hour(8).startOf('h');
 
     const orderData: OrderFirebase = {
-      date: firebase.firestore.Timestamp.fromDate(time),
+      date: firebase.firestore.Timestamp.fromDate(time.toDate()),
       dishes: preparedDishes,
       person: firebaseInstance.doc(`${Collections.Users}/${currentUser.id}`),
     };
@@ -99,20 +100,19 @@ const OrderCreate: FC = () => {
           Меню на {weekdaysNames[todayNumber - 1]}
         </Typography>
       </Grid>
-      {todayLunches &&
-        todayLunches.map((lunch: Lunch) => (
-          <Grid item xs={12} sm={6} key={lunch.name}>
-            <ListSubheader component="div">{lunch.name}</ListSubheader>
-            <ListDishes
-              key={lunch.name}
-              dishes={lunch.dishes}
-              selectedDishes={selectedDishes}
-              selectDish={(selected, dish) =>
-                onDishSelect(lunch.id, selected, dish)
-              }
-            />
-          </Grid>
-        ))}
+      {todayLunches?.map((lunch: Lunch) => (
+        <Grid item xs={12} sm={6} key={lunch.name}>
+          <ListSubheader component="div">{lunch.name}</ListSubheader>
+          <ListDishes
+            key={lunch.name}
+            dishes={lunch.dishes}
+            selectedDishes={selectedDishes}
+            selectDish={(selected, dish) =>
+              onDishSelect(lunch.id, selected, dish)
+            }
+          />
+        </Grid>
+      ))}
       <Typography component="h6" variant="h5">
         Общая стоимость заказа: {calculatedPrice}&#8381;
       </Typography>
@@ -123,7 +123,7 @@ const OrderCreate: FC = () => {
         disabled={!calculatedPrice}
         onClick={onCreateOrderSubmit}
       >
-        {order && order.id ? 'Обновить заказ' : 'Заказать'}
+        {order?.id ? 'Обновить заказ' : 'Заказать'}
       </Button>
     </Grid>
   );

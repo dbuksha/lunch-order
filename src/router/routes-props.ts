@@ -6,7 +6,7 @@ import OrderCreate from 'pages/OrderCreate';
 export type RouteProp = {
   path: string;
   exact?: boolean;
-  loginned?: boolean;
+  auth?: boolean;
   component: FC | ComponentClass | LazyExoticComponent<any>;
 };
 
@@ -15,7 +15,7 @@ export const routes: RouteProp[] = [
     path: '/',
     exact: true,
     component: Home,
-    loginned: true,
+    auth: true,
   },
   {
     path: '/login',
@@ -24,6 +24,6 @@ export const routes: RouteProp[] = [
   {
     path: '/orders/new',
     component: OrderCreate,
-    loginned: true,
+    auth: true,
   },
 ];
