@@ -1,7 +1,7 @@
 import React, { FC } from 'react';
 import Button from '@material-ui/core/Button';
 import { Link } from 'react-router-dom';
-import { createStyles, makeStyles, Theme, Box } from '@material-ui/core';
+import { createStyles, makeStyles, Theme, Box, Paper } from '@material-ui/core';
 
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
@@ -17,8 +17,8 @@ export const Home: FC = () => {
   const classes = useStyles();
 
   return (
-    <>
-      <Box className={classes.root}>
+    <Box className={classes.root}>
+      <Paper>
         <Button
           component={Link}
           to="/orders/new"
@@ -31,7 +31,7 @@ export const Home: FC = () => {
 
         <Button
           component={Link}
-          to="/about"
+          to="/orders"
           fullWidth
           variant="contained"
           color="primary"
@@ -48,7 +48,7 @@ export const Home: FC = () => {
         >
           Заказать доставку
         </Button>
-      </Box>
-    </>
+      </Paper>
+    </Box>
   );
 };

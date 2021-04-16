@@ -1,5 +1,15 @@
 import React, { FC, useEffect, useState } from 'react';
-import { Grid, Button, Typography, ListSubheader } from '@material-ui/core';
+import {
+  Grid,
+  Button,
+  Typography,
+  ListSubheader,
+  Paper,
+  Box,
+  makeStyles,
+  createStyles,
+  Theme,
+} from '@material-ui/core';
 import { useDispatch, useSelector } from 'react-redux';
 import { useHistory } from 'react-router-dom';
 import firebase from 'firebase/app';
@@ -14,6 +24,8 @@ import { calculateDishesPrice } from 'utils/orders';
 
 // components
 import ListDishes from 'components/orders/List-Dishes';
+import StyledPaper from 'components/StyledPaper';
+
 // entities
 import { Lunch } from 'entities/Lunch';
 import { Dish } from 'entities/Dish';
@@ -24,8 +36,19 @@ import { useTodayLunches } from './useTodayLunches';
 const findLunchById = (lunches: Lunch[], lunchId: string): Lunch | null =>
   lunches.find((lunch: Lunch) => lunch.id === lunchId) || null;
 
+const useStyles = makeStyles((theme: Theme) =>
+  createStyles({
+    root: {
+      '& > *': {
+        margin: theme.spacing(1),
+      },
+    },
+  }),
+);
+
 const OrderCreate: FC = () => {
   const dispatch = useDispatch();
+  const classes = useStyles();
   const history = useHistory();
   const currentUser = useSelector(
     (state: RootState) => state.users.currentUser,
@@ -94,38 +117,62 @@ const OrderCreate: FC = () => {
   };
 
   return (
-    <Grid container spacing={2}>
-      <Grid item sm={12}>
-        <Typography gutterBottom variant="subtitle1">
-          Меню на {weekdaysNames[todayNumber - 1]}
-        </Typography>
-      </Grid>
-      {todayLunches?.map((lunch: Lunch) => (
-        <Grid item xs={12} sm={6} key={lunch.name}>
-          <ListSubheader component="div">{lunch.name}</ListSubheader>
-          <ListDishes
-            key={lunch.name}
-            dishes={lunch.dishes}
-            selectedDishes={selectedDishes}
-            selectDish={(selected, dish) =>
-              onDishSelect(lunch.id, selected, dish)
-            }
-          />
+    <StyledPaper>
+      <Grid container spacing={2} justify="center">
+        {todayLunches?.map((lunch: Lunch) => (
+          <Grid item xs={12} sm={6} md={4} key={lunch.name}>
+            <Typography
+              component="div"
+              variant="subtitle1"
+              color="textSecondary"
+            >
+              {lunch.name}
+            </Typography>
+            <ListDishes
+              key={lunch.name}
+              dishes={lunch.dishes}
+              selectedDishes={selectedDishes}
+              selectDish={(selected, dish) =>
+                onDishSelect(lunch.id, selected, dish)
+              }
+            />
+          </Grid>
+        ))}
+        <Grid
+          item
+          container
+          sm={12}
+          md={12}
+          lg
+          justify="flex-end"
+          spacing={2}
+          alignItems="baseline"
+        >
+          <Grid item xs={12} md={2}>
+            <Typography component="span" variant="h6">
+              Итого: <strong>{calculatedPrice}&#8381;</strong>
+            </Typography>
+          </Grid>
+          <Grid item container xs={12} md lg sm justify="flex-end">
+            <Button
+              variant="contained"
+              color="primary"
+              disabled={!calculatedPrice}
+              onClick={onCreateOrderSubmit}
+            >
+              {order?.id ? 'Обновить заказ' : 'Заказать'}
+            </Button>
+            <Button
+              variant="outlined"
+              color="secondary"
+              onClick={onCreateOrderSubmit}
+            >
+              Отменить заказ
+            </Button>
+          </Grid>
         </Grid>
-      ))}
-      <Typography component="h6" variant="h5">
-        Общая стоимость заказа: {calculatedPrice}&#8381;
-      </Typography>
-      <Button
-        fullWidth
-        variant="contained"
-        color="primary"
-        disabled={!calculatedPrice}
-        onClick={onCreateOrderSubmit}
-      >
-        {order?.id ? 'Обновить заказ' : 'Заказать'}
-      </Button>
-    </Grid>
+      </Grid>
+    </StyledPaper>
   );
 };
 

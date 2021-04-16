@@ -5,12 +5,15 @@ export const isTimeForTodayLunch = (): boolean => {
   return dayjs().isBefore(endLunchOrderTime);
 };
 
+export const todayStartOrderTime = dayjs().hour(8).startOf('h');
+export const todayEndOrderTime = dayjs().hour(10).minute(30).second(0);
+
 export const weekdaysNames = [
   'пондельник',
   'вторник',
   'среду',
   'четверг',
   'пятницу',
-  'субботу',
+  'суббота',
   'воскресенье',
 ];

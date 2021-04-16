@@ -2,7 +2,7 @@ import { createSlice, PayloadAction, current } from '@reduxjs/toolkit';
 
 import { Order } from 'entities/Order';
 import { Dish } from 'entities/Dish';
-import { addOrder, getUserOrder } from './orders-actions';
+import { addOrder, fetchOrders, getUserOrder } from './orders-actions';
 
 const initOrder = {
   dishes: [],
@@ -10,10 +10,12 @@ const initOrder = {
 
 type OrderState = {
   currentOrder: Order;
+  orders: Order[];
 };
 
 const initialState: OrderState = {
   currentOrder: initOrder,
+  orders: [],
 };
 
 const ordersSlice = createSlice({
@@ -40,11 +42,17 @@ const ordersSlice = createSlice({
 
       if (selected) {
         const selectedDishesIds = new Set(order.dishes.map((d) => d.dish.id));
+        const dishesToAdd: { dish: Dish; quantity: number }[] = Object.assign(
+          [],
+          order.dishes,
+        );
 
         dishesMap.forEach((dish, dishId) => {
           if (!selectedDishesIds.has(dishId)) {
-            order.dishes.push({ dish, quantity: 1 });
+            dishesToAdd.push({ dish, quantity: 1 });
           }
+
+          order.dishes = dishesToAdd;
         });
       } else {
         order.dishes = order.dishes.filter((dish) => {
@@ -66,7 +74,13 @@ const ordersSlice = createSlice({
       )
       .addCase(getUserOrder.fulfilled, (state: OrderState, action) => {
         if (action.payload) state.currentOrder = action.payload;
-      });
+      })
+      .addCase(
+        fetchOrders.fulfilled,
+        (state: OrderState, { payload }: PayloadAction<Order[]>) => {
+          state.orders = payload;
+        },
+      );
   },
 });
 

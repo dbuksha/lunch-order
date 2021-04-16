@@ -39,9 +39,11 @@ const ListDishes: FC<ListDishesProps> = ({
 
   // set selectedAll when all lunch dishes were selected one by one or on first load page with existing order
   useEffect(() => {
+    // check if every dish id is in selected dishes
     if (selectedDishes.size && dishes.length) {
+      const parStr = JSON.stringify(sortBy([...selectedDishes]));
       setSelectedAll(
-        isEqual(sortBy(dishes.map((d) => d.id)), sortBy([...selectedDishes])),
+        dishes.map((d) => d.id).every((id) => parStr.indexOf(id) !== -1),
       );
     }
   }, [dishes, selectedDishes]);
@@ -52,46 +54,44 @@ const ListDishes: FC<ListDishesProps> = ({
   };
 
   return (
-    <>
-      <FormGroup>
+    <FormGroup>
+      <FormControlLabel
+        classes={classes}
+        control={
+          <div>
+            <Checkbox
+              checked={selectedAll}
+              onChange={handleSelectedAll}
+              name="selectAll"
+            />
+          </div>
+        }
+        label={
+          <>
+            Полный комплекс <b>{lunchPrice}&#8381;</b>
+          </>
+        }
+      />
+      {dishes.map((dish: Dish) => (
         <FormControlLabel
           classes={classes}
+          key={dish.id}
           control={
-            <div>
-              <Checkbox
-                checked={selectedAll}
-                onChange={handleSelectedAll}
-                name="selectAll"
-              />
-            </div>
+            <Checkbox
+              checked={selectedDishes.has(dish.id)}
+              onChange={(e) => selectDish(e.target.checked, dish)}
+              disabled={selectedAll}
+              name={dish.name}
+            />
           }
           label={
             <>
-              Полный комплекс <b>{lunchPrice}&#8381;</b>
+              {dish.name} <b>{dish.price}&#8381;</b>
             </>
           }
         />
-        {dishes.map((dish: Dish) => (
-          <FormControlLabel
-            classes={classes}
-            key={dish.id}
-            control={
-              <Checkbox
-                checked={selectedDishes.has(dish.id)}
-                onChange={(e) => selectDish(e.target.checked, dish)}
-                disabled={selectedAll}
-                name={dish.name}
-              />
-            }
-            label={
-              <>
-                {dish.name} <b>{dish.price}&#8381;</b>
-              </>
-            }
-          />
-        ))}
-      </FormGroup>
-    </>
+      ))}
+    </FormGroup>
   );
 };
 

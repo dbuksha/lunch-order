@@ -15,7 +15,7 @@ export const App: FC = () => {
   return (
     <Router>
       <CssBaseline />
-      <Container maxWidth="sm" component="main">
+      <Container fixed component="main">
         <h1>Lanchos</h1>
 
         <Routes />

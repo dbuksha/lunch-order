@@ -10,7 +10,12 @@ import isSameOrAfter from 'dayjs/plugin/isSameOrAfter';
 import isBetween from 'dayjs/plugin/isBetween';
 
 import { Order, OrderFirebase } from 'entities/Order';
-import { isTimeForTodayLunch } from 'utils/time-helper';
+import { User } from 'entities/User';
+import {
+  isTimeForTodayLunch,
+  todayEndOrderTime,
+  todayStartOrderTime,
+} from 'utils/time-helper';
 import { DishesState } from 'store/dishes';
 import { UsersState } from '../users/users-reducer';
 
@@ -18,23 +23,17 @@ dayjs.extend(isBetween);
 dayjs.extend(isSameOrAfter);
 
 enum ActionTypes {
+  FETCH_ORDERS = 'orders/fetchOrders',
   ADD_ORDER = 'orders/addOrder',
   GET_USER_ORDER = 'orders/getUserOrder',
 }
 
 // If today is later then 10:30 return condition of getting tomorrow order otherwise today's order
 const isTodayOrTomorrowOrderExists = (date: number) => {
-  const todayEndTime = dayjs().hour(10).minute(30).second(0);
-  const todayStartTime = dayjs().hour(8).startOf('h');
   const tomorrow = dayjs().add(1, 'd').startOf('d');
 
-  if (isTimeForTodayLunch()) {
-    dayjs.extend(isBetween);
-    return dayjs(date).isBetween(todayStartTime, dayjs(todayEndTime));
-  }
-
   return isTimeForTodayLunch()
-    ? dayjs(date).isBetween(todayStartTime, dayjs(todayEndTime))
+    ? dayjs(date).isBetween(todayStartOrderTime, todayEndOrderTime)
     : dayjs(date).isSameOrAfter(tomorrow);
 };
 
@@ -107,5 +106,34 @@ export const getUserOrder = createAsyncThunk(
         quantity: d.quantity,
       })),
     } as Order;
+  },
+);
+
+export const fetchOrders = createAsyncThunk(
+  ActionTypes.FETCH_ORDERS,
+  async (_, { getState }) => {
+    const {
+      dishes: { dishesMap },
+    } = getState() as { users: UsersState; dishes: DishesState };
+
+    const result = await collectionRef
+      // .where('date', '>=', todayStartOrderTime.toDate())
+      .where('date', '<=', todayEndOrderTime.toDate())
+      .get();
+
+    const orders = getCollectionEntries<OrderFirebase>(result);
+    if (!orders.length) return [];
+
+    const usersCollection = firebaseInstance.collection(Collections.Users);
+    const usersResult = getCollectionEntries<User>(await usersCollection.get());
+
+    return orders.map((order) => {
+      const person = usersResult.find((u) => u.id === order.person.id);
+      const dishes = order.dishes.map(({ quantity, dishRef }) => ({
+        quantity,
+        dish: dishesMap[dishRef.id],
+      }));
+      return { ...order, date: order.date.toMillis(), dishes, person };
+    });
   },
 );
