@@ -5,6 +5,7 @@ import { Home } from 'pages/Home';
 import Login from 'pages/Login';
 import OrderCreate from 'pages/OrderCreate';
 import OrdersList from 'pages/OrdersList/OrdersList';
+import OrdersDelivery from 'pages/OrdersDelivery';
 
 export type RouteProp = {
   path: string;
@@ -34,5 +35,10 @@ export const routes: RouteProp[] = [
     component: OrdersList,
     auth: true,
     exact: true,
+  },
+  {
+    path: '/orders/delivery',
+    component: OrdersDelivery,
+    auth: true,
   },
 ];

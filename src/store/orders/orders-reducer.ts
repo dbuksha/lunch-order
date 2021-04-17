@@ -1,7 +1,7 @@
 import { createSlice, PayloadAction, current } from '@reduxjs/toolkit';
 
 import { Order } from 'entities/Order';
-import { Dish } from 'entities/Dish';
+import { Dish, OrderDish } from 'entities/Dish';
 import { addOrder, fetchOrders, getUserOrder } from './orders-actions';
 
 const initOrder = {
@@ -42,10 +42,7 @@ const ordersSlice = createSlice({
 
       if (selected) {
         const selectedDishesIds = new Set(order.dishes.map((d) => d.dish.id));
-        const dishesToAdd: { dish: Dish; quantity: number }[] = Object.assign(
-          [],
-          order.dishes,
-        );
+        const dishesToAdd: OrderDish[] = Object.assign([], order.dishes);
 
         dishesMap.forEach((dish, dishId) => {
           if (!selectedDishesIds.has(dishId)) {
