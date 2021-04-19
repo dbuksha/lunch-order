@@ -6,6 +6,7 @@ export type Dish = {
 };
 
 export type OrderDish = {
+  id?: string;
   dish: Dish;
   quantity: number;
 };

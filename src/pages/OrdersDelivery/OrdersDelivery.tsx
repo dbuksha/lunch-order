@@ -1,9 +1,10 @@
 import React, { FC, useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { RootState } from 'store';
-import { chain } from 'lodash';
+import { minBy } from 'lodash';
 import { fetchOrders } from 'store/orders';
-import { OrderDish } from 'entities/Dish';
+import { Dish, OrderDish } from 'entities/Dish';
+import { useTodayLunches } from 'use/useTodayLunches';
 import {
   Paper,
   TableContainer,
@@ -12,53 +13,84 @@ import {
   Table,
   TableBody,
   TableRow,
-  makeStyles,
 } from '@material-ui/core';
-import DeliveryItem from './DeliveryItem';
-
-const useStyles = makeStyles({});
+import {
+  calculateDeliveryPrice,
+  calculateDishesQuantity,
+  getLunchDishesAndIds,
+  removeDishesWithLunchQuantity,
+  subtractLunchQuantityFromDish,
+} from './collectDeliveryDataHelper';
+import DeliveryItem, { DeliveryItemProps } from './DeliveryItem';
 
 const OrdersDelivery: FC = () => {
-  const classes = useStyles();
   const dispatch = useDispatch();
+  const [todayNumber, lunches] = useTodayLunches();
   const orders = useSelector((state: RootState) => state.orders.orders);
-  const [deliveryDishes, setDeliveryDishes] = useState<OrderDish[]>([]);
   const [deliveryPrice, setDeliveryPrice] = useState<number>(0);
+  const [deliveryData, setDeliveryData] = useState<DeliveryItemProps[]>([]);
 
+  // load order
   useEffect(() => {
     dispatch(fetchOrders());
   }, [dispatch]);
 
-  // TODO: count lunches
+  // collect table data
+  // TODO: separate set price and set table data to the different
   useEffect(() => {
     if (!orders.length) return;
     const dishes = orders.flatMap((o) => o.dishes);
+    if (!dishes.length) return;
+    const deliveryDataMap: Map<string, DeliveryItemProps> = new Map();
 
-    const result = chain(dishes)
-      .groupBy((d) => d.dish.id)
-      .map((value) => {
-        const size = value.reduce((acc: number, dish: OrderDish) => {
-          acc += dish.quantity;
-          return acc;
-        }, 0);
-
-        return { dish: value[0].dish, quantity: size };
-      })
-      .value();
-    console.log('==========');
-
-    setDeliveryDishes(result);
-    console.log(result);
-
+    // calculate quantity of each order dishes
+    let calculatedDishes = calculateDishesQuantity(dishes);
     // calculate and set delivery price
-    const price = result.reduce((acc: number, dish: OrderDish) => {
-      const dishesPrice = dish.dish.price * dish.quantity;
-      acc += dishesPrice;
-      return acc;
-    }, 0);
+    const finalPrice = calculateDeliveryPrice(calculatedDishes);
 
-    console.log(price);
-    setDeliveryPrice(price);
+    // collect full lunches from groupedOrders
+    lunches.forEach((lunch) => {
+      const [lunchDishes, lunchDishesIds] = getLunchDishesAndIds(
+        calculatedDishes,
+        lunch.dishes,
+      );
+
+      // get full lunch quantity
+      const minQuantityDish = minBy<OrderDish>(lunchDishes, (d) => d.quantity);
+      if (!minQuantityDish) return;
+      const fullLunchQuantity = minQuantityDish.quantity;
+
+      // add calculated lunches to the table data
+      deliveryDataMap.set(lunch.name, {
+        name: lunch.name,
+        quantity: fullLunchQuantity,
+      });
+
+      calculatedDishes = removeDishesWithLunchQuantity(
+        calculatedDishes,
+        lunchDishes,
+        fullLunchQuantity,
+      );
+
+      // subtract lunch quantity from dish quantity (if lunch has this dish)
+      calculatedDishes = subtractLunchQuantityFromDish(
+        calculatedDishes,
+        lunchDishesIds,
+        fullLunchQuantity,
+      );
+    });
+
+    // add leftovers dishes to the table data
+    calculatedDishes.forEach(({ dish, quantity }) => {
+      deliveryDataMap.set(dish.name, {
+        name: dish.name,
+        quantity,
+      });
+    });
+
+    // set price and table data
+    setDeliveryData([...deliveryDataMap.values()]);
+    setDeliveryPrice(finalPrice);
   }, [orders]);
 
   return (
@@ -69,14 +101,17 @@ const OrdersDelivery: FC = () => {
           <TableHead>
             <TableRow>
               <TableCell colSpan={2} align="right">
-                Цена
+                Кол-во
               </TableCell>
-              <TableCell align="right">Кол-во</TableCell>
             </TableRow>
           </TableHead>
           <TableBody>
-            {deliveryDishes?.map(({ dish, quantity }) => (
-              <DeliveryItem dish={dish} quantity={quantity} key={dish.id} />
+            {deliveryData?.map((deliveryItem) => (
+              <DeliveryItem
+                name={deliveryItem.name}
+                quantity={deliveryItem.quantity}
+                key={deliveryItem.name}
+              />
             ))}
           </TableBody>
         </Table>

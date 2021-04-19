@@ -1,18 +1,17 @@
 import React, { FC } from 'react';
 import { TableCell, TableRow } from '@material-ui/core';
-import { Dish } from 'entities/Dish';
 
-type DeliveryItemProps = {
+export type DeliveryItemProps = {
+  name: string;
   quantity: number;
-  dish: Dish;
 };
-const DeliveryItem: FC<DeliveryItemProps> = ({ dish, quantity }) => {
+
+const DeliveryItem: FC<DeliveryItemProps> = ({ name, quantity }) => {
   return (
-    <TableRow key={dish.id}>
+    <TableRow>
       <TableCell component="th" scope="row">
-        {dish.name}
+        {name}
       </TableCell>
-      <TableCell align="right">{dish.price}&#8381;</TableCell>
       <TableCell align="right">{quantity}</TableCell>
     </TableRow>
   );

@@ -31,7 +31,7 @@ import { Lunch } from 'entities/Lunch';
 import { Dish } from 'entities/Dish';
 import { OrderFirebase } from 'entities/Order';
 import { isTimeForTodayLunch, weekdaysNames } from 'utils/time-helper';
-import { useTodayLunches } from './useTodayLunches';
+import { useTodayLunches } from 'use/useTodayLunches';
 
 const findLunchById = (lunches: Lunch[], lunchId: string): Lunch | null =>
   lunches.find((lunch: Lunch) => lunch.id === lunchId) || null;
