@@ -2,7 +2,12 @@ import { createSlice, PayloadAction, current } from '@reduxjs/toolkit';
 
 import { Order } from 'entities/Order';
 import { Dish, OrderDish } from 'entities/Dish';
-import { addOrder, fetchOrders, getUserOrder } from './orders-actions';
+import {
+  addOrder,
+  deleteOrder,
+  fetchOrders,
+  getUserOrder,
+} from './orders-actions';
 
 const initOrder = {
   dishes: [],
@@ -77,7 +82,10 @@ const ordersSlice = createSlice({
         (state: OrderState, { payload }: PayloadAction<Order[]>) => {
           state.orders = payload;
         },
-      );
+      )
+      .addCase(deleteOrder.fulfilled, (state: OrderState) => {
+        state.currentOrder = initOrder;
+      });
   },
 });
 

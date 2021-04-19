@@ -26,6 +26,7 @@ enum ActionTypes {
   FETCH_ORDERS = 'orders/fetchOrders',
   ADD_ORDER = 'orders/addOrder',
   GET_USER_ORDER = 'orders/getUserOrder',
+  DELETE_ORDER = 'orders/deleteOrder',
 }
 
 // If today is later then 10:30 return condition of getting tomorrow order otherwise today's order
@@ -117,6 +118,7 @@ export const fetchOrders = createAsyncThunk(
     } = getState() as { users: UsersState; dishes: DishesState };
 
     const result = await collectionRef
+      // FIXME: do not push it!
       // .where('date', '>=', todayStartOrderTime.toDate())
       .where('date', '<=', todayEndOrderTime.toDate())
       .get();
@@ -135,5 +137,12 @@ export const fetchOrders = createAsyncThunk(
       }));
       return { ...order, date: order.date.toMillis(), dishes, person };
     });
+  },
+);
+
+export const deleteOrder = createAsyncThunk(
+  ActionTypes.DELETE_ORDER,
+  async (id: string) => {
+    await collectionRef.doc(id).delete();
   },
 );

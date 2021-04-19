@@ -1,11 +1,11 @@
 import React, { FC, useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { RootState } from 'store';
+import { chain } from 'lodash';
 import { fetchOrders } from 'store/orders';
-import { Dish, OrderDish } from 'entities/Dish';
+import { OrderDish } from 'entities/Dish';
 import {
   Paper,
-  Typography,
   TableContainer,
   TableHead,
   TableCell,
@@ -14,14 +14,9 @@ import {
   TableRow,
   makeStyles,
 } from '@material-ui/core';
-import { chain } from 'lodash';
-import { calculateDishesPrice } from 'utils/orders';
+import DeliveryItem from './DeliveryItem';
 
-const useStyles = makeStyles({
-  table: {
-    minWidth: 650,
-  },
-});
+const useStyles = makeStyles({});
 
 const OrdersDelivery: FC = () => {
   const classes = useStyles();
@@ -69,7 +64,7 @@ const OrdersDelivery: FC = () => {
   return (
     <>
       <TableContainer component={Paper}>
-        <Table className={classes.table} aria-label="simple table">
+        <Table aria-label="simple table">
           <caption> Итого: {deliveryPrice}&#8381;</caption>
           <TableHead>
             <TableRow>
@@ -81,13 +76,7 @@ const OrdersDelivery: FC = () => {
           </TableHead>
           <TableBody>
             {deliveryDishes?.map(({ dish, quantity }) => (
-              <TableRow key={dish.id}>
-                <TableCell component="th" scope="row">
-                  {dish.name}
-                </TableCell>
-                <TableCell align="right">{dish.price}&#8381;</TableCell>
-                <TableCell align="right">{quantity}</TableCell>
-              </TableRow>
+              <DeliveryItem dish={dish} quantity={quantity} key={dish.id} />
             ))}
           </TableBody>
         </Table>

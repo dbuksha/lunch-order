@@ -18,7 +18,7 @@ import dayjs from 'dayjs';
 import firebaseInstance, { Collections } from 'utils/firebase';
 // store
 import { RootState } from 'store';
-import { addOrder, getUserOrder, updateOrder } from 'store/orders';
+import { addOrder, deleteOrder, getUserOrder, updateOrder } from 'store/orders';
 import { selectedOrderDishesIdsSet } from 'store/orders/orders-selectors';
 import { calculateDishesPrice } from 'utils/orders';
 
@@ -39,6 +39,9 @@ const findLunchById = (lunches: Lunch[], lunchId: string): Lunch | null =>
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
     root: {
+      [theme.breakpoints.down('xs')]: {
+        justifyContent: 'inherit',
+      },
       '& > *': {
         margin: theme.spacing(1),
       },
@@ -116,6 +119,18 @@ const OrderCreate: FC = () => {
     dispatch(updateOrder({ dishes, selected }));
   };
 
+  // TODO: show alerts
+  const onDeleteOrder = () => {
+    async function handleDeleteOrder() {
+      if (order?.id) {
+        await dispatch(deleteOrder(order.id));
+        history.push('/');
+      }
+    }
+
+    handleDeleteOrder();
+  };
+
   return (
     <StyledPaper>
       <Grid container spacing={2} justify="center">
@@ -140,36 +155,34 @@ const OrderCreate: FC = () => {
         ))}
         <Grid
           item
+          className={classes.root}
           container
           sm={12}
           md={12}
-          lg
+          lg={12}
           justify="flex-end"
-          spacing={2}
           alignItems="baseline"
         >
-          <Grid item xs={12} md={2}>
-            <Typography component="span" variant="h6">
-              Итого: <strong>{calculatedPrice}&#8381;</strong>
-            </Typography>
-          </Grid>
-          <Grid item container xs={12} md lg sm justify="flex-end">
-            <Button
-              variant="contained"
-              color="primary"
-              disabled={!calculatedPrice}
-              onClick={onCreateOrderSubmit}
-            >
-              {order?.id ? 'Обновить заказ' : 'Заказать'}
-            </Button>
+          <Typography component="span" variant="h6">
+            Итого: <strong>{calculatedPrice}&#8381;</strong>
+          </Typography>
+          <Button
+            variant="contained"
+            color="primary"
+            disabled={!calculatedPrice}
+            onClick={onCreateOrderSubmit}
+          >
+            {order?.id ? 'Обновить заказ' : 'Заказать'}
+          </Button>
+          {order?.id && (
             <Button
               variant="outlined"
               color="secondary"
-              onClick={onCreateOrderSubmit}
+              onClick={onDeleteOrder}
             >
               Отменить заказ
             </Button>
-          </Grid>
+          )}
         </Grid>
       </Grid>
     </StyledPaper>

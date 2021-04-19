@@ -5,7 +5,7 @@ import { Home } from 'pages/Home';
 import Login from 'pages/Login';
 import OrderCreate from 'pages/OrderCreate';
 import OrdersList from 'pages/OrdersList/OrdersList';
-import OrdersDelivery from 'pages/OrdersDelivery';
+import OrdersDelivery from 'pages/OrdersDelivery/OrdersDelivery';
 
 export type RouteProp = {
   path: string;
