@@ -1,11 +1,12 @@
-import { FC, ComponentClass, LazyExoticComponent } from 'react';
+import { FC, ComponentClass, LazyExoticComponent, lazy } from 'react';
 
 // components
 import { Home } from 'pages/Home';
 import Login from 'pages/Login';
-import OrderCreate from 'pages/OrderCreate';
-import OrdersList from 'pages/OrdersList/OrdersList';
-import OrdersDelivery from 'pages/OrdersDelivery/OrdersDelivery';
+
+const OrdersList = lazy(() => import('pages/OrdersList'));
+const OrderCreate = lazy(() => import('pages/OrderCreate'));
+const OrdersDelivery = lazy(() => import('pages/OrdersDelivery'));
 
 export type RouteProp = {
   path: string;
