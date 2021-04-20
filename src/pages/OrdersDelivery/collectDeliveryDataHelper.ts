@@ -1,6 +1,9 @@
 import { Dish, OrderDish } from 'entities/Dish';
 import { chain, intersectionBy } from 'lodash';
 
+/**
+ *  Filter dishes from order delivery dishes by lunch dishes ids
+ */
 export const getLunchDishesAndIds = (
   orderDishes: OrderDish[],
   dishes: Dish[],
@@ -19,7 +22,10 @@ export const getLunchDishesAndIds = (
   return [lunchDishes, lunchDishesIds];
 };
 
-export const calculateDishesQuantity = (dishes: OrderDish[]): any[] => {
+/**
+ * Calculate every dish quantity in delivery
+ */
+export const calculateDishesQuantity = (dishes: OrderDish[]): OrderDish[] => {
   return chain(dishes)
     .groupBy((d) => d.dish.id)
     .map((value) => {
@@ -33,6 +39,9 @@ export const calculateDishesQuantity = (dishes: OrderDish[]): any[] => {
     .value();
 };
 
+/**
+ * Calculate delivery price depending on the dishes quantity
+ */
 export const calculateDeliveryPrice = (dishes: OrderDish[]): number => {
   return dishes.reduce((acc: number, dish: OrderDish) => {
     const dishesPrice = dish.dish.price * dish.quantity;
@@ -41,6 +50,13 @@ export const calculateDeliveryPrice = (dishes: OrderDish[]): number => {
   }, 0);
 };
 
+/**
+ * Remove dishes in delivery data if they have the same quantity, as lunch
+ *
+ * @param dishes: all delivery dishes
+ * @param lunchDishes: dishes, which are included in lunch
+ * @param quantity - quantity of lunch in order delivery
+ */
 export const removeDishesWithLunchQuantity = (
   dishes: OrderDish[],
   lunchDishes: OrderDish[],
@@ -49,10 +65,13 @@ export const removeDishesWithLunchQuantity = (
   const dishesToRemove = lunchDishes.filter((d) => d.quantity === quantity);
   if (!dishesToRemove.length) return dishes;
 
-  const dishesIdsToRemove = dishesToRemove.map((d) => d.id);
+  const dishesIdsToRemove = dishesToRemove.map(({ dish }) => dish.id);
   return dishes.filter(({ dish }) => dishesIdsToRemove.indexOf(dish.id) === -1);
 };
 
+/**
+ * Reduce dishes quantity in delivery data if they are in lunch
+ */
 export const subtractLunchQuantityFromDish = (
   dishes: OrderDish[],
   lunchDishesIds: string[],

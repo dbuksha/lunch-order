@@ -1,9 +1,6 @@
 import React, { FC, useEffect, useState } from 'react';
-import { useDispatch, useSelector } from 'react-redux';
-import { RootState } from 'store';
 import { minBy } from 'lodash';
-import { fetchOrders } from 'store/orders';
-import { Dish, OrderDish } from 'entities/Dish';
+import { OrderDish } from 'entities/Dish';
 import { useTodayLunches } from 'use/useTodayLunches';
 import {
   Paper,
@@ -14,43 +11,38 @@ import {
   TableBody,
   TableRow,
 } from '@material-ui/core';
-import {
-  calculateDeliveryPrice,
-  calculateDishesQuantity,
-  getLunchDishesAndIds,
-  removeDishesWithLunchQuantity,
-  subtractLunchQuantityFromDish,
-} from './collectDeliveryDataHelper';
+import * as deliveryDataHelper from './collectDeliveryDataHelper';
 import DeliveryItem, { DeliveryItemProps } from './DeliveryItem';
+import { useCalculateDeliveryDishes } from './useCalculatedDeliveryDishes';
 
 const OrdersDelivery: FC = () => {
-  const dispatch = useDispatch();
   const [todayNumber, lunches] = useTodayLunches();
-  const orders = useSelector((state: RootState) => state.orders.orders);
+  const calculatedDishes = useCalculateDeliveryDishes();
   const [deliveryPrice, setDeliveryPrice] = useState<number>(0);
   const [deliveryData, setDeliveryData] = useState<DeliveryItemProps[]>([]);
 
-  // load order
+  // set delivery price
   useEffect(() => {
-    dispatch(fetchOrders());
-  }, [dispatch]);
+    if (!calculatedDishes.length) return;
+    setDeliveryPrice(
+      deliveryDataHelper.calculateDeliveryPrice(calculatedDishes),
+    );
+  }, [calculatedDishes]);
 
   // collect table data
-  // TODO: separate set price and set table data to the different
   useEffect(() => {
-    if (!orders.length) return;
-    const dishes = orders.flatMap((o) => o.dishes);
-    if (!dishes.length) return;
+    if (!calculatedDishes.length) return;
     const deliveryDataMap: Map<string, DeliveryItemProps> = new Map();
+    let deliveryDataStart: OrderDish[] = JSON.parse(
+      JSON.stringify(calculatedDishes),
+    );
 
-    // calculate quantity of each order dishes
-    let calculatedDishes = calculateDishesQuantity(dishes);
-    // calculate and set delivery price
-    const finalPrice = calculateDeliveryPrice(calculatedDishes);
-
-    // collect full lunches from groupedOrders
+    // collect full lunches from groupedDishes
     lunches.forEach((lunch) => {
-      const [lunchDishes, lunchDishesIds] = getLunchDishesAndIds(
+      const [
+        lunchDishes,
+        lunchDishesIds,
+      ] = deliveryDataHelper.getLunchDishesAndIds(
         calculatedDishes,
         lunch.dishes,
       );
@@ -66,22 +58,22 @@ const OrdersDelivery: FC = () => {
         quantity: fullLunchQuantity,
       });
 
-      calculatedDishes = removeDishesWithLunchQuantity(
-        calculatedDishes,
+      deliveryDataStart = deliveryDataHelper.removeDishesWithLunchQuantity(
+        deliveryDataStart,
         lunchDishes,
         fullLunchQuantity,
       );
 
       // subtract lunch quantity from dish quantity (if lunch has this dish)
-      calculatedDishes = subtractLunchQuantityFromDish(
-        calculatedDishes,
+      deliveryDataStart = deliveryDataHelper.subtractLunchQuantityFromDish(
+        deliveryDataStart,
         lunchDishesIds,
         fullLunchQuantity,
       );
     });
 
     // add leftovers dishes to the table data
-    calculatedDishes.forEach(({ dish, quantity }) => {
+    deliveryDataStart.forEach(({ dish, quantity }) => {
       deliveryDataMap.set(dish.name, {
         name: dish.name,
         quantity,
@@ -90,8 +82,7 @@ const OrdersDelivery: FC = () => {
 
     // set price and table data
     setDeliveryData([...deliveryDataMap.values()]);
-    setDeliveryPrice(finalPrice);
-  }, [orders]);
+  }, [calculatedDishes]);
 
   return (
     <>
