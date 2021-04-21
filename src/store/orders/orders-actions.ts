@@ -17,7 +17,7 @@ import {
   todayStartOrderTime,
 } from 'utils/time-helper';
 import { DishesState } from 'store/dishes';
-import { showLoader, hideLoader } from 'store/loading';
+import { showLoader, hideLoader, showSnackBar, statusesTypes } from 'store/app';
 import { UsersState } from '../users/users-reducer';
 
 dayjs.extend(isBetween);
@@ -59,6 +59,12 @@ export const addOrder = createAsyncThunk(
       } else {
         result = await collectionRef.add(payload);
       }
+      dispatch(
+        showSnackBar({
+          status: statusesTypes.success,
+          message: 'Заказ был создан успешно.',
+        }),
+      );
       dispatch(hideLoader());
 
       return {
@@ -70,6 +76,13 @@ export const addOrder = createAsyncThunk(
         })),
       } as Order;
     } catch (err) {
+      dispatch(hideLoader());
+      dispatch(
+        showSnackBar({
+          status: statusesTypes.error,
+          message: err.response.data.message,
+        }),
+      );
       return rejectWithValue(err.response.data);
     }
   },
@@ -158,7 +171,21 @@ export const deleteOrder = createAsyncThunk(
   ActionTypes.DELETE_ORDER,
   async (id: string, { dispatch }) => {
     dispatch(showLoader());
-    await collectionRef.doc(id).delete();
-    dispatch(hideLoader());
+    try {
+      await collectionRef.doc(id).delete();
+      dispatch(hideLoader());
+    } catch ({
+      response: {
+        data: { message },
+      },
+    }) {
+      dispatch(
+        showSnackBar({
+          status: statusesTypes.error,
+          message,
+        }),
+      );
+      dispatch(hideLoader());
+    }
   },
 );

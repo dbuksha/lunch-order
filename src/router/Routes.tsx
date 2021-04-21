@@ -9,7 +9,7 @@ import AuthRoute from './AuthRoute';
 import { routes } from './routes-props';
 
 export const Routes: FC = () => {
-  const isLoading = useSelector((state: RootState) => state.loading.isLoading);
+  const isLoading = useSelector((state: RootState) => state.app.isLoading);
 
   return (
     <React.Suspense fallback={<StyledLoader />}>

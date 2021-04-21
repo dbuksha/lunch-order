@@ -5,6 +5,7 @@ import { BrowserRouter as Router } from 'react-router-dom';
 
 import { Routes } from 'router/Routes';
 import { envSchema } from 'utils/env-schema';
+import SnackBar from 'components/SnackBar';
 
 export const App: FC = () => {
   // check required credentials
@@ -17,6 +18,7 @@ export const App: FC = () => {
       <CssBaseline />
       <Container fixed component="main">
         <h1>Lanchos</h1>
+        <SnackBar />
 
         <Routes />
       </Container>
