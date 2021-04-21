@@ -30,7 +30,7 @@ import StyledPaper from 'components/StyledPaper';
 import { Lunch } from 'entities/Lunch';
 import { Dish } from 'entities/Dish';
 import { OrderFirebase } from 'entities/Order';
-import { isTimeForTodayLunch, weekdaysNames } from 'utils/time-helper';
+import { isTimeForTodayLunch } from 'utils/time-helper';
 import { useTodayLunches } from 'use/useTodayLunches';
 
 const findLunchById = (lunches: Lunch[], lunchId: string): Lunch | null =>
@@ -56,7 +56,7 @@ const OrderCreate: FC = () => {
   const currentUser = useSelector(
     (state: RootState) => state.users.currentUser,
   );
-  const [todayNumber, todayLunches] = useTodayLunches();
+  const todayLunches = useTodayLunches();
   const order = useSelector((state: RootState) => state.orders.currentOrder);
   const selectedDishes = useSelector(selectedOrderDishesIdsSet);
 

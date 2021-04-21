@@ -17,6 +17,7 @@ import {
   todayStartOrderTime,
 } from 'utils/time-helper';
 import { DishesState } from 'store/dishes';
+import { showLoader, hideLoader } from 'store/loading';
 import { UsersState } from '../users/users-reducer';
 
 dayjs.extend(isBetween);
@@ -42,18 +43,23 @@ const collectionRef = firebaseInstance.collection(Collections.Orders);
 
 export const addOrder = createAsyncThunk(
   ActionTypes.ADD_ORDER,
-  async ({ id, ...payload }: OrderFirebase, { rejectWithValue, getState }) => {
+  async (
+    { id, ...payload }: OrderFirebase,
+    { rejectWithValue, getState, dispatch },
+  ) => {
     const {
       dishes: { dishesMap },
     } = getState() as { dishes: DishesState };
 
     try {
       let result: DocumentReference<DocumentData> | null = null;
+      dispatch(showLoader());
       if (id) {
         await collectionRef.doc(id).update(payload);
       } else {
         result = await collectionRef.add(payload);
       }
+      dispatch(hideLoader());
 
       return {
         id: result?.id || id,
@@ -71,7 +77,7 @@ export const addOrder = createAsyncThunk(
 
 export const getUserOrder = createAsyncThunk(
   ActionTypes.GET_USER_ORDER,
-  async (_, { getState }) => {
+  async (_, { getState, dispatch }) => {
     const {
       users: { currentUser },
       dishes: { dishesMap },
@@ -80,6 +86,8 @@ export const getUserOrder = createAsyncThunk(
     // FIXME: should I show an error message?
     if (!currentUser) return null;
 
+    dispatch(showLoader());
+
     const result = await collectionRef
       .where(
         'person',
@@ -87,6 +95,8 @@ export const getUserOrder = createAsyncThunk(
         firebaseInstance.doc(`${Collections.Users}/${currentUser.id}`),
       )
       .get();
+
+    dispatch(hideLoader());
 
     const orders = getCollectionEntries<OrderFirebase>(result).map(
       ({ person, ...order }) => ({
@@ -112,16 +122,20 @@ export const getUserOrder = createAsyncThunk(
 
 export const fetchOrders = createAsyncThunk(
   ActionTypes.FETCH_ORDERS,
-  async (_, { getState }) => {
+  async (_, { getState, dispatch }) => {
     const {
       dishes: { dishesMap },
     } = getState() as { users: UsersState; dishes: DishesState };
+
+    dispatch(showLoader());
 
     const result = await collectionRef
       // FIXME: do not push it!
       // .where('date', '>=', todayStartOrderTime.toDate())
       .where('date', '<=', todayEndOrderTime.toDate())
       .get();
+
+    dispatch(hideLoader());
 
     const orders = getCollectionEntries<OrderFirebase>(result);
     if (!orders.length) return [];
@@ -142,7 +156,9 @@ export const fetchOrders = createAsyncThunk(
 
 export const deleteOrder = createAsyncThunk(
   ActionTypes.DELETE_ORDER,
-  async (id: string) => {
+  async (id: string, { dispatch }) => {
+    dispatch(showLoader());
     await collectionRef.doc(id).delete();
+    dispatch(hideLoader());
   },
 );

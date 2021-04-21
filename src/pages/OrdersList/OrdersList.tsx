@@ -1,6 +1,6 @@
 import React, { FC, useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import { fetchOrders } from 'store/orders';
+import { fetchOrders, clearOrdersList } from 'store/orders';
 import { Grid } from '@material-ui/core';
 import { RootState } from 'store';
 
@@ -12,6 +12,10 @@ const OrdersList: FC = () => {
 
   useEffect(() => {
     dispatch(fetchOrders());
+
+    return () => {
+      dispatch(clearOrdersList());
+    };
   }, [dispatch]);
   return (
     <Grid container spacing={3} alignItems="stretch">

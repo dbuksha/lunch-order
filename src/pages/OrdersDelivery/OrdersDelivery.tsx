@@ -16,7 +16,7 @@ import DeliveryItem, { DeliveryItemProps } from './DeliveryItem';
 import { useCalculateDeliveryDishes } from './useCalculatedDeliveryDishes';
 
 const OrdersDelivery: FC = () => {
-  const [todayNumber, lunches] = useTodayLunches();
+  const lunches = useTodayLunches();
   const calculatedDishes = useCalculateDeliveryDishes();
   const [deliveryPrice, setDeliveryPrice] = useState<number>(0);
   const [deliveryData, setDeliveryData] = useState<DeliveryItemProps[]>([]);

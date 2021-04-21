@@ -1,7 +1,7 @@
 import { useDispatch, useSelector } from 'react-redux';
 import { RootState } from 'store';
 import { useEffect, useState } from 'react';
-import { fetchOrders } from 'store/orders';
+import { clearOrdersList, fetchOrders } from 'store/orders';
 import * as deliveryDataHelper from 'pages/OrdersDelivery/collectDeliveryDataHelper';
 import { OrderDish } from 'entities/Dish';
 
@@ -13,6 +13,9 @@ export const useCalculateDeliveryDishes = (): OrderDish[] => {
   // load order
   useEffect(() => {
     dispatch(fetchOrders());
+    return () => {
+      dispatch(clearOrdersList());
+    };
   }, [dispatch]);
 
   // TODO: set dishes after dispatch
