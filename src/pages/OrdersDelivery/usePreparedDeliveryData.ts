@@ -9,7 +9,7 @@ import { useTodayLunches } from 'use/useTodayLunches';
 export const usePreparedDeliveryData = (
   calculatedDishes: OrderDish[],
 ): DeliveryItemProps[] => {
-  const lunches = useTodayLunches();
+  const lunches = useTodayLunches(false);
   const [deliveryData, setDeliveryData] = useState<DeliveryItemProps[]>([]);
 
   useEffect(() => {
@@ -24,10 +24,17 @@ export const usePreparedDeliveryData = (
       const [
         lunchDishes,
         lunchDishesIds,
-      ] = deliveryDataHelper.getLunchDishesAndIds(
+      ] = deliveryDataHelper.filterDishesAndIdsFromOrderDishesByLunch(
         calculatedDishes,
         lunch.dishes,
       );
+
+      // skip handling lunch if we don't have full lunch set in delivery
+      const isFullExist = deliveryDataHelper.isFullLunchExist(
+        lunch.dishes,
+        deliveryDataStart,
+      );
+      if (!isFullExist) return;
 
       // get full lunch quantity
       const minQuantityDish = minBy<OrderDish>(lunchDishes, (d) => d.quantity);

@@ -2,9 +2,9 @@ import { Dish, OrderDish } from 'entities/Dish';
 import { chain, intersectionBy } from 'lodash';
 
 /**
- *  Filter dishes from order delivery dishes by lunch dishes ids
+ *  Return filtered dishes from order delivery dishes by lunch dishes ids
  */
-export const getLunchDishesAndIds = (
+export const filterDishesAndIdsFromOrderDishesByLunch = (
   orderDishes: OrderDish[],
   dishes: Dish[],
 ): [OrderDish[], string[]] => {
@@ -20,6 +20,23 @@ export const getLunchDishesAndIds = (
   const lunchDishesIds = lunchDishes.map((d) => d.dish.id);
 
   return [lunchDishes, lunchDishesIds];
+};
+
+/**
+ *
+ * @param lunchDishes - dishes in lunch
+ * @param dishes - order delivery dishes
+ *
+ * Check if we have full lunch set in ordery delivery
+ */
+export const isFullLunchExist = (
+  lunchDishes: Dish[],
+  dishes: OrderDish[],
+): boolean => {
+  const dishesIds = dishes.map((d) => d.dish.id);
+  const lunchDishesIds = lunchDishes.map((d) => d.id);
+
+  return lunchDishesIds.every((id) => dishesIds.indexOf(id) > -1);
 };
 
 /**

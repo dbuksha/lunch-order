@@ -2,12 +2,14 @@ import React, { FC, useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { fetchOrders, clearOrdersList } from 'store/orders';
 import { Grid } from '@material-ui/core';
+import { Alert } from '@material-ui/lab';
 import { RootState } from 'store';
 
 import OrderCard from 'pages/OrdersList/OrderCard';
 
 const OrdersList: FC = () => {
   const dispatch = useDispatch();
+  const isLoading = useSelector((state: RootState) => state.app.isLoading);
   const orders = useSelector((state: RootState) => state.orders.orders);
 
   useEffect(() => {
@@ -17,6 +19,15 @@ const OrdersList: FC = () => {
       dispatch(clearOrdersList());
     };
   }, [dispatch]);
+
+  if (!orders.length && !isLoading) {
+    return (
+      <Alert variant="outlined" severity="info">
+        На сегодня еще нет заказов.
+      </Alert>
+    );
+  }
+
   return (
     <Grid container spacing={3} alignItems="stretch">
       {orders?.map((order) => (

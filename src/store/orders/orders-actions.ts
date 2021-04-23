@@ -139,8 +139,7 @@ export const fetchOrders = createAsyncThunk(
     dispatch(showLoader());
 
     const result = await collectionRef
-      // FIXME: do not push it!
-      // .where('date', '>=', todayStartOrderTime.toDate())
+      .where('date', '>=', todayStartOrderTime.toDate())
       .where('date', '<=', todayEndOrderTime.toDate())
       .get();
 

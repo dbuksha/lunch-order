@@ -1,8 +1,7 @@
 import React, { ChangeEvent, FC, useEffect, useState } from 'react';
-import { isEqual, sortBy } from 'lodash';
+import { sortBy } from 'lodash';
 import {
   Checkbox,
-  createStyles,
   FormControlLabel,
   FormGroup,
   makeStyles,
