@@ -9,11 +9,11 @@ export const todayStartOrderTime = dayjs().hour(8).startOf('h');
 export const todayEndOrderTime = dayjs().hour(10).minute(30).second(0);
 
 export const weekdaysNames = [
-  'пондельник',
+  'понедельник',
   'вторник',
-  'среду',
+  'среда',
   'четверг',
-  'пятницу',
+  'пятница',
   'суббота',
   'воскресенье',
 ];
