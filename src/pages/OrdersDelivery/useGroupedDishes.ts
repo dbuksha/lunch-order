@@ -1,11 +1,12 @@
 import { useDispatch, useSelector } from 'react-redux';
 import { RootState } from 'store';
 import { useEffect, useState } from 'react';
+
 import { clearOrdersList, fetchOrders } from 'store/orders';
 import * as deliveryDataHelper from 'pages/OrdersDelivery/collectDeliveryDataHelper';
 import { OrderDish } from 'entities/Dish';
 
-export const useCalculateDeliveryDishes = (): OrderDish[] => {
+export const useGroupedDishes = (): OrderDish[] => {
   const dispatch = useDispatch();
   const orders = useSelector((state: RootState) => state.orders.orders);
   const [calculatedDishes, setCalculatedDishes] = useState<OrderDish[]>([]);
@@ -18,8 +19,6 @@ export const useCalculateDeliveryDishes = (): OrderDish[] => {
     };
   }, [dispatch]);
 
-  // TODO: set dishes after dispatch
-  // set calculatedDishes
   useEffect(() => {
     if (!orders.length) return;
     const dishes = orders.flatMap((o) => o.dishes);
