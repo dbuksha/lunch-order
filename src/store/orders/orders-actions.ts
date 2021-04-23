@@ -5,23 +5,19 @@ import firebaseInstance, {
   DocumentReference,
   DocumentData,
 } from 'utils/firebase';
-import dayjs from 'dayjs';
-import isSameOrAfter from 'dayjs/plugin/isSameOrAfter';
-import isBetween from 'dayjs/plugin/isBetween';
-
-import { Order, OrderFirebase } from 'entities/Order';
-import { User } from 'entities/User';
 import {
   isTimeForTodayLunch,
   todayEndOrderTime,
   todayStartOrderTime,
 } from 'utils/time-helper';
+import dayjs from 'utils/dayjs';
+// store
 import { DishesState } from 'store/dishes';
 import { showLoader, hideLoader, showSnackBar, statusesTypes } from 'store/app';
-import { UsersState } from '../users/users-reducer';
-
-dayjs.extend(isBetween);
-dayjs.extend(isSameOrAfter);
+import { UsersState } from 'store/users';
+// entities
+import { Order, OrderFirebase } from 'entities/Order';
+import { User } from 'entities/User';
 
 enum ActionTypes {
   FETCH_ORDERS = 'orders/fetchOrders',

@@ -1,4 +1,4 @@
-import dayjs from 'dayjs';
+import dayjs from 'utils/dayjs';
 
 export const isTimeForTodayLunch = (): boolean => {
   const endLunchOrderTime = dayjs().hour(10).minute(30).second(0);
