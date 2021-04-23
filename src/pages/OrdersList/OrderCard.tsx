@@ -34,7 +34,7 @@ const OrderCard: FC<OrderCardProps> = ({ order }) => {
     <Paper>
       <Toolbar>
         <Typography component="div" variant="subtitle1">
-          {order.person!.name}
+          {order?.person?.name}
         </Typography>
       </Toolbar>
       <TableContainer>

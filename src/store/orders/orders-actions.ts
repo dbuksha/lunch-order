@@ -6,11 +6,10 @@ import firebaseInstance, {
   DocumentData,
 } from 'utils/firebase';
 import {
-  isTimeForTodayLunch,
+  isTodayOrTomorrowOrderExists,
   todayEndOrderTime,
   todayStartOrderTime,
 } from 'utils/time-helper';
-import dayjs from 'utils/dayjs';
 // store
 import { DishesState } from 'store/dishes';
 import { showLoader, hideLoader, showSnackBar, statusesTypes } from 'store/app';
@@ -25,15 +24,6 @@ enum ActionTypes {
   GET_USER_ORDER = 'orders/getUserOrder',
   DELETE_ORDER = 'orders/deleteOrder',
 }
-
-// If today is later then 10:30 return condition of getting tomorrow order otherwise today's order
-const isTodayOrTomorrowOrderExists = (date: number) => {
-  const tomorrow = dayjs().add(1, 'd').startOf('d');
-
-  return isTimeForTodayLunch()
-    ? dayjs(date).isBetween(todayStartOrderTime, todayEndOrderTime)
-    : dayjs(date).isSameOrAfter(tomorrow);
-};
 
 const collectionRef = firebaseInstance.collection(Collections.Orders);
 
@@ -139,8 +129,7 @@ export const fetchOrders = createAsyncThunk(
     dispatch(showLoader());
 
     const result = await collectionRef
-      // FIXME: do not push it!
-      // .where('date', '>=', todayStartOrderTime.toDate())
+      .where('date', '>=', todayStartOrderTime.toDate())
       .where('date', '<=', todayEndOrderTime.toDate())
       .get();
 

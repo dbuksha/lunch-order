@@ -10,7 +10,7 @@
     "@testing-library/jest-dom": "^5.11.4",
     "@testing-library/react": "^11.1.0",
     "@testing-library/user-event": "^12.1.10",
-    "@types/jest": "^26.0.15",
+    "@types/jest": "^26.0.22",
     "@types/lodash": "^4.14.168",
     "@types/node": "^12.0.0",
     "@types/react": "^17.0.0",
@@ -60,6 +60,8 @@
     ]
   },
   "devDependencies": {
+    "@testing-library/react-hooks": "^5.1.2",
+    "@types/mockdate": "^2.0.0",
     "@typescript-eslint/eslint-plugin": "^4.21.0",
     "@typescript-eslint/parser": "^4.21.0",
     "eslint": "^7.23.0",
@@ -67,7 +69,9 @@
     "eslint-config-airbnb-typescript-prettier": "^4.2.0",
     "husky": "^6.0.0",
     "lint-staged": "^10.5.4",
-    "prettier": "^2.2.1"
+    "mockdate": "^3.0.5",
+    "prettier": "^2.2.1",
+    "ts-jest": "^26.5.5"
   },
   "husky": {
     "hooks": {

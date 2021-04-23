@@ -1,5 +1,5 @@
 import React, { FC } from 'react';
-import { TableCell, TableRow } from '@material-ui/core';
+import { TableCell } from '@material-ui/core';
 import { Dish } from 'entities/Dish';
 
 type OrderDishItemProps = {

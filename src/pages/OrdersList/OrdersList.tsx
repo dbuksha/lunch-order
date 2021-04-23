@@ -3,6 +3,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import { fetchOrders, clearOrdersList } from 'store/orders';
 import { Grid } from '@material-ui/core';
 import { RootState } from 'store';
+import { Alert } from '@material-ui/lab';
 
 import OrderCard from 'pages/OrdersList/OrderCard';
 
@@ -17,6 +18,14 @@ const OrdersList: FC = () => {
       dispatch(clearOrdersList());
     };
   }, [dispatch]);
+
+  if (!orders.length)
+    return (
+      <Alert variant="outlined" severity="info">
+        На сегодня еще нет заказов.
+      </Alert>
+    );
+
   return (
     <Grid container spacing={3} alignItems="stretch">
       {orders?.map((order) => (

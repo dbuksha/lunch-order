@@ -62,7 +62,7 @@ export const usePreparedDeliveryData = (
       });
     });
 
-    // set price and table data
+    // set table data
     setDeliveryData([...deliveryDataMap.values()]);
   }, [calculatedDishes]);
 

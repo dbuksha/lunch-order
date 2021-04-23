@@ -8,6 +8,7 @@ import {
   TableBody,
   TableRow,
 } from '@material-ui/core';
+import { Alert } from '@material-ui/lab';
 import DeliveryItem from './DeliveryItem';
 import { useGroupedDishes } from './useGroupedDishes';
 import { usePreparedDeliveryData } from './usePreparedDeliveryData';
@@ -17,6 +18,13 @@ const OrdersDelivery: FC = () => {
   const gropedDishes = useGroupedDishes();
   const deliveryPrice = useCalculatedDeliveryPrice(gropedDishes);
   const deliveryData = usePreparedDeliveryData(gropedDishes);
+
+  if (!deliveryData.length)
+    return (
+      <Alert variant="outlined" severity="info">
+        На сегодня еще нет заказов.
+      </Alert>
+    );
 
   return (
     <TableContainer component={Paper}>
@@ -30,7 +38,7 @@ const OrdersDelivery: FC = () => {
           </TableRow>
         </TableHead>
         <TableBody>
-          {deliveryData?.map((deliveryItem) => (
+          {deliveryData.map((deliveryItem) => (
             <DeliveryItem
               name={deliveryItem.name}
               quantity={deliveryItem.quantity}

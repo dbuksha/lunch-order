@@ -10,7 +10,6 @@ import {
 import { useDispatch, useSelector } from 'react-redux';
 import { useHistory } from 'react-router-dom';
 import firebase from 'firebase/app';
-import dayjs from 'dayjs';
 
 import firebaseInstance, { Collections } from 'utils/firebase';
 // store
@@ -27,7 +26,12 @@ import StyledPaper from 'components/StyledPaper';
 import { Lunch } from 'entities/Lunch';
 import { Dish } from 'entities/Dish';
 import { OrderFirebase } from 'entities/Order';
-import { isTimeForTodayLunch } from 'utils/time-helper';
+import {
+  getOrderDayNumber,
+  getDaysToAdd,
+  isTimeForTodayLunch,
+} from 'utils/time-helper';
+import dayjs from 'utils/dayjs';
 import { useTodayLunches } from 'use/useTodayLunches';
 
 const findLunchById = (lunches: Lunch[], lunchId: string): Lunch | null =>
@@ -41,6 +45,11 @@ const useStyles = makeStyles((theme: Theme) =>
       },
       '& > *': {
         margin: theme.spacing(1),
+      },
+    },
+    h6: {
+      '&:first-letter': {
+        textTransform: 'capitalize',
       },
     },
   }),
@@ -73,7 +82,7 @@ const OrderCreate: FC = () => {
   }, [selectedDishes]);
 
   const onCreateOrderSubmit = async () => {
-    // TODO: show an error popup
+    // TODO: show an error popup ?
     if (!currentUser || !selectedDishes) return;
 
     const preparedDishes = [...selectedDishes].map((id) => ({
@@ -84,7 +93,7 @@ const OrderCreate: FC = () => {
     // if lunch not for today: set tomorrow (8 a.m.)
     const time = isTimeForTodayLunch()
       ? dayjs()
-      : dayjs().add(1, 'day').hour(8).startOf('h');
+      : dayjs().add(getDaysToAdd(), 'day').hour(8).startOf('h');
 
     const orderData: OrderFirebase = {
       date: firebase.firestore.Timestamp.fromDate(time.toDate()),
@@ -128,8 +137,17 @@ const OrderCreate: FC = () => {
     handleDeleteOrder();
   };
 
+  const dayName = dayjs()
+    .weekday(getOrderDayNumber() - 1)
+    .format('dddd');
+
   return (
     <StyledPaper>
+      <Typography className={classes.h6} component="div" variant="h6">
+        {dayName}
+        {dayjs().day() !== getOrderDayNumber() && '(предварительный заказ)'}
+      </Typography>
+
       <Grid container spacing={2} justify="center">
         {todayLunches?.map((lunch: Lunch) => (
           <Grid item xs={12} sm={6} md={4} key={lunch.name}>
