@@ -19,6 +19,7 @@
     "@types/react-router-dom": "^5.1.7",
     "@types/react-text-mask": "^5.4.7",
     "dayjs": "^1.10.4",
+    "env-cmd": "^10.1.0",
     "firebase": "^8.3.2",
     "formik": "^2.2.6",
     "joi": "^17.4.0",
@@ -39,7 +40,8 @@
     "build": "react-scripts build",
     "test": "react-scripts test",
     "eject": "react-scripts eject",
-    "format": "prettier --write src/**/*.ts{,x}"
+    "format": "prettier --write src/**/*.ts{,x}",
+    "build:staging": "env-cmd -f .env.local npm run build && firebase deploy"
   },
   "eslintConfig": {
     "extends": [
