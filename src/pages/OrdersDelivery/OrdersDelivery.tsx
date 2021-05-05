@@ -1,4 +1,5 @@
 import React, { FC } from 'react';
+import { useSelector } from 'react-redux';
 import {
   Paper,
   TableContainer,
@@ -9,15 +10,15 @@ import {
   TableRow,
 } from '@material-ui/core';
 import { Alert } from '@material-ui/lab';
-import { useSelector } from 'react-redux';
-import { RootState } from 'store';
+import { getIsLoading } from 'store/app';
+
 import DeliveryItem from './DeliveryItem';
 import { useGroupedDishes } from './useGroupedDishes';
 import { usePreparedDeliveryData } from './usePreparedDeliveryData';
 import { useCalculatedDeliveryPrice } from './useCalculatedDeliveryPrice';
 
 const OrdersDelivery: FC = () => {
-  const isLoading = useSelector((state: RootState) => state.app.isLoading);
+  const isLoading = useSelector(getIsLoading);
   const gropedDishes = useGroupedDishes();
   const deliveryPrice = useCalculatedDeliveryPrice(gropedDishes);
   const deliveryData = usePreparedDeliveryData(gropedDishes);

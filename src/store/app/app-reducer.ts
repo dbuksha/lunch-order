@@ -6,7 +6,7 @@ export const statusesTypes = {
   warning: 'warning',
 };
 
-export type LoadingState = {
+export type AppState = {
   isLoading: boolean;
   snackbar: {
     status: 'success' | 'error' | 'warning';
@@ -14,7 +14,7 @@ export type LoadingState = {
   } | null;
 };
 
-const initialState: LoadingState = {
+const initialState: AppState = {
   isLoading: false,
   snackbar: null,
 };
