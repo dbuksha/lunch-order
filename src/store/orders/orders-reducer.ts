@@ -23,6 +23,37 @@ const initialState: OrderState = {
   orders: [],
 };
 
+// preparing data to update currentOrder
+const getUpdatedDishesList = (
+  oldDishes: OrderDish[],
+  selected: boolean,
+  dishes: Dish[],
+): OrderDish[] => {
+  let newDishes: OrderDish[] = [];
+  const dishesMap: Map<string, Dish> = new Map(
+    dishes.map((dish) => [dish.id, dish]),
+  );
+
+  if (selected) {
+    const selectedDishesIds = new Set(oldDishes.map((d) => d.dish.id));
+    const dishesToAdd: OrderDish[] = Object.assign([], oldDishes);
+
+    dishesMap.forEach((dish, dishId) => {
+      if (!selectedDishesIds.has(dishId)) {
+        dishesToAdd.push({ dish, quantity: 1 });
+      }
+
+      newDishes = dishesToAdd;
+    });
+  } else {
+    newDishes = newDishes.filter((dish) => {
+      return !dishesMap.has(dish.dish.id);
+    });
+  }
+
+  return newDishes;
+};
+
 const ordersSlice = createSlice({
   name: 'orders',
 
@@ -39,31 +70,17 @@ const ordersSlice = createSlice({
       }>,
     ) {
       const order = { ...current(state.currentOrder) };
-      if (!order) return;
+      const newDishes = getUpdatedDishesList(order.dishes, selected, dishes);
 
-      const dishesMap: Map<string, Dish> = new Map(
-        dishes.map((dish) => [dish.id, dish]),
-      );
-
-      if (selected) {
-        const selectedDishesIds = new Set(order.dishes.map((d) => d.dish.id));
-        const dishesToAdd: OrderDish[] = Object.assign([], order.dishes);
-
-        dishesMap.forEach((dish, dishId) => {
-          if (!selectedDishesIds.has(dishId)) {
-            dishesToAdd.push({ dish, quantity: 1 });
-          }
-
-          order.dishes = dishesToAdd;
-        });
-      } else {
-        order.dishes = order.dishes.filter((dish) => {
-          return !dishesMap.has(dish.dish.id);
-        });
-      }
-
-      state.currentOrder = order;
+      return {
+        ...state,
+        currentOrder: {
+          ...state.currentOrder,
+          dishes: newDishes,
+        },
+      };
     },
+
     clearOrdersList(state) {
       state.orders = [];
     },
