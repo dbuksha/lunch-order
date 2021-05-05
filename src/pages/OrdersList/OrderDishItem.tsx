@@ -1,6 +1,7 @@
 import React, { FC } from 'react';
-import { TableCell, TableRow } from '@material-ui/core';
+import { TableCell } from '@material-ui/core';
 import { Dish } from 'entities/Dish';
+import Rubbles from 'components/Rubbles';
 
 type OrderDishItemProps = {
   dish: Dish;
@@ -12,7 +13,10 @@ const OrderDishItem: FC<OrderDishItemProps> = ({ dish, quantity }) => {
       <TableCell component="th" scope="row">
         {dish.name}
       </TableCell>
-      <TableCell align="right">{dish.price}&#8381;</TableCell>
+      <TableCell align="right">
+        {dish.price}
+        <Rubbles />
+      </TableCell>
       <TableCell align="right">{quantity}</TableCell>
     </>
   );

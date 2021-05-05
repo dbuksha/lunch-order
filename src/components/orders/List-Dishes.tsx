@@ -9,6 +9,7 @@ import {
 
 import { Dish } from 'entities/Dish';
 import { calculateDishesPrice } from 'utils/orders';
+import Rubbles from 'components/Rubbles';
 
 type ListDishesProps = {
   dishes: Dish[];
@@ -67,7 +68,11 @@ const ListDishes: FC<ListDishesProps> = ({
         }
         label={
           <>
-            Полный комплекс <b>{lunchPrice}&#8381;</b>
+            Полный комплекс{' '}
+            <b>
+              {lunchPrice}
+              <Rubbles />
+            </b>
           </>
         }
       />
@@ -85,7 +90,11 @@ const ListDishes: FC<ListDishesProps> = ({
           }
           label={
             <>
-              {dish.name} <b>{dish.price}&#8381;</b>
+              {dish.name}{' '}
+              <b>
+                {dish.price}
+                <Rubbles />
+              </b>
             </>
           }
         />

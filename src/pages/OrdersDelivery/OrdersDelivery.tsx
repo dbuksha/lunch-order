@@ -11,6 +11,7 @@ import {
 } from '@material-ui/core';
 import { Alert } from '@material-ui/lab';
 import { getIsLoading } from 'store/app';
+import Rubbles from 'components/Rubbles';
 
 import DeliveryItem from './DeliveryItem';
 import { useGroupedDishes } from './useGroupedDishes';
@@ -34,7 +35,11 @@ const OrdersDelivery: FC = () => {
   return (
     <TableContainer component={Paper}>
       <Table aria-label="simple table">
-        <caption> Итого: {deliveryPrice}&#8381;</caption>
+        <caption>
+          {' '}
+          Итого: {deliveryPrice}
+          <Rubbles />
+        </caption>
         <TableHead>
           <TableRow>
             <TableCell colSpan={2} align="right">

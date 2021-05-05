@@ -29,6 +29,7 @@ import { Dish } from 'entities/Dish';
 import { OrderFirebase } from 'entities/Order';
 import { isTimeForTodayLunch } from 'utils/time-helper';
 import { useTodayLunches } from 'use/useTodayLunches';
+import Rubbles from 'components/Rubbles';
 
 const findLunchById = (lunches: Lunch[], lunchId: string): Lunch | null =>
   lunches.find((lunch: Lunch) => lunch.id === lunchId) || null;
@@ -161,7 +162,11 @@ const OrderCreate: FC = () => {
           alignItems="baseline"
         >
           <Typography component="span" variant="h6">
-            Итого: <strong>{calculatedPrice}&#8381;</strong>
+            Итого:{' '}
+            <strong>
+              {calculatedPrice}
+              <Rubbles />
+            </strong>
           </Typography>
           <Button
             variant="contained"
