@@ -29,14 +29,12 @@ const initialValues = {
 
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
-    root: {
-      '& .MuiTextField-root': {
-        margin: theme.spacing(1),
-      },
-      '& .MuiFormControl-root': {
-        margin: theme.spacing(1),
-        width: '100%',
-      },
+    textField: {
+      margin: theme.spacing(1),
+    },
+    formControl: {
+      margin: theme.spacing(1),
+      width: '100%',
     },
   }),
 );
@@ -55,19 +53,20 @@ const LoginForm: FC = () => {
 
   return (
     <Container maxWidth="sm">
-      <form className={classes.root} onSubmit={formik.handleSubmit}>
+      <form onSubmit={formik.handleSubmit}>
         <TextField
           value={formik.values.name}
           onChange={formik.handleChange}
           error={formik.touched.name && Boolean(formik.errors.name)}
           helperText={formik.touched.name && formik.errors.name}
           name="name"
+          classes={{ root: classes.textField }}
           required
           fullWidth
           label="Имя"
         />
 
-        <FormControl>
+        <FormControl classes={{ root: classes.formControl }}>
           <InputLabel htmlFor="phoneInput">Телефон</InputLabel>
           <Input
             value={formik.values.phone}
