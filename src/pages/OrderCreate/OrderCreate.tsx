@@ -20,7 +20,7 @@ import { selectedOrderDishesIdsSet } from 'store/orders/orders-selectors';
 import { calculateDishesPrice } from 'utils/orders';
 
 // components
-import ListDishes from 'components/orders/List-Dishes';
+import ListDishes from 'pages/OrderCreate/List-Dishes';
 import StyledPaper from 'components/StyledPaper';
 
 // entities

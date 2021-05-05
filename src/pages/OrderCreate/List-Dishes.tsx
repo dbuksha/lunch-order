@@ -1,5 +1,4 @@
-import React, { ChangeEvent, FC, useEffect, useState } from 'react';
-import { sortBy } from 'lodash';
+import React, { FC, useState } from 'react';
 import {
   Checkbox,
   FormControlLabel,
@@ -9,9 +8,10 @@ import {
 
 import { Dish } from 'entities/Dish';
 import { calculateDishesPrice } from 'utils/orders';
+import { useSelectDishes } from 'pages/OrderCreate/useSelectDishes';
 import Rubbles from 'components/Rubbles';
 
-type ListDishesProps = {
+export type ListDishesProps = {
   dishes: Dish[];
   selectedDishes: Set<string>;
   selectDish: (selected: boolean, dish?: Dish) => void;
@@ -34,24 +34,12 @@ const ListDishes: FC<ListDishesProps> = ({
   selectedDishes,
 }) => {
   const classes = useStyles();
-  const [selectedAll, setSelectedAll] = useState(false);
+  const { selectedAll, handleSelectedAll } = useSelectDishes({
+    dishes,
+    selectedDishes,
+    selectDish,
+  });
   const [lunchPrice] = useState<number>(() => calculateDishesPrice(dishes));
-
-  // set selectedAll when all lunch dishes were selected one by one or on first load page with existing order
-  useEffect(() => {
-    // check if every dish id is in selected dishes
-    if (selectedDishes.size && dishes.length) {
-      const parStr = JSON.stringify(sortBy([...selectedDishes]));
-      setSelectedAll(
-        dishes.map((d) => d.id).every((id) => parStr.indexOf(id) !== -1),
-      );
-    }
-  }, [dishes, selectedDishes]);
-
-  const handleSelectedAll = (e: ChangeEvent<HTMLInputElement>) => {
-    setSelectedAll(e.target.checked);
-    selectDish(e.target.checked);
-  };
 
   return (
     <FormGroup>

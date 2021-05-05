@@ -25,18 +25,18 @@ const initialState: OrderState = {
 
 // preparing data to update currentOrder
 const getUpdatedDishesList = (
-  oldDishes: OrderDish[],
+  orderDishes: OrderDish[],
   selected: boolean,
   dishes: Dish[],
 ): OrderDish[] => {
-  let newDishes: OrderDish[] = [];
+  let newDishes: OrderDish[] = [...orderDishes];
   const dishesMap: Map<string, Dish> = new Map(
     dishes.map((dish) => [dish.id, dish]),
   );
 
   if (selected) {
-    const selectedDishesIds = new Set(oldDishes.map((d) => d.dish.id));
-    const dishesToAdd: OrderDish[] = Object.assign([], oldDishes);
+    const selectedDishesIds = new Set(orderDishes.map((d) => d.dish.id));
+    const dishesToAdd: OrderDish[] = Object.assign([], orderDishes);
 
     dishesMap.forEach((dish, dishId) => {
       if (!selectedDishesIds.has(dishId)) {
