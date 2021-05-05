@@ -13,7 +13,7 @@ import {
 import dayjs from 'utils/dayjs';
 // store
 import { DishesState } from 'store/dishes';
-import { showLoader, hideLoader, showSnackBar, statusesTypes } from 'store/app';
+import { showLoader, hideLoader, showSnackBar, StatusTypes } from 'store/app';
 import { UsersState } from 'store/users';
 // entities
 import { Order, OrderFirebase } from 'entities/Order';
@@ -57,7 +57,7 @@ export const addOrder = createAsyncThunk(
       }
       dispatch(
         showSnackBar({
-          status: statusesTypes.success,
+          status: StatusTypes.success,
           message: 'Заказ был создан успешно.',
         }),
       );
@@ -75,7 +75,7 @@ export const addOrder = createAsyncThunk(
       dispatch(hideLoader());
       dispatch(
         showSnackBar({
-          status: statusesTypes.error,
+          status: StatusTypes.error,
           message: err.response.data.message,
         }),
       );
@@ -176,7 +176,7 @@ export const deleteOrder = createAsyncThunk(
     }) {
       dispatch(
         showSnackBar({
-          status: statusesTypes.error,
+          status: StatusTypes.error,
           message,
         }),
       );

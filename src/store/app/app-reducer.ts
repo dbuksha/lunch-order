@@ -1,10 +1,10 @@
 import { createSlice } from '@reduxjs/toolkit';
 
-export const statusesTypes = {
-  success: 'success',
-  error: 'error',
-  warning: 'warning',
-};
+export enum StatusTypes {
+  success = 'success',
+  error = 'error',
+  warning = 'warning',
+}
 
 export type AppState = {
   isLoading: boolean;

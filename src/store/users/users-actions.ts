@@ -1,7 +1,7 @@
 import { createAsyncThunk } from '@reduxjs/toolkit';
 import firebaseInstance, { Collections } from 'utils/firebase';
 import { setLocalStorageValue } from 'utils/local-storage';
-import { showLoader, showSnackBar, hideLoader, statusesTypes } from 'store/app';
+import { showLoader, showSnackBar, hideLoader, StatusTypes } from 'store/app';
 
 import { User } from 'entities/User';
 
@@ -20,7 +20,7 @@ export const addUser = createAsyncThunk(
       dispatch(hideLoader());
       dispatch(
         showSnackBar({
-          status: statusesTypes.success,
+          status: StatusTypes.success,
           message: 'Вы успешно зарегистировались!',
         }),
       );
@@ -33,7 +33,7 @@ export const addUser = createAsyncThunk(
 
       dispatch(
         showSnackBar({
-          status: statusesTypes.error,
+          status: StatusTypes.error,
           message: err.message.data.message,
         }),
       );
