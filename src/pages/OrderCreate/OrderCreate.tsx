@@ -40,9 +40,9 @@ const useStyles = makeStyles((theme: Theme) =>
       [theme.breakpoints.down('xs')]: {
         justifyContent: 'inherit',
       },
-      '& > *': {
-        margin: theme.spacing(1),
-      },
+    },
+    item: {
+      margin: theme.spacing(1),
     },
   }),
 );
@@ -161,23 +161,16 @@ const OrderCreate: FC = () => {
           justify="flex-end"
           alignItems="baseline"
         >
-          <Typography component="span" variant="h6">
+          <Typography component="span" variant="h6" className={classes.item}>
             Итого:{' '}
             <strong>
               {calculatedPrice}
               <Rubbles />
             </strong>
           </Typography>
-          <Button
-            variant="contained"
-            color="primary"
-            disabled={!calculatedPrice}
-            onClick={onCreateOrderSubmit}
-          >
-            {order?.id ? 'Обновить заказ' : 'Заказать'}
-          </Button>
           {order?.id && (
             <Button
+              className={classes.item}
               variant="outlined"
               color="secondary"
               onClick={onDeleteOrder}
@@ -185,6 +178,15 @@ const OrderCreate: FC = () => {
               Отменить заказ
             </Button>
           )}
+          <Button
+            variant="contained"
+            color="primary"
+            className={classes.item}
+            disabled={!calculatedPrice}
+            onClick={onCreateOrderSubmit}
+          >
+            {order?.id ? 'Обновить заказ' : 'Заказать'}
+          </Button>
         </Grid>
       </Grid>
     </StyledPaper>
