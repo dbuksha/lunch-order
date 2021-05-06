@@ -5,7 +5,7 @@ import { useDispatch, useSelector } from 'react-redux';
 
 import { RootState } from 'store';
 import { fetchLunches } from 'store/lunches';
-import { fetchDishes } from 'store/dishes';
+import { fetchDishes, addNewDishes } from 'store/dishes';
 import { getCurrentUser } from 'store/users';
 
 import StyledLoader from 'components/StyledLoader';
@@ -21,6 +21,7 @@ const AuthRoute: FC<RouteProps> = (props) => {
     async function preloadData() {
       await dispatch(fetchDishes());
       await dispatch(fetchLunches());
+      await dispatch(addNewDishes());
     }
 
     if (!isDataPreloaded) preloadData();

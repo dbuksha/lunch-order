@@ -19,6 +19,7 @@ import {
   getCurrentOrder,
   getUserOrder,
   updateOrder,
+  updateOrderDishQuantity,
 } from 'store/orders';
 import { selectedOrderDishesIdsSet } from 'store/orders/orders-selectors';
 import { getCurrentUser } from 'store/users/users-selectors';
@@ -142,6 +143,23 @@ const OrderCreate: FC = () => {
     handleDeleteOrder();
   };
 
+  const onChangeDishQuantity = (
+    quantity: number,
+    lunchId: string,
+    dish?: Dish,
+  ) => {
+    let dishes = [];
+    if (!dish) {
+      const selectedLunch = findLunchById(todayLunches, lunchId);
+      if (!selectedLunch) return;
+      dishes = selectedLunch.dishes;
+    } else {
+      dishes = [dish];
+    }
+
+    dispatch(updateOrderDishQuantity({ dishes, quantity }));
+  };
+
   const dayName = dayjs()
     .weekday(getOrderDayNumber() - 1)
     .format('dddd');
@@ -166,6 +184,9 @@ const OrderCreate: FC = () => {
             <ListDishes
               key={lunch.name}
               dishes={lunch.dishes}
+              changeDishQuantity={(quantity, dish) =>
+                onChangeDishQuantity(quantity, lunch.id, dish)
+              }
               selectedDishes={selectedDishes}
               selectDish={(selected, dish) =>
                 onDishSelect(lunch.id, selected, dish)

@@ -84,6 +84,19 @@ const ordersSlice = createSlice({
     clearOrdersList(state) {
       state.orders = [];
     },
+
+    updateOrderDishQuantity(
+      state: OrderState,
+      {
+        payload: { dishes, quantity },
+      }: PayloadAction<{
+        dishes: Dish[];
+        quantity: number;
+      }>,
+    ) {
+      console.log(dishes);
+      console.log(quantity);
+    },
   },
 
   extraReducers: (builder) => {
@@ -109,5 +122,9 @@ const ordersSlice = createSlice({
   },
 });
 
-export const { updateOrder, clearOrdersList } = ordersSlice.actions;
+export const {
+  updateOrder,
+  clearOrdersList,
+  updateOrderDishQuantity,
+} = ordersSlice.actions;
 export default ordersSlice.reducer;

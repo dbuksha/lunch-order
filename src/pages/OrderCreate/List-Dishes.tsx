@@ -7,15 +7,16 @@ import {
   TextField,
 } from '@material-ui/core';
 
-import { Dish } from 'entities/Dish';
+import { Dish, SelectedDishes } from 'entities/Dish';
 import { calculateDishesPrice } from 'utils/orders';
 import { useSelectDishes } from 'pages/OrderCreate/useSelectDishes';
 import Ruble from 'components/Ruble';
 
 export type ListDishesProps = {
   dishes: Dish[];
-  selectedDishes: Set<string>;
+  selectedDishes: SelectedDishes;
   selectDish: (selected: boolean, dish?: Dish) => void;
+  changeDishQuantity: (quantiy: number, dish?: Dish) => void;
 };
 
 const useStyles = makeStyles({
@@ -32,6 +33,7 @@ const useStyles = makeStyles({
 const ListDishes: FC<ListDishesProps> = ({
   dishes,
   selectDish,
+  changeDishQuantity,
   selectedDishes,
 }) => {
   const classes = useStyles();
@@ -77,12 +79,19 @@ const ListDishes: FC<ListDishesProps> = ({
                 disabled={selectedAll}
                 name={dish.name}
               />
-              <TextField type="number" />
             </>
           }
           label={
             <>
               {dish.name}{' '}
+              <TextField
+                type="number"
+                disabled={!selectedDishes.has(dish.id)}
+                value={selectedDishes.get(dish.id) || 1}
+                onChange={(e) =>
+                  changeDishQuantity(Number(e.target.value), dish)
+                }
+              />
               <b>
                 {dish.price}
                 <Ruble />

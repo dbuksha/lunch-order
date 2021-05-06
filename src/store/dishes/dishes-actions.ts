@@ -24,3 +24,43 @@ export const fetchDishes = createAsyncThunk(
     }, {});
   },
 );
+
+export const addNewDishes = createAsyncThunk('add', async () => {
+  const data = [
+    {
+      name: 'Суп с зеленым горошком',
+      price: 60,
+      weight: 250,
+    },
+    {
+      name: 'Суп пюре грибной',
+      price: 60,
+      weight: 250,
+    },
+    {
+      name: 'Суп с вермишелью',
+      price: 60,
+      weight: 250,
+    },
+    {
+      name: 'Борщ со свининой',
+      price: 60,
+      weight: 250,
+    },
+    {
+      name: 'Суп из цветной капусты',
+      price: 60,
+      weight: 250,
+    },
+
+    {
+      name: 'Соус куриный',
+      price: 60,
+      weight: 250,
+    },
+  ];
+
+  data.forEach((d) => {
+    dishesCollection.add(d);
+  });
+});

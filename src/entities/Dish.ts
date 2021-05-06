@@ -11,4 +11,6 @@ export type OrderDish = {
   quantity: number;
 };
 
+export type SelectedDishes = Map<string, number>;
+
 export type DishesMap = Record<string, Dish>;

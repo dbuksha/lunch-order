@@ -1,0 +1,195 @@
+[
+  {
+    "id": "0V9Ykvm4exZproQ04GgE",
+    "price": 30,
+    "name": "Картофельное пюре",
+    "weight": 150
+  },
+  {
+    "id": "1eOBD4bu0R0jcKnfQdm3",
+    "weight": 250,
+    "name": "Борщ с фасолью",
+    "price": 60
+  },
+  {
+    "id": "48mL1N5dqpSnZNEWGOpR",
+    "name": "Восторг(жар.грибы, картоф, сол.огур.)",
+    "weight": 120,
+    "price": 40
+  },
+  {
+    "id": "4JDD0Hz2wDqGMzqqh6ym",
+    "price": 150,
+    "weight": 250,
+    "name": "Роллы"
+  },
+  {
+    "id": "6f2cX7A3aWDs3sQ6jqI3",
+    "name": "Грудка с омлетом и ветчиной",
+    "weight": 120,
+    "price": 80
+  },
+  {
+    "id": "70wYdWWNo5k4LXjeHyLe",
+    "weight": 120,
+    "price": 80,
+    "name": "Зразы кур. с грибами"
+  },
+  {
+    "id": "9wt3jzDMFCygC5ESuKAS",
+    "weight": 250,
+    "price": 60,
+    "name": "Суп с фрикадельками"
+  },
+  {
+    "id": "BBLcc05Ml84Xsv4Nfpzj",
+    "weight": 120,
+    "name": "Рыбные котлеты",
+    "price": 80
+  },
+  {
+    "id": "ECseBOiSGptjimn9dpmR",
+    "name": "Суп гороховый",
+    "weight": 250,
+    "price": 60
+  },
+  {
+    "id": "EHpc6HONE8fGLPqviYma",
+    "weight": 120,
+    "price": 80,
+    "name": "Котлета по-киевски"
+  },
+  {
+    "id": "Ec0iRhD7v6u3DsgLsuRi",
+    "name": "Паста болоньезе",
+    "price": 110,
+    "weight": 350
+  },
+  {
+    "id": "HWZQ0S6XAJxbiizTXo1u",
+    "weight": 120,
+    "price": 40,
+    "name": "Пирог сметанник"
+  },
+  {
+    "id": "KQFI4otUFp0MWLeNtbfd",
+    "price": 40,
+    "weight": 120,
+    "name": "Сырник"
+  },
+  {
+    "id": "KqwxaC832Xv7Z4Ah2rB3",
+    "weight": 250,
+    "price": 60,
+    "name": "Сырный суп пюре"
+  },
+  {
+    "id": "NH1jhbUiUBRXyx6GUW0G",
+    "name": "Солянка",
+    "price": 60,
+    "weight": 250
+  },
+  {
+    "id": "Q8oaw60daEOnY5ZNlkbt",
+    "weight": 150,
+    "price": 30,
+    "name": "Гречка"
+  },
+  {
+    "id": "RCb48dDSqxKfKCku0CGI",
+    "weight": 250,
+    "price": 60,
+    "name": "Щи со свининой"
+  },
+  {
+    "id": "VC1XwspcAp3dJjAOPX6a",
+    "price": 60,
+    "name": "Суп грибной",
+    "weight": 250
+  },
+  { "id": "Xp3jqe1ZLNO2OsocCfCj", "price": 40, "name": "Лобио", "weight": 120 },
+  {
+    "id": "akIdPwc0WUO3HEUXd0hg",
+    "weight": 120,
+    "price": 40,
+    "name": "Блинчик (банан и заварн. крем)"
+  },
+  {
+    "id": "bBUYc917oMYkp9BCLflT",
+    "price": 60,
+    "name": "Лапша куриная",
+    "weight": 250
+  },
+  {
+    "id": "fsjGF1pMzFOWT6QZdS0N",
+    "name": "Десерт чизкейк",
+    "weight": 120,
+    "price": 40
+  },
+  {
+    "id": "gQdg2nxuLkOq2CUznBqh",
+    "name": "Люля кебаб куриный",
+    "price": 80,
+    "weight": 120
+  },
+  {
+    "id": "gsev92J5748HRmePEYcK",
+    "name": "Запеканка творожная",
+    "weight": 120,
+    "price": 40
+  },
+  {
+    "id": "ht9TXBBJLRwhcXzjh1g7",
+    "name": "Салат свекольный",
+    "price": 40,
+    "weight": 120
+  },
+  {
+    "id": "mUsVebMgJBJxVPReKdhz",
+    "name": "Рассольник",
+    "weight": 250,
+    "price": 60
+  },
+  {
+    "id": "p72F090ckFoIUWlAL9qv",
+    "name": "Цезарь с курицей",
+    "weight": 120,
+    "price": 40
+  },
+  {
+    "id": "qXBuwmccIWz7duXWTw0y",
+    "price": 120,
+    "name": "Семга запеченая",
+    "weight": 100
+  },
+  {
+    "id": "tBW6F6PlV9jscVhZogOs",
+    "name": "Уха из лосося",
+    "weight": 250,
+    "price": 60
+  },
+  {
+    "id": "tHVK35vUMVq1u8yiHmrW",
+    "weight": 120,
+    "name": "Котлеты свин-гов.",
+    "price": 80
+  },
+  {
+    "id": "xOOU0yxxubx9wPh4a22K",
+    "weight": 120,
+    "price": 80,
+    "name": "Поджарка из свинины"
+  },
+  {
+    "id": "yEo3f4YAbt6dMkbNYd6F",
+    "price": 40,
+    "weight": 120,
+    "name": "Салат витаминный"
+  },
+  {
+    "id": "zUGZb5hIlh2lzXs9N04H",
+    "price": 30,
+    "name": "Рис отварной",
+    "weight": 150
+  }
+]
