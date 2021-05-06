@@ -12,7 +12,7 @@ import {
 } from 'utils/time-helper';
 // store
 import { DishesState } from 'store/dishes';
-import { showLoader, hideLoader, showSnackBar, statusesTypes } from 'store/app';
+import { showLoader, hideLoader, showSnackBar, StatusTypes } from 'store/app';
 import { UsersState } from 'store/users';
 // entities
 import { Order, OrderFirebase } from 'entities/Order';
@@ -47,7 +47,7 @@ export const addOrder = createAsyncThunk(
       }
       dispatch(
         showSnackBar({
-          status: statusesTypes.success,
+          status: StatusTypes.success,
           message: 'Заказ был создан успешно.',
         }),
       );
@@ -65,7 +65,7 @@ export const addOrder = createAsyncThunk(
       dispatch(hideLoader());
       dispatch(
         showSnackBar({
-          status: statusesTypes.error,
+          status: StatusTypes.error,
           message: err.response.data.message,
         }),
       );
@@ -130,7 +130,7 @@ export const fetchOrders = createAsyncThunk(
 
     const result = await collectionRef
       .where('date', '>=', todayStartOrderTime.toDate())
-      .where('date', '<=', todayEndOrderTime.toDate())
+      // .where('date', '<=', todayEndOrderTime.toDate())
       .get();
 
     dispatch(hideLoader());
@@ -166,7 +166,7 @@ export const deleteOrder = createAsyncThunk(
     }) {
       dispatch(
         showSnackBar({
-          status: statusesTypes.error,
+          status: StatusTypes.error,
           message,
         }),
       );

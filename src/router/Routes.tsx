@@ -1,15 +1,14 @@
 import React, { FC } from 'react';
 import { Route, Switch } from 'react-router-dom';
 import StyledLoader from 'components/StyledLoader';
-import { RootState } from 'store';
 import { useSelector } from 'react-redux';
+import { getIsLoading } from 'store/app';
 
 import AuthRoute from './AuthRoute';
-
 import { routes } from './routes-props';
 
 export const Routes: FC = () => {
-  const isLoading = useSelector((state: RootState) => state.app.isLoading);
+  const isLoading = useSelector(getIsLoading);
 
   return (
     <React.Suspense fallback={<StyledLoader />}>

@@ -19,9 +19,10 @@ export const isTodayOrTomorrowOrderExists = (date: number): boolean => {
 
 export const getOrderDayNumber = (): number => {
   const todayNumber = dayjs().day();
+  // skip sunday and saturday
   if ([0, 6].includes(todayNumber)) return 1;
   const dayNumber = isTimeForTodayLunch() ? todayNumber : todayNumber + 1;
-  // skip sunday and saturday
+
   return dayNumber === 6 ? 1 : dayNumber;
 };
 
@@ -29,8 +30,8 @@ export const getDaysToAdd = (): number => {
   const today = dayjs();
   const orderDayNumber = getOrderDayNumber();
 
-  if (orderDayNumber === 1 && today.day() !== orderDayNumber) {
-    return today.weekday(+7).diff(today, 'day');
-  }
-  return 0;
+  if (today.day() === orderDayNumber) return 0;
+  if (orderDayNumber === 1) return today.weekday(+7).diff(today, 'day');
+
+  return 1;
 };

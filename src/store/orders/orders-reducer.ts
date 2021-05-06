@@ -13,7 +13,7 @@ const initOrder = {
   dishes: [],
 };
 
-type OrderState = {
+export type OrderState = {
   currentOrder: Order;
   orders: Order[];
 };
@@ -21,6 +21,37 @@ type OrderState = {
 const initialState: OrderState = {
   currentOrder: initOrder,
   orders: [],
+};
+
+// preparing data to update currentOrder
+const getUpdatedDishesList = (
+  orderDishes: OrderDish[],
+  selected: boolean,
+  dishes: Dish[],
+): OrderDish[] => {
+  let newDishes: OrderDish[] = [...orderDishes];
+  const dishesMap: Map<string, Dish> = new Map(
+    dishes.map((dish) => [dish.id, dish]),
+  );
+
+  if (selected) {
+    const selectedDishesIds = new Set(orderDishes.map((d) => d.dish.id));
+    const dishesToAdd: OrderDish[] = Object.assign([], orderDishes);
+
+    dishesMap.forEach((dish, dishId) => {
+      if (!selectedDishesIds.has(dishId)) {
+        dishesToAdd.push({ dish, quantity: 1 });
+      }
+
+      newDishes = dishesToAdd;
+    });
+  } else {
+    newDishes = newDishes.filter((dish) => {
+      return !dishesMap.has(dish.dish.id);
+    });
+  }
+
+  return newDishes;
 };
 
 const ordersSlice = createSlice({
@@ -39,31 +70,17 @@ const ordersSlice = createSlice({
       }>,
     ) {
       const order = { ...current(state.currentOrder) };
-      if (!order) return;
+      const newDishes = getUpdatedDishesList(order.dishes, selected, dishes);
 
-      const dishesMap: Map<string, Dish> = new Map(
-        dishes.map((dish) => [dish.id, dish]),
-      );
-
-      if (selected) {
-        const selectedDishesIds = new Set(order.dishes.map((d) => d.dish.id));
-        const dishesToAdd: OrderDish[] = Object.assign([], order.dishes);
-
-        dishesMap.forEach((dish, dishId) => {
-          if (!selectedDishesIds.has(dishId)) {
-            dishesToAdd.push({ dish, quantity: 1 });
-          }
-
-          order.dishes = dishesToAdd;
-        });
-      } else {
-        order.dishes = order.dishes.filter((dish) => {
-          return !dishesMap.has(dish.dish.id);
-        });
-      }
-
-      state.currentOrder = order;
+      return {
+        ...state,
+        currentOrder: {
+          ...state.currentOrder,
+          dishes: newDishes,
+        },
+      };
     },
+
     clearOrdersList(state) {
       state.orders = [];
     },
