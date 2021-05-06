@@ -140,7 +140,7 @@ export const fetchOrders = createAsyncThunk(
 
     const result = await collectionRef
       .where('date', '>=', todayStartOrderTime.toDate())
-      .where('date', '<=', todayEndOrderTime.toDate())
+      // .where('date', '<=', todayEndOrderTime.toDate())
       .get();
 
     dispatch(hideLoader());

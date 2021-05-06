@@ -11,7 +11,7 @@ import {
 } from '@material-ui/core';
 import { Alert } from '@material-ui/lab';
 import { getIsLoading } from 'store/app';
-import Rubbles from 'components/Rubbles';
+import Ruble from 'components/Ruble';
 
 import DeliveryItem from './DeliveryItem';
 import { useGroupedDishes } from './useGroupedDishes';
@@ -38,7 +38,7 @@ const OrdersDelivery: FC = () => {
         <caption>
           {' '}
           Итого: {deliveryPrice}
-          <Rubbles />
+          <Ruble />
         </caption>
         <TableHead>
           <TableRow>

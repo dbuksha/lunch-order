@@ -1,8 +1,17 @@
 import { createSelector } from '@reduxjs/toolkit';
 import { RootState } from 'store/store';
-import { AppState } from 'store/app/app-reducer';
+import { AppState, SnackbarType } from 'store/app/app-reducer';
 
 export const getIsLoading = createSelector<RootState, AppState, boolean>(
-  (state: RootState) => state.app,
+  (state) => state.app,
   (state) => state.isLoading,
+);
+
+export const getSnackBar = createSelector<
+  RootState,
+  AppState,
+  SnackbarType | null
+>(
+  (state) => state.app,
+  (state) => state.snackbar,
 );

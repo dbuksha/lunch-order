@@ -13,7 +13,7 @@ const initOrder = {
   dishes: [],
 };
 
-type OrderState = {
+export type OrderState = {
   currentOrder: Order;
   orders: Order[];
 };

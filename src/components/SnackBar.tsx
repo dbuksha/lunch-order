@@ -1,12 +1,11 @@
 import React, { FC } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import { RootState } from 'store';
-import { clearSnackBar } from 'store/app';
+import { clearSnackBar, getSnackBar } from 'store/app';
 import { Snackbar } from '@material-ui/core';
 import { Alert } from '@material-ui/lab';
 
 const SnackBar: FC = () => {
-  const snackbar = useSelector((state: RootState) => state.app.snackbar);
+  const snackbar = useSelector(getSnackBar);
   const dispatch = useDispatch();
 
   const handleClose = () => {

@@ -3,16 +3,16 @@ import React, { FC, useEffect } from 'react';
 import { Redirect, Route, RouteProps } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
 
-import { RootState } from 'store/store';
+import { RootState } from 'store';
 import { fetchLunches } from 'store/lunches';
 import { fetchDishes } from 'store/dishes';
+import { getCurrentUser } from 'store/users';
+
 import StyledLoader from 'components/StyledLoader';
 
 const AuthRoute: FC<RouteProps> = (props) => {
   const dispatch = useDispatch();
-  const currentUser = useSelector(
-    (state: RootState) => state.users.currentUser,
-  );
+  const currentUser = useSelector(getCurrentUser);
   const isDataPreloaded = useSelector(
     (state: RootState) => state.lunches.isPreloaded,
   );

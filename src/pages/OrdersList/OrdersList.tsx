@@ -1,16 +1,15 @@
 import React, { FC, useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import { fetchOrders, clearOrdersList } from 'store/orders';
+import { fetchOrders, clearOrdersList, getOrdersList } from 'store/orders';
 import { Grid } from '@material-ui/core';
 import { Alert } from '@material-ui/lab';
-import { RootState } from 'store';
 import { getIsLoading } from 'store/app';
 import OrderCard from 'pages/OrdersList/OrderCard';
 
 const OrdersList: FC = () => {
   const dispatch = useDispatch();
   const isLoading = useSelector(getIsLoading);
-  const orders = useSelector((state: RootState) => state.orders.orders);
+  const orders = useSelector(getOrdersList);
 
   useEffect(() => {
     dispatch(fetchOrders());

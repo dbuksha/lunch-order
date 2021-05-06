@@ -6,12 +6,14 @@ export enum StatusTypes {
   warning = 'warning',
 }
 
+export type SnackbarType = {
+  status: 'success' | 'error' | 'warning';
+  message: string;
+};
+
 export type AppState = {
   isLoading: boolean;
-  snackbar: {
-    status: 'success' | 'error' | 'warning';
-    message: string;
-  } | null;
+  snackbar: SnackbarType | null;
 };
 
 const initialState: AppState = {

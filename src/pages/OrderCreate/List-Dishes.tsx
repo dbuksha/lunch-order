@@ -4,12 +4,13 @@ import {
   FormControlLabel,
   FormGroup,
   makeStyles,
+  TextField,
 } from '@material-ui/core';
 
 import { Dish } from 'entities/Dish';
 import { calculateDishesPrice } from 'utils/orders';
 import { useSelectDishes } from 'pages/OrderCreate/useSelectDishes';
-import Rubbles from 'components/Rubbles';
+import Ruble from 'components/Ruble';
 
 export type ListDishesProps = {
   dishes: Dish[];
@@ -59,7 +60,7 @@ const ListDishes: FC<ListDishesProps> = ({
             Полный комплекс{' '}
             <b>
               {lunchPrice}
-              <Rubbles />
+              <Ruble />
             </b>
           </>
         }
@@ -69,19 +70,22 @@ const ListDishes: FC<ListDishesProps> = ({
           classes={classes}
           key={dish.id}
           control={
-            <Checkbox
-              checked={selectedDishes.has(dish.id)}
-              onChange={(e) => selectDish(e.target.checked, dish)}
-              disabled={selectedAll}
-              name={dish.name}
-            />
+            <>
+              <Checkbox
+                checked={selectedDishes.has(dish.id)}
+                onChange={(e) => selectDish(e.target.checked, dish)}
+                disabled={selectedAll}
+                name={dish.name}
+              />
+              <TextField type="number" />
+            </>
           }
           label={
             <>
               {dish.name}{' '}
               <b>
                 {dish.price}
-                <Rubbles />
+                <Ruble />
               </b>
             </>
           }

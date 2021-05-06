@@ -14,6 +14,7 @@ import {
 import { calculateDishesPrice } from 'utils/orders';
 import { Order } from 'entities/Order';
 import OrderDishItem from 'pages/OrdersList/OrderDishItem';
+import Ruble from 'components/Ruble';
 
 type OrderCardProps = {
   order: Order;
@@ -42,7 +43,7 @@ const OrderCard: FC<OrderCardProps> = ({ order }) => {
           <caption>
             {' '}
             Итого: {calculateDishesPrice(order.dishes.map((d) => d.dish))}
-            &#8381;
+            <Ruble />
           </caption>
           <TableHead>
             <TableRow>

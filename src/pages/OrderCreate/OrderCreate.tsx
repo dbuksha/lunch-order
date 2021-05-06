@@ -14,9 +14,15 @@ import dayjs from 'dayjs';
 
 import firebaseInstance, { Collections } from 'utils/firebase';
 // store
-import { RootState } from 'store';
-import { addOrder, deleteOrder, getUserOrder, updateOrder } from 'store/orders';
+import {
+  addOrder,
+  deleteOrder,
+  getCurrentOrder,
+  getUserOrder,
+  updateOrder,
+} from 'store/orders';
 import { selectedOrderDishesIdsSet } from 'store/orders/orders-selectors';
+import { getCurrentUser } from 'store/users/users-selectors';
 import { calculateDishesPrice } from 'utils/orders';
 
 // components
@@ -29,7 +35,7 @@ import { Dish } from 'entities/Dish';
 import { OrderFirebase } from 'entities/Order';
 import { isTimeForTodayLunch } from 'utils/time-helper';
 import { useTodayLunches } from 'use/useTodayLunches';
-import Rubbles from 'components/Rubbles';
+import Ruble from 'components/Ruble';
 
 const findLunchById = (lunches: Lunch[], lunchId: string): Lunch | null =>
   lunches.find((lunch: Lunch) => lunch.id === lunchId) || null;
@@ -51,11 +57,9 @@ const OrderCreate: FC = () => {
   const dispatch = useDispatch();
   const classes = useStyles();
   const history = useHistory();
-  const currentUser = useSelector(
-    (state: RootState) => state.users.currentUser,
-  );
+  const currentUser = useSelector(getCurrentUser);
   const todayLunches = useTodayLunches();
-  const order = useSelector((state: RootState) => state.orders.currentOrder);
+  const order = useSelector(getCurrentOrder);
   const selectedDishes = useSelector(selectedOrderDishesIdsSet);
 
   const [calculatedPrice, setCalculatedPrice] = useState<number>(0);
@@ -165,7 +169,7 @@ const OrderCreate: FC = () => {
             Итого:{' '}
             <strong>
               {calculatedPrice}
-              <Rubbles />
+              <Ruble />
             </strong>
           </Typography>
           {order?.id && (
