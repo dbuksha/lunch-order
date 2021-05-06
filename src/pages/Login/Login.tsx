@@ -2,14 +2,11 @@ import React, { FC } from 'react';
 import { Box } from '@material-ui/core';
 import { useSelector } from 'react-redux';
 import { Redirect } from 'react-router-dom';
-
-import { RootState } from 'store';
+import { getCurrentUser } from 'store/users';
 import LoginForm from './LoginForm';
 
 const Login: FC = () => {
-  const currentUser = useSelector(
-    (state: RootState) => state.users.currentUser,
-  );
+  const currentUser = useSelector(getCurrentUser);
 
   if (currentUser) {
     return <Redirect to={{ pathname: '/' }} />;

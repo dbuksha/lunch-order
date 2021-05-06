@@ -3,8 +3,9 @@ import * as Joi from 'joi';
 import { Container, CssBaseline } from '@material-ui/core';
 import { BrowserRouter as Router } from 'react-router-dom';
 
-import { Routes } from './router/Routes';
-import { envSchema } from './utils/env-schema';
+import { Routes } from 'router/Routes';
+import { envSchema } from 'utils/env-schema';
+import SnackBar from 'components/SnackBar';
 
 export const App: FC = () => {
   // check required credentials
@@ -15,8 +16,9 @@ export const App: FC = () => {
   return (
     <Router>
       <CssBaseline />
-      <Container maxWidth="sm" component="main">
+      <Container fixed component="main">
         <h1>Lanchos</h1>
+        <SnackBar />
 
         <Routes />
       </Container>

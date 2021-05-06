@@ -3,7 +3,12 @@ export type Dish = {
   name: string;
   price: number;
   weight: number;
-  quantity?: number;
+};
+
+export type OrderDish = {
+  id?: string;
+  dish: Dish;
+  quantity: number;
 };
 
 export type DishesMap = Record<string, Dish>;

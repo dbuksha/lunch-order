@@ -1,19 +1,57 @@
 import { createSlice, PayloadAction, current } from '@reduxjs/toolkit';
 
 import { Order } from 'entities/Order';
-import { Dish } from 'entities/Dish';
-import { addOrder, getUserOrder } from './orders-actions';
+import { Dish, OrderDish } from 'entities/Dish';
+import {
+  addOrder,
+  deleteOrder,
+  fetchOrders,
+  getUserOrder,
+} from './orders-actions';
 
 const initOrder = {
   dishes: [],
 };
 
-type OrderState = {
+export type OrderState = {
   currentOrder: Order;
+  orders: Order[];
 };
 
 const initialState: OrderState = {
   currentOrder: initOrder,
+  orders: [],
+};
+
+// preparing data to update currentOrder
+const getUpdatedDishesList = (
+  orderDishes: OrderDish[],
+  selected: boolean,
+  dishes: Dish[],
+): OrderDish[] => {
+  let newDishes: OrderDish[] = [...orderDishes];
+  const dishesMap: Map<string, Dish> = new Map(
+    dishes.map((dish) => [dish.id, dish]),
+  );
+
+  if (selected) {
+    const selectedDishesIds = new Set(orderDishes.map((d) => d.dish.id));
+    const dishesToAdd: OrderDish[] = Object.assign([], orderDishes);
+
+    dishesMap.forEach((dish, dishId) => {
+      if (!selectedDishesIds.has(dishId)) {
+        dishesToAdd.push({ dish, quantity: 1 });
+      }
+
+      newDishes = dishesToAdd;
+    });
+  } else {
+    newDishes = newDishes.filter((dish) => {
+      return !dishesMap.has(dish.dish.id);
+    });
+  }
+
+  return newDishes;
 };
 
 const ordersSlice = createSlice({
@@ -32,27 +70,19 @@ const ordersSlice = createSlice({
       }>,
     ) {
       const order = { ...current(state.currentOrder) };
-      if (!order) return;
+      const newDishes = getUpdatedDishesList(order.dishes, selected, dishes);
 
-      const dishesMap: Map<string, Dish> = new Map(
-        dishes.map((dish) => [dish.id, dish]),
-      );
+      return {
+        ...state,
+        currentOrder: {
+          ...state.currentOrder,
+          dishes: newDishes,
+        },
+      };
+    },
 
-      if (selected) {
-        const selectedDishesIds = new Set(order.dishes.map((d) => d.dish.id));
-
-        dishesMap.forEach((dish, dishId) => {
-          if (!selectedDishesIds.has(dishId)) {
-            order.dishes.push({ dish, quantity: 1 });
-          }
-        });
-      } else {
-        order.dishes = order.dishes.filter((dish) => {
-          return !dishesMap.has(dish.dish.id);
-        });
-      }
-
-      state.currentOrder = order;
+    clearOrdersList(state) {
+      state.orders = [];
     },
   },
 
@@ -66,9 +96,18 @@ const ordersSlice = createSlice({
       )
       .addCase(getUserOrder.fulfilled, (state: OrderState, action) => {
         if (action.payload) state.currentOrder = action.payload;
+      })
+      .addCase(
+        fetchOrders.fulfilled,
+        (state: OrderState, { payload }: PayloadAction<Order[]>) => {
+          state.orders = payload;
+        },
+      )
+      .addCase(deleteOrder.fulfilled, (state: OrderState) => {
+        state.currentOrder = initOrder;
       });
   },
 });
 
-export const { updateOrder } = ordersSlice.actions;
+export const { updateOrder, clearOrdersList } = ordersSlice.actions;
 export default ordersSlice.reducer;

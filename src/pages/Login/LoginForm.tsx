@@ -5,12 +5,17 @@ import {
   createStyles,
   makeStyles,
   Theme,
+  Input,
+  FormControl,
+  InputLabel,
+  Container,
 } from '@material-ui/core';
 import { useFormik } from 'formik';
 import * as yup from 'yup';
 import { useDispatch } from 'react-redux';
 
 import { addUser } from 'store/users';
+import { InputMask } from 'components/MaskedInput';
 
 const validationSchema = yup.object({
   name: yup.string().required('is required'),
@@ -24,10 +29,12 @@ const initialValues = {
 
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
-    root: {
-      '& .MuiTextField-root': {
-        margin: theme.spacing(1),
-      },
+    textField: {
+      margin: theme.spacing(1),
+    },
+    formControl: {
+      margin: theme.spacing(1),
+      width: '100%',
     },
   }),
 );
@@ -45,30 +52,37 @@ const LoginForm: FC = () => {
   });
 
   return (
-    <form className={classes.root} onSubmit={formik.handleSubmit}>
-      <TextField
-        value={formik.values.name}
-        onChange={formik.handleChange}
-        error={formik.touched.name && Boolean(formik.errors.name)}
-        helperText={formik.touched.name && formik.errors.name}
-        name="name"
-        required
-        fullWidth
-        label="Name"
-      />
-      <TextField
-        value={formik.values.phone}
-        onChange={formik.handleChange}
-        error={formik.touched.phone && Boolean(formik.errors.phone)}
-        helperText={formik.touched.phone && formik.errors.phone}
-        name="phone"
-        label="Phone"
-        fullWidth
-      />
-      <Button fullWidth color="primary" type="submit">
-        Sign In
-      </Button>
-    </form>
+    <Container maxWidth="sm">
+      <form onSubmit={formik.handleSubmit}>
+        <TextField
+          value={formik.values.name}
+          onChange={formik.handleChange}
+          error={formik.touched.name && Boolean(formik.errors.name)}
+          helperText={formik.touched.name && formik.errors.name}
+          name="name"
+          classes={{ root: classes.textField }}
+          required
+          fullWidth
+          label="Имя"
+        />
+
+        <FormControl classes={{ root: classes.formControl }}>
+          <InputLabel htmlFor="phoneInput">Телефон</InputLabel>
+          <Input
+            value={formik.values.phone}
+            onChange={formik.handleChange}
+            name="phone"
+            id="phoneInput"
+            inputComponent={InputMask as any}
+            fullWidth
+          />
+        </FormControl>
+
+        <Button fullWidth color="primary" type="submit">
+          Sign In
+        </Button>
+      </form>
+    </Container>
   );
 };
 
