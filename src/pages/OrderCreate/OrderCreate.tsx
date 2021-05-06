@@ -13,13 +13,19 @@ import firebase from 'firebase/app';
 
 import firebaseInstance, { Collections } from 'utils/firebase';
 // store
-import { RootState } from 'store';
-import { addOrder, deleteOrder, getUserOrder, updateOrder } from 'store/orders';
+import {
+  addOrder,
+  deleteOrder,
+  getCurrentOrder,
+  getUserOrder,
+  updateOrder,
+} from 'store/orders';
 import { selectedOrderDishesIdsSet } from 'store/orders/orders-selectors';
+import { getCurrentUser } from 'store/users/users-selectors';
 import { calculateDishesPrice } from 'utils/orders';
 
 // components
-import ListDishes from 'components/orders/List-Dishes';
+import ListDishes from 'pages/OrderCreate/List-Dishes';
 import StyledPaper from 'components/StyledPaper';
 
 // entities
@@ -33,6 +39,7 @@ import {
 } from 'utils/time-helper';
 import dayjs from 'utils/dayjs';
 import { useTodayLunches } from 'use/useTodayLunches';
+import Ruble from 'components/Ruble';
 
 const findLunchById = (lunches: Lunch[], lunchId: string): Lunch | null =>
   lunches.find((lunch: Lunch) => lunch.id === lunchId) || null;
@@ -43,9 +50,9 @@ const useStyles = makeStyles((theme: Theme) =>
       [theme.breakpoints.down('xs')]: {
         justifyContent: 'inherit',
       },
-      '& > *': {
-        margin: theme.spacing(1),
-      },
+    },
+    item: {
+      margin: theme.spacing(1),
     },
     h6: {
       '&:first-letter': {
@@ -59,11 +66,9 @@ const OrderCreate: FC = () => {
   const dispatch = useDispatch();
   const classes = useStyles();
   const history = useHistory();
-  const currentUser = useSelector(
-    (state: RootState) => state.users.currentUser,
-  );
+  const currentUser = useSelector(getCurrentUser);
   const todayLunches = useTodayLunches();
-  const order = useSelector((state: RootState) => state.orders.currentOrder);
+  const order = useSelector(getCurrentOrder);
   const selectedDishes = useSelector(selectedOrderDishesIdsSet);
 
   const [calculatedPrice, setCalculatedPrice] = useState<number>(0);
@@ -178,19 +183,16 @@ const OrderCreate: FC = () => {
           justify="flex-end"
           alignItems="baseline"
         >
-          <Typography component="span" variant="h6">
-            Итого: <strong>{calculatedPrice}&#8381;</strong>
+          <Typography component="span" variant="h6" className={classes.item}>
+            Итого:{' '}
+            <strong>
+              {calculatedPrice}
+              <Ruble />
+            </strong>
           </Typography>
-          <Button
-            variant="contained"
-            color="primary"
-            disabled={!calculatedPrice}
-            onClick={onCreateOrderSubmit}
-          >
-            {order?.id ? 'Обновить заказ' : 'Заказать'}
-          </Button>
           {order?.id && (
             <Button
+              className={classes.item}
               variant="outlined"
               color="secondary"
               onClick={onDeleteOrder}
@@ -198,6 +200,15 @@ const OrderCreate: FC = () => {
               Отменить заказ
             </Button>
           )}
+          <Button
+            variant="contained"
+            color="primary"
+            className={classes.item}
+            disabled={!calculatedPrice}
+            onClick={onCreateOrderSubmit}
+          >
+            {order?.id ? 'Обновить заказ' : 'Заказать'}
+          </Button>
         </Grid>
       </Grid>
     </StyledPaper>

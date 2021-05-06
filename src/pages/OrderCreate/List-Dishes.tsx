@@ -1,16 +1,18 @@
-import React, { ChangeEvent, FC, useEffect, useState } from 'react';
-import { sortBy } from 'lodash';
+import React, { FC, useState } from 'react';
 import {
   Checkbox,
   FormControlLabel,
   FormGroup,
   makeStyles,
+  TextField,
 } from '@material-ui/core';
 
 import { Dish } from 'entities/Dish';
 import { calculateDishesPrice } from 'utils/orders';
+import { useSelectDishes } from 'pages/OrderCreate/useSelectDishes';
+import Ruble from 'components/Ruble';
 
-type ListDishesProps = {
+export type ListDishesProps = {
   dishes: Dish[];
   selectedDishes: Set<string>;
   selectDish: (selected: boolean, dish?: Dish) => void;
@@ -33,24 +35,12 @@ const ListDishes: FC<ListDishesProps> = ({
   selectedDishes,
 }) => {
   const classes = useStyles();
-  const [selectedAll, setSelectedAll] = useState(false);
+  const { selectedAll, handleSelectedAll } = useSelectDishes({
+    dishes,
+    selectedDishes,
+    selectDish,
+  });
   const [lunchPrice] = useState<number>(() => calculateDishesPrice(dishes));
-
-  // set selectedAll when all lunch dishes were selected one by one or on first load page with existing order
-  useEffect(() => {
-    // check if every dish id is in selected dishes
-    if (selectedDishes.size && dishes.length) {
-      const parStr = JSON.stringify(sortBy([...selectedDishes]));
-      setSelectedAll(
-        dishes.map((d) => d.id).every((id) => parStr.indexOf(id) !== -1),
-      );
-    }
-  }, [dishes, selectedDishes]);
-
-  const handleSelectedAll = (e: ChangeEvent<HTMLInputElement>) => {
-    setSelectedAll(e.target.checked);
-    selectDish(e.target.checked);
-  };
 
   return (
     <FormGroup>
@@ -67,7 +57,11 @@ const ListDishes: FC<ListDishesProps> = ({
         }
         label={
           <>
-            Полный комплекс <b>{lunchPrice}&#8381;</b>
+            Полный комплекс{' '}
+            <b>
+              {lunchPrice}
+              <Ruble />
+            </b>
           </>
         }
       />
@@ -76,16 +70,23 @@ const ListDishes: FC<ListDishesProps> = ({
           classes={classes}
           key={dish.id}
           control={
-            <Checkbox
-              checked={selectedDishes.has(dish.id)}
-              onChange={(e) => selectDish(e.target.checked, dish)}
-              disabled={selectedAll}
-              name={dish.name}
-            />
+            <>
+              <Checkbox
+                checked={selectedDishes.has(dish.id)}
+                onChange={(e) => selectDish(e.target.checked, dish)}
+                disabled={selectedAll}
+                name={dish.name}
+              />
+              <TextField type="number" />
+            </>
           }
           label={
             <>
-              {dish.name} <b>{dish.price}&#8381;</b>
+              {dish.name}{' '}
+              <b>
+                {dish.price}
+                <Ruble />
+              </b>
             </>
           }
         />

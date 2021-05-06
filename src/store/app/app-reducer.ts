@@ -1,20 +1,22 @@
 import { createSlice } from '@reduxjs/toolkit';
 
-export const statusesTypes = {
-  success: 'success',
-  error: 'error',
-  warning: 'warning',
+export enum StatusTypes {
+  success = 'success',
+  error = 'error',
+  warning = 'warning',
+}
+
+export type SnackbarType = {
+  status: 'success' | 'error' | 'warning';
+  message: string;
 };
 
-export type LoadingState = {
+export type AppState = {
   isLoading: boolean;
-  snackbar: {
-    status: 'success' | 'error' | 'warning';
-    message: string;
-  } | null;
+  snackbar: SnackbarType | null;
 };
 
-const initialState: LoadingState = {
+const initialState: AppState = {
   isLoading: false,
   snackbar: null,
 };

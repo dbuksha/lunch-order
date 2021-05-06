@@ -1,14 +1,13 @@
 import { useDispatch, useSelector } from 'react-redux';
-import { RootState } from 'store';
 import { useEffect, useState } from 'react';
 
-import { clearOrdersList, fetchOrders } from 'store/orders';
+import { clearOrdersList, fetchOrders, getOrdersList } from 'store/orders';
 import * as deliveryDataHelper from 'pages/OrdersDelivery/collectDeliveryDataHelper';
 import { OrderDish } from 'entities/Dish';
 
 export const useGroupedDishes = (): OrderDish[] => {
   const dispatch = useDispatch();
-  const orders = useSelector((state: RootState) => state.orders.orders);
+  const orders = useSelector(getOrdersList);
   const [calculatedDishes, setCalculatedDishes] = useState<OrderDish[]>([]);
 
   // load order
