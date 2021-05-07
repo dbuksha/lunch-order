@@ -23,9 +23,26 @@ export type ListDishesProps = {
 };
 
 // const getMinLunchQuantity = (selectedDishesIds: number[], lunchDishes: any) => {
-const getMinLunchQuantity = (selectedDishes: IterableIterator<number>) => {
-  return Math.min(...selectedDishes);
+const getMinLunchQuantity = (
+  lunchDishesIds: string[],
+  selectedDishes: SelectedDishes,
+) => {
+  const isFullSelected = lunchDishesIds.every(
+    (id) => [...selectedDishes.keys()].indexOf(id) > -1,
+  );
+  if (!isFullSelected) return 0;
+  return Math.min(...selectedDishes.values());
 };
+
+export const isFullLunchExist = (
+  lunchDishesIds: string[],
+  dishesIds: string[],
+): boolean => {
+  return lunchDishesIds.every((id) => dishesIds.indexOf(id) > -1);
+};
+
+// get full lunch quantity
+// const minQuantityDish = minBy<OrderDish>(lunchDishes, (d) => d.quantity);
 
 const useStyles = makeStyles({
   root: {
@@ -53,7 +70,10 @@ const ListDishes: FC<ListDishesProps> = ({
     selectDish,
   });
   const [lunchPrice] = useState<number>(() => calculateDishesPrice(dishes));
-  const minLunchQuantity = getMinLunchQuantity(selectedDishes.values());
+  const minLunchQuantity = getMinLunchQuantity(
+    dishes.map((d) => d.id),
+    selectedDishes,
+  );
 
   return (
     <TableContainer>
@@ -75,6 +95,9 @@ const ListDishes: FC<ListDishesProps> = ({
                 type="number"
                 size="small"
                 disabled={!selectedAll}
+                InputProps={{
+                  inputProps: { min: 0 },
+                }}
                 value={minLunchQuantity}
                 onChange={(e) => selectDish(true, Number(e.target.value))}
               />
@@ -108,6 +131,9 @@ const ListDishes: FC<ListDishesProps> = ({
                 <TextField
                   size="small"
                   type="number"
+                  InputProps={{
+                    inputProps: { min: 1 },
+                  }}
                   disabled={!selectedDishes.has(dish.id)}
                   value={selectedDishes.get(dish.id) || 1}
                   onChange={(e) =>
