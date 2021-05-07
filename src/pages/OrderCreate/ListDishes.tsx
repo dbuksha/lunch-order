@@ -1,9 +1,12 @@
 import React, { FC, useState } from 'react';
 import {
   Checkbox,
-  FormControlLabel,
-  FormGroup,
   makeStyles,
+  Table,
+  TableBody,
+  TableCell,
+  TableContainer,
+  TableRow,
   TextField,
 } from '@material-ui/core';
 
@@ -33,6 +36,9 @@ const useStyles = makeStyles({
     display: 'flex',
     justifyContent: 'space-between',
   },
+  quantityCell: {
+    width: '20%',
+  },
 });
 
 const ListDishes: FC<ListDishesProps> = ({
@@ -50,22 +56,21 @@ const ListDishes: FC<ListDishesProps> = ({
   const minLunchQuantity = getMinLunchQuantity(selectedDishes.values());
 
   return (
-    <FormGroup>
-      <FormControlLabel
-        classes={classes}
-        control={
-          <div>
-            <Checkbox
-              checked={selectedAll}
-              onChange={handleSelectedAll}
-              name="selectAll"
-            />
-          </div>
-        }
-        label={
-          <>
-            <span>Полный комплекс</span>
-            <div>
+    <TableContainer>
+      <Table aria-label="simple table" size="small">
+        <TableBody>
+          <TableRow>
+            <TableCell padding="none">
+              <Checkbox
+                checked={selectedAll}
+                onChange={handleSelectedAll}
+                name="selectAll"
+              />
+            </TableCell>
+            <TableCell component="th" scope="row" padding="none">
+              Полный комплекс
+            </TableCell>
+            <TableCell>
               <TextField
                 type="number"
                 size="small"
@@ -73,32 +78,33 @@ const ListDishes: FC<ListDishesProps> = ({
                 value={minLunchQuantity}
                 onChange={(e) => selectDish(true, Number(e.target.value))}
               />
+            </TableCell>
+            <TableCell align="right" size="small" padding="none">
               <b>
                 {lunchPrice}
                 <Ruble />
               </b>
-            </div>
-          </>
-        }
-      />
-      {dishes.map((dish: Dish) => (
-        <FormControlLabel
-          classes={classes}
-          key={dish.id}
-          control={
-            <>
-              <Checkbox
-                checked={selectedDishes.has(dish.id)}
-                onChange={(e) => selectDish(e.target.checked, 1, dish)}
-                disabled={selectedAll}
-                name={dish.name}
-              />
-            </>
-          }
-          label={
-            <>
-              <span>{dish.name}</span>
-              <div>
+            </TableCell>
+          </TableRow>
+
+          {dishes.map((dish: Dish) => (
+            <TableRow>
+              <TableCell padding="none">
+                <Checkbox
+                  checked={selectedDishes.has(dish.id)}
+                  onChange={(e) => selectDish(e.target.checked, 1, dish)}
+                  disabled={selectedAll}
+                  name={dish.name}
+                />
+              </TableCell>
+              <TableCell component="th" scope="row" padding="none">
+                {dish.name}
+              </TableCell>
+              <TableCell
+                align="right"
+                size="small"
+                className={classes.quantityCell}
+              >
                 <TextField
                   size="small"
                   type="number"
@@ -108,16 +114,18 @@ const ListDishes: FC<ListDishesProps> = ({
                     selectDish(true, Number(e.target.value), dish)
                   }
                 />
+              </TableCell>
+              <TableCell align="right" padding="none">
                 <b>
                   {dish.price}
                   <Ruble />
                 </b>
-              </div>
-            </>
-          }
-        />
-      ))}
-    </FormGroup>
+              </TableCell>
+            </TableRow>
+          ))}
+        </TableBody>
+      </Table>
+    </TableContainer>
   );
 };
 

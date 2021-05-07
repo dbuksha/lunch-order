@@ -58,6 +58,7 @@ const useStyles = makeStyles((theme: Theme) =>
       '&:first-letter': {
         textTransform: 'capitalize',
       },
+      wordWrap: 'break-word',
     },
   }),
 );
