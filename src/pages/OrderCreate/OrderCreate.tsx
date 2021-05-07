@@ -19,14 +19,13 @@ import {
   getCurrentOrder,
   getUserOrder,
   updateOrder,
-  updateOrderDishQuantity,
 } from 'store/orders';
 import { selectedOrderDishesIdsSet } from 'store/orders/orders-selectors';
 import { getCurrentUser } from 'store/users/users-selectors';
-import { calculateDishesPrice } from 'utils/orders';
+import * as deliveryDataHelper from 'pages/OrdersDelivery/collectDeliveryDataHelper';
 
 // components
-import ListDishes from 'pages/OrderCreate/List-Dishes';
+import ListDishes from 'pages/OrderCreate/ListDishes';
 import StyledPaper from 'components/StyledPaper';
 
 // entities
@@ -81,8 +80,8 @@ const OrderCreate: FC = () => {
   // recalculate order sum
   useEffect(() => {
     if (order && selectedDishes) {
-      const dishes = order.dishes.map((d) => d.dish);
-      setCalculatedPrice(calculateDishesPrice(dishes));
+      const price = deliveryDataHelper.calculateDeliveryPrice(order.dishes);
+      setCalculatedPrice(price);
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [selectedDishes]);
@@ -90,11 +89,14 @@ const OrderCreate: FC = () => {
   const onCreateOrderSubmit = async () => {
     // TODO: show an error popup ?
     if (!currentUser || !selectedDishes) return;
+    const preparedDishes: any[] = [];
 
-    const preparedDishes = [...selectedDishes].map((id) => ({
-      dishRef: firebaseInstance.doc(`${Collections.Dishes}/${id}`),
-      quantity: 1, // TODO: add quantity selection to the form
-    }));
+    selectedDishes.forEach((quantity, id) => {
+      preparedDishes.push({
+        dishRef: firebaseInstance.doc(`${Collections.Dishes}/${id}`),
+        quantity,
+      });
+    });
 
     // if lunch not for today: set tomorrow (8 a.m.)
     const time = isTimeForTodayLunch()
@@ -118,7 +120,12 @@ const OrderCreate: FC = () => {
     }
   };
 
-  const onDishSelect = (lunchId: string, selected: boolean, dish?: Dish) => {
+  const onDishSelect = (
+    lunchId: string,
+    selected: boolean,
+    quantity: number,
+    dish?: Dish,
+  ) => {
     let dishes = [];
     if (!dish) {
       const selectedLunch = findLunchById(todayLunches, lunchId);
@@ -128,7 +135,7 @@ const OrderCreate: FC = () => {
       dishes = [dish];
     }
 
-    dispatch(updateOrder({ dishes, selected }));
+    dispatch(updateOrder({ dishes, selected, quantity }));
   };
 
   // TODO: show alerts
@@ -156,8 +163,8 @@ const OrderCreate: FC = () => {
     } else {
       dishes = [dish];
     }
-
-    dispatch(updateOrderDishQuantity({ dishes, quantity }));
+    dispatch(updateOrder({ dishes, selected: true, quantity }));
+    //   TODO:!!
   };
 
   const dayName = dayjs()
@@ -188,8 +195,8 @@ const OrderCreate: FC = () => {
                 onChangeDishQuantity(quantity, lunch.id, dish)
               }
               selectedDishes={selectedDishes}
-              selectDish={(selected, dish) =>
-                onDishSelect(lunch.id, selected, dish)
+              selectDish={(selected, quantity, dish) =>
+                onDishSelect(lunch.id, selected, quantity, dish)
               }
             />
           </Grid>

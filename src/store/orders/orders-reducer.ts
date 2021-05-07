@@ -27,31 +27,28 @@ const initialState: OrderState = {
 const getUpdatedDishesList = (
   orderDishes: OrderDish[],
   selected: boolean,
+  quantity: number,
   dishes: Dish[],
 ): OrderDish[] => {
-  let newDishes: OrderDish[] = [...orderDishes];
+  const newDishes: OrderDish[] = [...orderDishes];
   const dishesMap: Map<string, Dish> = new Map(
     dishes.map((dish) => [dish.id, dish]),
   );
 
   if (selected) {
-    const selectedDishesIds = new Set(orderDishes.map((d) => d.dish.id));
-    const dishesToAdd: OrderDish[] = Object.assign([], orderDishes);
-
     dishesMap.forEach((dish, dishId) => {
-      if (!selectedDishesIds.has(dishId)) {
-        dishesToAdd.push({ dish, quantity: 1 });
+      const dishIndex = newDishes.findIndex((d) => d.dish.id === dishId);
+      if (dishIndex > -1) {
+        newDishes.splice(dishIndex, 1, { dish, quantity });
+      } else {
+        newDishes.push({ dish, quantity });
       }
+    });
 
-      newDishes = dishesToAdd;
-    });
-  } else {
-    newDishes = newDishes.filter((dish) => {
-      return !dishesMap.has(dish.dish.id);
-    });
+    return newDishes;
   }
 
-  return newDishes;
+  return newDishes.filter((dish) => !dishesMap.has(dish.dish.id));
 };
 
 const ordersSlice = createSlice({
@@ -63,14 +60,20 @@ const ordersSlice = createSlice({
     updateOrder(
       state: OrderState,
       {
-        payload: { dishes, selected },
+        payload: { dishes, selected, quantity },
       }: PayloadAction<{
         dishes: Dish[];
         selected: boolean;
+        quantity: number;
       }>,
     ) {
       const order = { ...current(state.currentOrder) };
-      const newDishes = getUpdatedDishesList(order.dishes, selected, dishes);
+      const newDishes = getUpdatedDishesList(
+        order.dishes,
+        selected,
+        quantity,
+        dishes,
+      );
 
       return {
         ...state,
@@ -83,19 +86,6 @@ const ordersSlice = createSlice({
 
     clearOrdersList(state) {
       state.orders = [];
-    },
-
-    updateOrderDishQuantity(
-      state: OrderState,
-      {
-        payload: { dishes, quantity },
-      }: PayloadAction<{
-        dishes: Dish[];
-        quantity: number;
-      }>,
-    ) {
-      console.log(dishes);
-      console.log(quantity);
     },
   },
 
@@ -122,9 +112,5 @@ const ordersSlice = createSlice({
   },
 });
 
-export const {
-  updateOrder,
-  clearOrdersList,
-  updateOrderDishQuantity,
-} = ordersSlice.actions;
+export const { updateOrder, clearOrdersList } = ordersSlice.actions;
 export default ordersSlice.reducer;

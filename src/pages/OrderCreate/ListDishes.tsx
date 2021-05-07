@@ -15,8 +15,13 @@ import Ruble from 'components/Ruble';
 export type ListDishesProps = {
   dishes: Dish[];
   selectedDishes: SelectedDishes;
-  selectDish: (selected: boolean, dish?: Dish) => void;
+  selectDish: (selected: boolean, quantity: number, dish?: Dish) => void;
   changeDishQuantity: (quantiy: number, dish?: Dish) => void;
+};
+
+// const getMinLunchQuantity = (selectedDishesIds: number[], lunchDishes: any) => {
+const getMinLunchQuantity = (selectedDishes: IterableIterator<number>) => {
+  return Math.min(...selectedDishes);
 };
 
 const useStyles = makeStyles({
@@ -33,7 +38,6 @@ const useStyles = makeStyles({
 const ListDishes: FC<ListDishesProps> = ({
   dishes,
   selectDish,
-  changeDishQuantity,
   selectedDishes,
 }) => {
   const classes = useStyles();
@@ -43,6 +47,7 @@ const ListDishes: FC<ListDishesProps> = ({
     selectDish,
   });
   const [lunchPrice] = useState<number>(() => calculateDishesPrice(dishes));
+  const minLunchQuantity = getMinLunchQuantity(selectedDishes.values());
 
   return (
     <FormGroup>
@@ -59,11 +64,20 @@ const ListDishes: FC<ListDishesProps> = ({
         }
         label={
           <>
-            Полный комплекс{' '}
-            <b>
-              {lunchPrice}
-              <Ruble />
-            </b>
+            <span>Полный комплекс</span>
+            <div>
+              <TextField
+                type="number"
+                size="small"
+                disabled={!selectedAll}
+                value={minLunchQuantity}
+                onChange={(e) => selectDish(true, Number(e.target.value))}
+              />
+              <b>
+                {lunchPrice}
+                <Ruble />
+              </b>
+            </div>
           </>
         }
       />
@@ -75,7 +89,7 @@ const ListDishes: FC<ListDishesProps> = ({
             <>
               <Checkbox
                 checked={selectedDishes.has(dish.id)}
-                onChange={(e) => selectDish(e.target.checked, dish)}
+                onChange={(e) => selectDish(e.target.checked, 1, dish)}
                 disabled={selectedAll}
                 name={dish.name}
               />
@@ -83,19 +97,22 @@ const ListDishes: FC<ListDishesProps> = ({
           }
           label={
             <>
-              {dish.name}{' '}
-              <TextField
-                type="number"
-                disabled={!selectedDishes.has(dish.id)}
-                value={selectedDishes.get(dish.id) || 1}
-                onChange={(e) =>
-                  changeDishQuantity(Number(e.target.value), dish)
-                }
-              />
-              <b>
-                {dish.price}
-                <Ruble />
-              </b>
+              <span>{dish.name}</span>
+              <div>
+                <TextField
+                  size="small"
+                  type="number"
+                  disabled={!selectedDishes.has(dish.id)}
+                  value={selectedDishes.get(dish.id) || 1}
+                  onChange={(e) =>
+                    selectDish(true, Number(e.target.value), dish)
+                  }
+                />
+                <b>
+                  {dish.price}
+                  <Ruble />
+                </b>
+              </div>
             </>
           }
         />

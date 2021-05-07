@@ -1,6 +1,6 @@
 import { ChangeEvent, useEffect, useState } from 'react';
 import { sortBy } from 'lodash';
-import { ListDishesProps } from 'pages/OrderCreate/List-Dishes';
+import { ListDishesProps } from 'pages/OrderCreate/ListDishes';
 
 const getSortedDishesString = (dishes: string[]) =>
   JSON.stringify(sortBy(dishes));
@@ -28,7 +28,7 @@ export const useSelectDishes = ({
 
   const handleSelectedAll = (e: ChangeEvent<HTMLInputElement>) => {
     setSelectedAll(e.target.checked);
-    selectDish(e.target.checked);
+    selectDish(e.target.checked, 1);
   };
 
   return { selectedAll, handleSelectedAll };
