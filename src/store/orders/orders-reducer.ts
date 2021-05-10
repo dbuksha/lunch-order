@@ -39,7 +39,11 @@ const getUpdatedDishesList = (
     dishesMap.forEach((dish, dishId) => {
       const dishIndex = newDishes.findIndex((d) => d.dish.id === dishId);
       if (dishIndex > -1) {
-        newDishes.splice(dishIndex, 1, { dish, quantity });
+        const oldQuantity = newDishes[dishIndex].quantity;
+        const newQuantity =
+          oldQuantity > quantity ? oldQuantity - 1 : oldQuantity + 1;
+
+        newDishes.splice(dishIndex, 1, { dish, quantity: newQuantity });
       } else {
         newDishes.push({ dish, quantity });
       }
