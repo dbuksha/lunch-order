@@ -13,6 +13,11 @@ const initOrder = {
   dishes: [],
 };
 
+export enum UpdateQuantityAction {
+  ADD,
+  REMOVE,
+}
+
 export type OrderState = {
   currentOrder: Order;
   orders: Order[];
@@ -23,35 +28,47 @@ const initialState: OrderState = {
   orders: [],
 };
 
-// preparing data to update currentOrder
+// preparing data to update currentOrder when quantity is changed
+const getUpdatedQuantityDishesList = (
+  orderDishes: OrderDish[],
+  selectedDishes: Dish[],
+  type: UpdateQuantityAction,
+) => {
+  const newDishes: OrderDish[] = [...orderDishes];
+  const selectedDishesIds = selectedDishes.map((dish) => dish.id);
+
+  return newDishes.map(({ dish, quantity }) => {
+    if (selectedDishesIds.indexOf(dish.id) > -1) {
+      quantity =
+        type === UpdateQuantityAction.ADD ? quantity + 1 : quantity - 1;
+    }
+
+    return { dish, quantity };
+  });
+};
+
+// preparing data to update currentOrder when checkbox is clicked
 const getUpdatedDishesList = (
   orderDishes: OrderDish[],
   selected: boolean,
+  quantity: number,
   dishes: Dish[],
 ): OrderDish[] => {
-  let newDishes: OrderDish[] = [...orderDishes];
+  const newDishes: OrderDish[] = [...orderDishes];
   const dishesMap: Map<string, Dish> = new Map(
     dishes.map((dish) => [dish.id, dish]),
   );
 
   if (selected) {
-    const selectedDishesIds = new Set(orderDishes.map((d) => d.dish.id));
-    const dishesToAdd: OrderDish[] = Object.assign([], orderDishes);
-
     dishesMap.forEach((dish, dishId) => {
-      if (!selectedDishesIds.has(dishId)) {
-        dishesToAdd.push({ dish, quantity: 1 });
-      }
+      const dishIndex = newDishes.findIndex((d) => d.dish.id === dishId);
+      if (dishIndex === -1) newDishes.push({ dish, quantity });
+    });
 
-      newDishes = dishesToAdd;
-    });
-  } else {
-    newDishes = newDishes.filter((dish) => {
-      return !dishesMap.has(dish.dish.id);
-    });
+    return newDishes;
   }
 
-  return newDishes;
+  return newDishes.filter((dish) => !dishesMap.has(dish.dish.id));
 };
 
 const ordersSlice = createSlice({
@@ -63,14 +80,43 @@ const ordersSlice = createSlice({
     updateOrder(
       state: OrderState,
       {
-        payload: { dishes, selected },
+        payload: { dishes, selected, quantity },
       }: PayloadAction<{
         dishes: Dish[];
         selected: boolean;
+        quantity: number;
       }>,
     ) {
       const order = { ...current(state.currentOrder) };
-      const newDishes = getUpdatedDishesList(order.dishes, selected, dishes);
+      const newDishes = getUpdatedDishesList(
+        order.dishes,
+        selected,
+        quantity,
+        dishes,
+      );
+
+      return {
+        ...state,
+        currentOrder: {
+          ...state.currentOrder,
+          dishes: newDishes,
+        },
+      };
+    },
+
+    updateDishesQuantity(
+      state: OrderState,
+      {
+        payload: { dishes, type },
+      }: PayloadAction<{ dishes: Dish[]; type: UpdateQuantityAction }>,
+    ) {
+      const order = { ...current(state.currentOrder) };
+
+      const newDishes = getUpdatedQuantityDishesList(
+        order.dishes,
+        dishes,
+        type,
+      );
 
       return {
         ...state,
@@ -109,5 +155,9 @@ const ordersSlice = createSlice({
   },
 });
 
-export const { updateOrder, clearOrdersList } = ordersSlice.actions;
+export const {
+  updateOrder,
+  clearOrdersList,
+  updateDishesQuantity,
+} = ordersSlice.actions;
 export default ordersSlice.reducer;

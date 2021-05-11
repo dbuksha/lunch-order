@@ -27,7 +27,7 @@ export const filterDishesAndIdsFromOrderDishesByLunch = (
  * @param lunchDishes - dishes in lunch
  * @param dishes - order delivery dishes
  *
- * Check if we have full lunch set in ordery delivery
+ * Check if we have full lunch set in order delivery
  */
 export const isFullLunchExist = (
   lunchDishes: Dish[],
