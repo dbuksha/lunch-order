@@ -1,7 +1,6 @@
-import React, { FC, useState } from 'react';
+import React, { FC } from 'react';
 import {
   Checkbox,
-  makeStyles,
   Table,
   TableBody,
   TableCell,
@@ -10,41 +9,16 @@ import {
 } from '@material-ui/core';
 
 import { Dish, SelectedDishes } from 'entities/Dish';
-import { calculateDishesPrice } from 'utils/orders';
 import { useSelectDishes } from 'pages/OrderCreate/useSelectDishes';
 import Ruble from 'components/Ruble';
 import InputNumber from 'components/InputNumber';
-import { intersection } from 'lodash';
+import { useLunchData } from 'pages/OrderCreate/useLunchData';
 
 export type ListDishesProps = {
   dishes: Dish[];
   selectedDishes: SelectedDishes;
   selectDish: (selected: boolean, quantity: number, dish?: Dish) => void;
   changeDishQuantity: (quantiy: number, dish?: Dish) => void;
-};
-
-const getMinLunchQuantity = (
-  lunchDishesIds: string[],
-  selectedDishes: SelectedDishes,
-) => {
-  const isFullSelected = lunchDishesIds.every(
-    (id) => [...selectedDishes.keys()].indexOf(id) > -1,
-  );
-  if (!isFullSelected) return 0;
-
-  const l = intersection<string>([...selectedDishes.keys()], lunchDishesIds);
-  const filteredData = new Map(
-    [...selectedDishes].filter(([k, v]) => l.indexOf(k) > -1),
-  );
-
-  return Math.min(...filteredData.values());
-};
-
-export const isFullLunchExist = (
-  lunchDishesIds: string[],
-  dishesIds: string[],
-): boolean => {
-  return lunchDishesIds.every((id) => dishesIds.indexOf(id) > -1);
 };
 
 const ListDishes: FC<ListDishesProps> = ({
@@ -57,11 +31,7 @@ const ListDishes: FC<ListDishesProps> = ({
     selectedDishes,
     selectDish,
   });
-  const [lunchPrice] = useState<number>(() => calculateDishesPrice(dishes));
-  const minLunchQuantity = getMinLunchQuantity(
-    dishes.map((d) => d.id),
-    selectedDishes,
-  );
+  const { lunchPrice, minLunchQuantity } = useLunchData(dishes, selectedDishes);
 
   return (
     <TableContainer>
