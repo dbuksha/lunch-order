@@ -13,18 +13,20 @@ import { useSelectDishes } from 'pages/OrderCreate/useSelectDishes';
 import Ruble from 'components/Ruble';
 import InputNumber from 'components/InputNumber';
 import { useLunchData } from 'pages/OrderCreate/useLunchData';
+import { UpdateQuantityAction } from 'store/orders';
 
 export type ListDishesProps = {
   dishes: Dish[];
   selectedDishes: SelectedDishes;
   selectDish: (selected: boolean, quantity: number, dish?: Dish) => void;
-  changeDishQuantity: (quantiy: number, dish?: Dish) => void;
+  updateDishQuantity: (type: UpdateQuantityAction, dish?: Dish) => void;
 };
 
 const ListDishes: FC<ListDishesProps> = ({
   dishes,
   selectDish,
   selectedDishes,
+  updateDishQuantity,
 }) => {
   const { selectedAll, handleSelectedAll } = useSelectDishes({
     dishes,
@@ -54,7 +56,7 @@ const ListDishes: FC<ListDishesProps> = ({
                 disabled={!selectedAll}
                 min={0}
                 value={minLunchQuantity}
-                onChange={(quantity) => selectDish(true, quantity)}
+                onChange={(type) => updateDishQuantity(type)}
               />
             </TableCell>
             <TableCell align="right" size="small" padding="none">
@@ -84,7 +86,7 @@ const ListDishes: FC<ListDishesProps> = ({
                   value={selectedDishes.get(dish.id) || 1}
                   disabled={!selectedDishes.has(dish.id)}
                   min={1}
-                  onChange={(quantity) => selectDish(true, quantity, dish)}
+                  onChange={(type) => updateDishQuantity(type, dish)}
                 />
               </TableCell>
               <TableCell align="right" padding="none">

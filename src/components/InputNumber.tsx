@@ -1,4 +1,4 @@
-import React, { FC } from 'react';
+import React, { ChangeEvent, FC } from 'react';
 import {
   IconButton,
   InputAdornment,
@@ -7,6 +7,7 @@ import {
 } from '@material-ui/core';
 import AddIcon from '@material-ui/icons/Add';
 import RemoveIcon from '@material-ui/icons/Remove';
+import { UpdateQuantityAction } from 'store/orders';
 
 const useStyles = makeStyles({
   textField: {
@@ -33,7 +34,7 @@ type InputNumberProps = {
   disabled: boolean;
   min: number;
   value: number;
-  onChange: (val: number) => void;
+  onChange: (type: UpdateQuantityAction) => void;
 };
 
 const InputNumber: FC<InputNumberProps> = ({
@@ -45,10 +46,17 @@ const InputNumber: FC<InputNumberProps> = ({
   const classes = useStyles();
 
   const onAdd = () => {
-    onChange(value + 1);
+    onChange(UpdateQuantityAction.ADD);
   };
   const onRemove = () => {
-    if (value > 1) onChange(value - 1);
+    if (value > 1) onChange(UpdateQuantityAction.REMOVE);
+  };
+
+  const handleUpdate = (e: ChangeEvent<HTMLInputElement>) => {
+    const newValue = Number(e.target.value);
+    const actionType =
+      value < newValue ? UpdateQuantityAction.ADD : UpdateQuantityAction.REMOVE;
+    onChange(actionType);
   };
 
   return (
@@ -58,7 +66,7 @@ const InputNumber: FC<InputNumberProps> = ({
       type="number"
       disabled={disabled}
       value={value}
-      onChange={({ target: { value } }) => onChange(Number(value))}
+      onChange={handleUpdate}
       InputProps={{
         inputProps: { min },
         disableUnderline: true,

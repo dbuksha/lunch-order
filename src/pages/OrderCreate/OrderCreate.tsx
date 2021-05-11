@@ -19,6 +19,8 @@ import {
   getCurrentOrder,
   getUserOrder,
   updateOrder,
+  updateDishesQuantity,
+  UpdateQuantityAction,
 } from 'store/orders';
 import { selectedOrderDishesIdsSet } from 'store/orders/orders-selectors';
 import { getCurrentUser } from 'store/users/users-selectors';
@@ -152,8 +154,8 @@ const OrderCreate: FC = () => {
   };
 
   const onChangeDishQuantity = (
-    quantity: number,
     lunchId: string,
+    type: UpdateQuantityAction,
     dish?: Dish,
   ) => {
     let dishes = [];
@@ -164,8 +166,8 @@ const OrderCreate: FC = () => {
     } else {
       dishes = [dish];
     }
-    dispatch(updateOrder({ dishes, selected: true, quantity }));
-    //   TODO:!!
+
+    dispatch(updateDishesQuantity({ dishes, type }));
   };
 
   const dayName = dayjs()
@@ -192,12 +194,12 @@ const OrderCreate: FC = () => {
             <ListDishes
               key={lunch.name}
               dishes={lunch.dishes}
-              changeDishQuantity={(quantity, dish) =>
-                onChangeDishQuantity(quantity, lunch.id, dish)
-              }
               selectedDishes={selectedDishes}
               selectDish={(selected, quantity, dish) =>
                 onDishSelect(lunch.id, selected, quantity, dish)
+              }
+              updateDishQuantity={(type, dish) =>
+                onChangeDishQuantity(lunch.id, type, dish)
               }
             />
           </Grid>
