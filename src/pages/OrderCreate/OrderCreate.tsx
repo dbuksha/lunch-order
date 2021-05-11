@@ -52,7 +52,7 @@ const useStyles = makeStyles((theme: Theme) =>
     item: {
       margin: theme.spacing(1),
     },
-    h6: {
+    pageTitle: {
       '&:first-letter': {
         textTransform: 'capitalize',
       },
@@ -172,6 +172,10 @@ const OrderCreate: FC = () => {
 
   return (
     <StyledPaper>
+      <Typography className={classes.pageTitle} component="div" variant="h6">
+        {dayName}
+        {dayjs().day() !== getOrderDayNumber() && '(предварительный заказ)'}
+      </Typography>
       <Grid container spacing={2} justify="center">
         {todayLunches?.map((lunch: Lunch) => (
           <Grid item xs={12} sm={6} md={4} key={lunch.name}>
