@@ -17,7 +17,6 @@
     "@types/react-dom": "^17.0.0",
     "@types/react-redux": "^7.1.16",
     "@types/react-router-dom": "^5.1.7",
-    "@types/react-text-mask": "^5.4.7",
     "dayjs": "^1.10.4",
     "firebase": "^8.3.2",
     "formik": "^2.2.6",
@@ -26,10 +25,10 @@
     "react": "^17.0.2",
     "react-dom": "^17.0.2",
     "react-hook-form": "^7.0.4",
+    "react-number-format": "^4.5.5",
     "react-redux": "^7.2.3",
     "react-router-dom": "^5.2.0",
     "react-scripts": "4.0.3",
-    "react-text-mask": "^5.4.3",
     "typescript": "^4.1.2",
     "web-vitals": "^1.0.1",
     "yup": "^0.32.9"
@@ -63,13 +62,13 @@
   "devDependencies": {
     "@typescript-eslint/eslint-plugin": "^4.21.0",
     "@typescript-eslint/parser": "^4.21.0",
+    "env-cmd": "^10.1.0",
     "eslint": "^7.23.0",
     "eslint-config-airbnb-typescript": "^12.3.1",
     "eslint-config-airbnb-typescript-prettier": "^4.2.0",
     "husky": "^6.0.0",
     "lint-staged": "^10.5.4",
-    "prettier": "^2.2.1",
-    "env-cmd": "^10.1.0"
+    "prettier": "^2.2.1"
   },
   "husky": {
     "hooks": {
