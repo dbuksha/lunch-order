@@ -10,11 +10,13 @@ import {
   TableRow,
   Toolbar,
   Typography,
+  Chip,
 } from '@material-ui/core';
 import { calculateDishesPrice } from 'utils/orders';
 import { Order } from 'entities/Order';
 import OrderDishItem from 'pages/OrdersList/OrderDishItem';
 import Ruble from 'components/Ruble';
+import dayjs from 'utils/dayjs';
 
 type OrderCardProps = {
   order: Order;
@@ -27,16 +29,26 @@ const useStyles = makeStyles({
   table: {
     width: '100%',
   },
+  justifySpaceBetween: {
+    display: 'flex',
+    justifyContent: 'space-between',
+  },
 });
 const OrderCard: FC<OrderCardProps> = ({ order }) => {
   const classes = useStyles();
 
+  const isTodayOrder = dayjs(order.date).day() === dayjs().day();
+
   return (
     <Paper>
-      <Toolbar>
+      <Toolbar className={classes.justifySpaceBetween}>
         <Typography component="div" variant="subtitle1">
           {order.person!.name}
         </Typography>
+        <Chip
+          label={isTodayOrder ? 'Сегодня' : 'Завтра'}
+          color={isTodayOrder ? 'primary' : 'default'}
+        />
       </Toolbar>
       <TableContainer>
         <Table className={classes.table} size="small">

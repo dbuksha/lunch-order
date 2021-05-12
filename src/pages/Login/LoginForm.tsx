@@ -5,17 +5,16 @@ import {
   createStyles,
   makeStyles,
   Theme,
-  Input,
   FormControl,
-  InputLabel,
   Container,
+  InputLabel,
 } from '@material-ui/core';
 import { useFormik } from 'formik';
 import * as yup from 'yup';
 import { useDispatch } from 'react-redux';
 
 import { addUser } from 'store/users';
-import { InputMask } from 'components/MaskedInput';
+import NumberFormat from 'react-number-format';
 
 const validationSchema = yup.object({
   name: yup.string().required('is required'),
@@ -63,18 +62,19 @@ const LoginForm: FC = () => {
           classes={{ root: classes.textField }}
           required
           fullWidth
-          label="Имя"
+          placeholder="Имя"
         />
 
         <FormControl classes={{ root: classes.formControl }}>
-          <InputLabel htmlFor="phoneInput">Телефон</InputLabel>
-          <Input
+          <NumberFormat
             value={formik.values.phone}
-            onChange={formik.handleChange}
-            name="phone"
             id="phoneInput"
-            inputComponent={InputMask as any}
-            fullWidth
+            placeholder="Телефон"
+            customInput={TextField}
+            onValueChange={(val) =>
+              formik.setFieldValue('phone', val.floatValue)
+            }
+            format="+7 (###) ###-####"
           />
         </FormControl>
 
