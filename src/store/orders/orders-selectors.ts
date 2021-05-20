@@ -3,6 +3,8 @@ import { RootState } from 'store';
 import { OrderState } from 'store/orders';
 import { Order } from 'entities/Order';
 import { SelectedDishes } from 'entities/Dish';
+import dayjs from 'utils/dayjs';
+import { todayEndOrderTime } from 'utils/time-helper';
 
 export const selectedOrderDishesIdsSet = createSelector<
   RootState,
@@ -29,4 +31,15 @@ export const getCurrentOrder = createSelector<RootState, OrderState, Order>(
 export const getOrdersList = createSelector<RootState, OrderState, Order[]>(
   (state) => state.orders,
   (state) => state.orders,
+);
+
+export const getTodayOrders = createSelector<RootState, OrderState, Order[]>(
+  (state) => state.orders,
+  (state) => {
+    const { orders } = state;
+    if (!orders.length) return [];
+    return state.orders.filter((o) =>
+      dayjs(o.date).isBefore(todayEndOrderTime),
+    );
+  },
 );
