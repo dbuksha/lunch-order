@@ -99,7 +99,7 @@ const OrderCreate: FC = () => {
 
     // if lunch not for today: set tomorrow (8 a.m.)
     const time = isTimeForTodayLunch()
-      ? dayjs()
+      ? dayjs().hour(8).startOf('h')
       : dayjs().add(1, 'day').hour(8).startOf('h');
 
     const orderData: OrderFirebase = {
