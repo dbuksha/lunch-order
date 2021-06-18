@@ -12,7 +12,8 @@ import {
   Typography,
   Chip,
 } from '@material-ui/core';
-import { calculateDishesPrice } from 'utils/orders';
+import { calculateOrderPrice } from 'utils/orders';
+
 import { Order } from 'entities/Order';
 import OrderDishItem from 'pages/OrdersList/OrderDishItem';
 import Ruble from 'components/Ruble';
@@ -38,6 +39,9 @@ const OrderCard: FC<OrderCardProps> = ({ order }) => {
   const classes = useStyles();
 
   const isTodayOrder = dayjs(order.date).day() === dayjs().day();
+  const calculatedDishesPrice = calculateOrderPrice(order.dishes);
+  const colorMode = isTodayOrder ? 'primary' : 'default';
+  const dayLabel = isTodayOrder ? 'Сегодня' : 'Завтра';
 
   return (
     <Paper>
@@ -45,16 +49,13 @@ const OrderCard: FC<OrderCardProps> = ({ order }) => {
         <Typography component="div" variant="subtitle1">
           {order.person!.name}
         </Typography>
-        <Chip
-          label={isTodayOrder ? 'Сегодня' : 'Завтра'}
-          color={isTodayOrder ? 'primary' : 'default'}
-        />
+        <Chip label={dayLabel} color={colorMode} />
       </Toolbar>
       <TableContainer>
         <Table className={classes.table} size="small">
           <caption>
             {' '}
-            Итого: {calculateDishesPrice(order.dishes.map((d) => d.dish))}
+            Итого: {calculatedDishesPrice}
             <Ruble />
           </caption>
           <TableHead>

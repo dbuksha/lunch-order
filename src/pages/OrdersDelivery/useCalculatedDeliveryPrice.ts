@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react';
-import * as deliveryDataHelper from 'pages/OrdersDelivery/collectDeliveryDataHelper';
+
 import { OrderDish } from 'entities/Dish';
+import { calculateOrderPrice } from 'utils/orders';
 
 export const useCalculatedDeliveryPrice = (
   calculatedDishes: OrderDish[],
@@ -9,9 +10,7 @@ export const useCalculatedDeliveryPrice = (
 
   useEffect(() => {
     if (!calculatedDishes.length) return;
-    setDeliveryPrice(
-      deliveryDataHelper.calculateDeliveryPrice(calculatedDishes),
-    );
+    setDeliveryPrice(calculateOrderPrice(calculatedDishes));
   }, [calculatedDishes]);
 
   return deliveryPrice;

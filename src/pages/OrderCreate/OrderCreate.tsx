@@ -25,7 +25,6 @@ import {
 } from 'store/orders';
 import { selectedOrderDishesIdsSet } from 'store/orders/orders-selectors';
 import { getCurrentUser } from 'store/users/users-selectors';
-import * as deliveryDataHelper from 'pages/OrdersDelivery/collectDeliveryDataHelper';
 
 // components
 import ListDishes from 'pages/OrderCreate/ListDishes';
@@ -38,6 +37,7 @@ import { OrderFirebase } from 'entities/Order';
 import { getOrderDayNumber, isTimeForTodayLunch } from 'utils/time-helper';
 import { useTodayLunches } from 'use/useTodayLunches';
 import Ruble from 'components/Ruble';
+import { calculateOrderPrice } from 'utils/orders';
 
 const findLunchById = (lunches: Lunch[], lunchId: string): Lunch | null =>
   lunches.find((lunch: Lunch) => lunch.id === lunchId) || null;
@@ -79,7 +79,7 @@ const OrderCreate: FC = () => {
   // recalculate order sum
   useEffect(() => {
     if (order && selectedDishes) {
-      const price = deliveryDataHelper.calculateDeliveryPrice(order.dishes);
+      const price = calculateOrderPrice(order.dishes);
       setCalculatedPrice(price);
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps

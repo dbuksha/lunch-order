@@ -57,17 +57,6 @@ export const calculateDishesQuantity = (dishes: OrderDish[]): OrderDish[] => {
 };
 
 /**
- * Calculate delivery price depending on the dishes quantity
- */
-export const calculateDeliveryPrice = (dishes: OrderDish[]): number => {
-  return dishes.reduce((acc: number, dish: OrderDish) => {
-    const dishesPrice = dish.dish.price * dish.quantity;
-    acc += dishesPrice;
-    return acc;
-  }, 0);
-};
-
-/**
  * Remove dishes in delivery data if they have the same quantity, as lunch
  *
  * @param dishes: all delivery dishes
