@@ -1,102 +1,192 @@
 import MockDate from 'mockdate';
-import dayjs from 'utils/dayjs';
 import {
   isTimeForTodayLunch,
   isTodayOrTomorrowOrderExists,
   getOrderDayNumber,
   getDaysToAdd,
 } from 'utils/time-helper';
+import dayjs from 'utils/dayjs';
+
+function randomDate() {
+  const start = new Date(2012, 0, 1);
+  const end = new Date();
+  return new Date(
+    start.getTime() + Math.random() * (end.getTime() - start.getTime()),
+  );
+}
 
 describe('isTimeForTodayLunch', () => {
-  it('should return false for 12:00', () => {
-    MockDate.set(dayjs().hour(12).startOf('h').valueOf());
-    expect(isTimeForTodayLunch()).toBeFalsy();
+  afterAll(() => {
+    MockDate.reset();
   });
 
-  it('should return true for 10:00', () => {
-    MockDate.set(dayjs().hour(10).startOf('h').valueOf());
-    expect(isTimeForTodayLunch()).toBeTruthy();
+  const IsBeforeEndLunchTime = (date: Date) => {
+    const now = dayjs(date);
+    const endOfLunchTime = now.hour(10).minute(30).second(0);
+    return dayjs(date).isBefore(endOfLunchTime);
+  };
+
+  const timeCases = Array.from({ length: 50 }, () => {
+    const date = randomDate();
+    return [date, IsBeforeEndLunchTime(date)];
+  });
+
+  test.each(timeCases)('for %s should return %s', (date, expected) => {
+    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+    // @ts-ignore
+    MockDate.set(dayjs(date).valueOf());
+    expect(isTimeForTodayLunch()).toBe(expected);
   });
 });
 
 describe('isTodayOrTomorrowOrderExists', () => {
-  it('should return false for yesterday order', () => {
-    const yesterday = dayjs().subtract(1, 'd').valueOf();
-    expect(isTodayOrTomorrowOrderExists(yesterday)).toBeFalsy();
+  afterAll(() => {
+    MockDate.reset();
   });
 
-  it('should return true for today in time order', () => {
-    const time = dayjs().hour(9).startOf('h').valueOf();
-    MockDate.set(time);
-
-    expect(isTodayOrTomorrowOrderExists(time)).toBeTruthy();
+  describe('yesterday order', () => {
+    it('should return false', () => {
+      const yesterday = dayjs().subtract(1, 'd').valueOf();
+      expect(isTodayOrTomorrowOrderExists(yesterday)).toBeFalsy();
+    });
   });
 
-  it('should return true for tomorrow order', () => {
-    const time = dayjs().hour(12).startOf('h');
-    MockDate.set(time.valueOf());
-    const tomorrow = time.add(1, 'd');
+  describe('today order', () => {
+    it('should return true in time', () => {
+      const time = dayjs().hour(9).startOf('h').valueOf();
+      MockDate.set(time);
 
-    expect(isTodayOrTomorrowOrderExists(tomorrow.valueOf())).toBeTruthy();
+      expect(isTodayOrTomorrowOrderExists(time)).toBeTruthy();
+    });
+
+    it('should return false later 10:30', () => {
+      const time = dayjs().hour(11).startOf('h').valueOf();
+      MockDate.set(time);
+
+      expect(isTodayOrTomorrowOrderExists(time)).toBeFalsy();
+    });
+  });
+
+  describe('tomorrow order', () => {
+    it('should return true ', () => {
+      const time = dayjs().hour(12).startOf('h');
+      MockDate.set(time.valueOf());
+      const tomorrow = time.add(1, 'd');
+
+      expect(isTodayOrTomorrowOrderExists(tomorrow.valueOf())).toBeTruthy();
+    });
   });
 });
 
-describe('getOrderDayNumber', () => {
-  it('should return Friday if we have Friday before 10:30', () => {
-    const time = dayjs().day(5).hour(9).startOf('h');
-    MockDate.set(time.valueOf());
-
-    expect(getOrderDayNumber()).toBe(5);
+describe('getOrder0DayNumber', () => {
+  afterAll(() => {
+    MockDate.reset();
   });
 
-  it('should return Monday if we have Friday after 10:30', () => {
-    const time = dayjs().day(5).hour(12).startOf('h');
-    MockDate.set(time.valueOf());
+  const daysCases: { [key: number]: number[][] } = {
+    1: [
+      [10, 1],
+      [11, 2],
+    ],
+    2: [
+      [10, 2],
+      [12, 3],
+    ],
+    3: [
+      [10, 3],
+      [15, 4],
+    ],
+    4: [
+      [10, 4],
+      [14, 5],
+    ],
+    5: [
+      [10, 5],
+      [15, 1],
+    ],
+    6: [
+      [10, 1],
+      [14, 1],
+    ],
+    0: [
+      [10, 1],
+      [14, 1],
+    ],
+  };
 
-    expect(getOrderDayNumber()).toBe(1);
-  });
+  Object.keys(daysCases).forEach((day) => {
+    const todayName = dayjs().locale('en').weekday(Number(day)).format('dddd');
 
-  it('should return Monday if we have Saturday', () => {
-    const time = dayjs().day(6).hour(10).startOf('h');
-    MockDate.set(time.valueOf());
+    describe(todayName, () => {
+      const cases = daysCases[Number(day)];
 
-    expect(getOrderDayNumber()).toBe(1);
-  });
+      cases.forEach(([time, expectedDay]) => {
+        const expectedDayName = dayjs()
+          .locale('en')
+          .weekday(Number(expectedDay))
+          .format('dddd');
 
-  it('should return Monday if we have Sunday', () => {
-    const time = dayjs().day(7).hour(10).startOf('h');
-    MockDate.set(time.valueOf());
+        it(`should return ${expectedDayName} at ${time}:00`, () => {
+          const today = dayjs().day(Number(day)).hour(time).startOf('h');
+          MockDate.set(today.valueOf());
 
-    expect(getOrderDayNumber()).toBe(1);
+          expect(getOrderDayNumber()).toBe(expectedDay);
+        });
+      });
+    });
   });
 });
 
 describe('getDaysToAdd', () => {
-  it('should return 0 for Friday before 10:30', () => {
-    const time = dayjs().day(5).hour(9).startOf('h');
-    MockDate.set(time.valueOf());
-
-    expect(getDaysToAdd()).toBe(0);
+  afterAll(() => {
+    MockDate.reset();
   });
 
-  it('should return 3 for Friday after 10:30', () => {
-    const time = dayjs().day(5).hour(12).startOf('h');
-    MockDate.set(time.valueOf());
+  const daysCases: { [key: number]: number[][] } = {
+    1: [
+      [10, 0],
+      [11, 1],
+    ],
+    2: [
+      [10, 0],
+      [12, 1],
+    ],
+    3: [
+      [10, 0],
+      [15, 1],
+    ],
+    4: [
+      [10, 0],
+      [14, 1],
+    ],
+    5: [
+      [10, 0],
+      [15, 3],
+    ],
+    6: [
+      [10, 2],
+      [14, 2],
+    ],
+    0: [
+      [10, 1],
+      [14, 1],
+    ],
+  };
 
-    expect(getDaysToAdd()).toBe(3);
-  });
+  Object.keys(daysCases).forEach((day) => {
+    const todayName = dayjs().locale('en').weekday(Number(day)).format('dddd');
 
-  it('should return 2 for Saturday', () => {
-    const time = dayjs().day(6).hour(12).startOf('h');
-    MockDate.set(time.valueOf());
+    describe(todayName, () => {
+      const cases = daysCases[Number(day)];
 
-    expect(getDaysToAdd()).toBe(2);
-  });
+      cases.forEach(([time, expectedDays]) => {
+        it(`should return ${expectedDays} days at ${time}:00`, () => {
+          const today = dayjs().day(Number(day)).hour(time).startOf('h');
+          MockDate.set(today.valueOf());
 
-  it('should return 1 for Sunday', () => {
-    const time = dayjs().day(7).hour(12).startOf('h');
-    MockDate.set(time.valueOf());
-
-    expect(getDaysToAdd()).toBe(1);
+          expect(getDaysToAdd()).toBe(expectedDays);
+        });
+      });
+    });
   });
 });

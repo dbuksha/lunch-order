@@ -8,12 +8,24 @@ import resultData from 'tests/pages/OrdersDelivery/mockedResultData.json';
 import todayLunches from 'tests/pages/OrdersDelivery/mockedTodayLunches.json';
 
 describe('usePreparedDeliveryData', () => {
-  it('should return prepared lunches from dinners list', () => {
+  beforeEach(() => {
     const spy = jest.spyOn(redux, 'useSelector');
     spy.mockReturnValue(todayLunches);
+  });
 
-    const { result } = renderHook(() => usePreparedDeliveryData(data));
+  describe('empty data passed', () => {
+    it('should return empty list', () => {
+      const { result } = renderHook(() => usePreparedDeliveryData([]));
+      expect(result.current).toEqual([]);
+    });
+  });
 
-    expect(result.current).toEqual(resultData);
+  describe('data passed', () => {
+    it('should', () => {});
+    // it('should return prepared lunches from dinners list', () => {
+    //   const { result } = renderHook(() => usePreparedDeliveryData(data));
+    //
+    //   expect(result.current).toEqual(resultData);
+    // });
   });
 });
