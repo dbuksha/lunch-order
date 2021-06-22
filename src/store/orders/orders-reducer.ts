@@ -160,4 +160,5 @@ export const {
   clearOrdersList,
   updateDishesQuantity,
 } = ordersSlice.actions;
+
 export default ordersSlice.reducer;

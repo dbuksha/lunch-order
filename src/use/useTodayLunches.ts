@@ -1,5 +1,4 @@
 import { useState } from 'react';
-import { sortBy } from 'lodash';
 import { useSelector } from 'react-redux';
 import { sortBy } from 'lodash';
 import { Lunch } from 'entities/Lunch';
