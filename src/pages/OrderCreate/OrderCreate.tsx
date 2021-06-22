@@ -19,25 +19,27 @@ import {
   getCurrentOrder,
   getUserOrder,
   updateOrder,
+  updateDishesQuantity,
+  UpdateQuantityAction,
 } from 'store/orders';
 import { selectedOrderDishesIdsSet } from 'store/orders/orders-selectors';
 import { getCurrentUser } from 'store/users/users-selectors';
-import { calculateDishesPrice } from 'utils/orders';
+import * as deliveryDataHelper from 'pages/OrdersDelivery/collectDeliveryDataHelper';
 
 // components
-import ListDishes from 'pages/OrderCreate/List-Dishes';
+import ListDishes from 'pages/OrderCreate/ListDishes';
 import StyledPaper from 'components/StyledPaper';
 
 // entities
 import { Lunch } from 'entities/Lunch';
 import { Dish } from 'entities/Dish';
 import { OrderFirebase } from 'entities/Order';
+import dayjs from 'utils/dayjs';
 import {
   getOrderDayNumber,
   getDaysToAdd,
   isTimeForTodayLunch,
 } from 'utils/time-helper';
-import dayjs from 'utils/dayjs';
 import { useTodayLunches } from 'use/useTodayLunches';
 import Ruble from 'components/Ruble';
 
@@ -54,10 +56,11 @@ const useStyles = makeStyles((theme: Theme) =>
     item: {
       margin: theme.spacing(1),
     },
-    h6: {
+    pageTitle: {
       '&:first-letter': {
         textTransform: 'capitalize',
       },
+      wordWrap: 'break-word',
     },
   }),
 );
@@ -80,8 +83,8 @@ const OrderCreate: FC = () => {
   // recalculate order sum
   useEffect(() => {
     if (order && selectedDishes) {
-      const dishes = order.dishes.map((d) => d.dish);
-      setCalculatedPrice(calculateDishesPrice(dishes));
+      const price = deliveryDataHelper.calculateDeliveryPrice(order.dishes);
+      setCalculatedPrice(price);
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [selectedDishes]);
@@ -89,11 +92,14 @@ const OrderCreate: FC = () => {
   const onCreateOrderSubmit = async () => {
     // TODO: show an error popup ?
     if (!currentUser || !selectedDishes) return;
+    const preparedDishes: any[] = [];
 
-    const preparedDishes = [...selectedDishes].map((id) => ({
-      dishRef: firebaseInstance.doc(`${Collections.Dishes}/${id}`),
-      quantity: 1, // TODO: add quantity selection to the form
-    }));
+    selectedDishes.forEach((quantity, id) => {
+      preparedDishes.push({
+        dishRef: firebaseInstance.doc(`${Collections.Dishes}/${id}`),
+        quantity,
+      });
+    });
 
     // if lunch not for today: set tomorrow (8 a.m.)
     const time = isTimeForTodayLunch()
@@ -117,7 +123,12 @@ const OrderCreate: FC = () => {
     }
   };
 
-  const onDishSelect = (lunchId: string, selected: boolean, dish?: Dish) => {
+  const onDishSelect = (
+    lunchId: string,
+    selected: boolean,
+    quantity: number,
+    dish?: Dish,
+  ) => {
     let dishes = [];
     if (!dish) {
       const selectedLunch = findLunchById(todayLunches, lunchId);
@@ -127,7 +138,7 @@ const OrderCreate: FC = () => {
       dishes = [dish];
     }
 
-    dispatch(updateOrder({ dishes, selected }));
+    dispatch(updateOrder({ dishes, selected, quantity }));
   };
 
   // TODO: show alerts
@@ -142,17 +153,33 @@ const OrderCreate: FC = () => {
     handleDeleteOrder();
   };
 
+  const onChangeDishQuantity = (
+    lunchId: string,
+    type: UpdateQuantityAction,
+    dish?: Dish,
+  ) => {
+    let dishes = [];
+    if (!dish) {
+      const selectedLunch = findLunchById(todayLunches, lunchId);
+      if (!selectedLunch) return;
+      dishes = selectedLunch.dishes;
+    } else {
+      dishes = [dish];
+    }
+
+    dispatch(updateDishesQuantity({ dishes, type }));
+  };
+
   const dayName = dayjs()
     .weekday(getOrderDayNumber() - 1)
     .format('dddd');
 
   return (
     <StyledPaper>
-      <Typography className={classes.h6} component="div" variant="h6">
+      <Typography className={classes.pageTitle} component="div" variant="h6">
         {dayName}
         {dayjs().day() !== getOrderDayNumber() && '(предварительный заказ)'}
       </Typography>
-
       <Grid container spacing={2} justify="center">
         {todayLunches?.map((lunch: Lunch) => (
           <Grid item xs={12} sm={6} md={4} key={lunch.name}>
@@ -167,8 +194,11 @@ const OrderCreate: FC = () => {
               key={lunch.name}
               dishes={lunch.dishes}
               selectedDishes={selectedDishes}
-              selectDish={(selected, dish) =>
-                onDishSelect(lunch.id, selected, dish)
+              selectDish={(selected, quantity, dish) =>
+                onDishSelect(lunch.id, selected, quantity, dish)
+              }
+              updateDishQuantity={(type, dish) =>
+                onChangeDishQuantity(lunch.id, type, dish)
               }
             />
           </Grid>
