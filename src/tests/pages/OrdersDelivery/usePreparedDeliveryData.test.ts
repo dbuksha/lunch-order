@@ -1,16 +1,17 @@
 import { usePreparedDeliveryData } from 'pages/OrdersDelivery/usePreparedDeliveryData';
-import * as redux from 'react-redux';
 import { renderHook } from '@testing-library/react-hooks';
 
 // mocked data
-import data from 'tests/pages/OrdersDelivery/mockedDishesData.json';
-import resultData from 'tests/pages/OrdersDelivery/mockedResultData.json';
-import todayLunches from 'tests/pages/OrdersDelivery/mockedTodayLunches.json';
+import mockedData from 'tests/pages/OrdersDelivery/mockedDishesData.json';
+import mockTodayLunches from 'tests/pages/OrdersDelivery/mockedTodayLunches.json';
+
+jest.mock('../../../use/useTodayLunches', () => ({
+  useTodayLunches: () => mockTodayLunches,
+}));
 
 describe('usePreparedDeliveryData', () => {
-  beforeEach(() => {
-    const spy = jest.spyOn(redux, 'useSelector');
-    spy.mockReturnValue(todayLunches);
+  afterAll(() => {
+    jest.clearAllMocks();
   });
 
   describe('empty data passed', () => {
@@ -21,11 +22,39 @@ describe('usePreparedDeliveryData', () => {
   });
 
   describe('data passed', () => {
-    it('should', () => {});
-    // it('should return prepared lunches from dinners list', () => {
-    //   const { result } = renderHook(() => usePreparedDeliveryData(data));
-    //
-    //   expect(result.current).toEqual(resultData);
-    // });
+    it('should contain the passed data', () => {
+      const list = [
+        {
+          dish: {
+            id: 'Q8oaw60daEOnY5ZNlkbt',
+            weight: 150,
+            price: 30,
+            name: 'Гречка',
+          },
+          quantity: 1,
+        },
+      ];
+
+      const { result } = renderHook(() => usePreparedDeliveryData(list));
+
+      expect(result.current).toEqual(
+        expect.arrayContaining([
+          expect.objectContaining({
+            name: list[0].dish.name,
+            quantity: list[0].quantity,
+          }),
+        ]),
+      );
+    });
+
+    it('should collect lunch', () => {
+      const { result } = renderHook(() => usePreparedDeliveryData(mockedData));
+
+      expect(result.current).toEqual(
+        expect.arrayContaining([
+          expect.objectContaining({ name: 'Комплекс 1' }),
+        ]),
+      );
+    });
   });
 });
