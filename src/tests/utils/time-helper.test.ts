@@ -83,6 +83,7 @@ describe('getOrderDayNumber get order day to set current menu', () => {
     MockDate.reset();
   });
 
+  // {day_number: [[current_hour: expected_order_day_number]]}
   const daysCases: { [key: number]: number[][] } = {
     1: [
       [10, 1],
@@ -142,6 +143,7 @@ describe('getDaysToAdd returns needed days count to add for set order date', () 
     MockDate.reset();
   });
 
+  // {day_number: [[current_hour: expected_result_days_count]]}
   const daysCases: { [key: number]: number[][] } = {
     1: [
       [10, 0],
