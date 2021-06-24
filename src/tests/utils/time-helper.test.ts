@@ -15,7 +15,7 @@ function randomDate() {
   );
 }
 
-describe('isTimeForTodayLunch', () => {
+describe('isTimeForTodayLunch check if time before 10:30', () => {
   afterAll(() => {
     MockDate.reset();
   });
@@ -39,7 +39,7 @@ describe('isTimeForTodayLunch', () => {
   });
 });
 
-describe('isTodayOrTomorrowOrderExists', () => {
+describe('isTodayOrTomorrowOrderExists check if order is created today/tomorrow', () => {
   afterAll(() => {
     MockDate.reset();
   });
@@ -78,7 +78,7 @@ describe('isTodayOrTomorrowOrderExists', () => {
   });
 });
 
-describe('getOrder0DayNumber', () => {
+describe('getOrderDayNumber get order day to set current menu', () => {
   afterAll(() => {
     MockDate.reset();
   });
@@ -137,7 +137,7 @@ describe('getOrder0DayNumber', () => {
   });
 });
 
-describe('getDaysToAdd', () => {
+describe('getDaysToAdd returns needed days count to add for set order date', () => {
   afterAll(() => {
     MockDate.reset();
   });

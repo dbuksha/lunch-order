@@ -10,6 +10,7 @@ export const usePreparedDeliveryData = (
   calculatedDishes: OrderDish[],
 ): DeliveryItemProps[] => {
   const lunches = useTodayLunches(false);
+
   const [deliveryData, setDeliveryData] = useState<DeliveryItemProps[]>([]);
 
   useEffect(() => {

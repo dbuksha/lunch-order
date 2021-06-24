@@ -22,16 +22,20 @@ describe('usePreparedDeliveryData', () => {
   });
 
   describe('data passed', () => {
+    const EXPECTED_NAME = 'Гречка';
+
     it('should contain the passed data', () => {
+      const EXPECTED_QUANTITY = 5;
+
       const list = [
         {
           dish: {
             id: 'Q8oaw60daEOnY5ZNlkbt',
             weight: 150,
             price: 30,
-            name: 'Гречка',
+            name: EXPECTED_NAME,
           },
-          quantity: 1,
+          quantity: EXPECTED_QUANTITY,
         },
       ];
 
@@ -40,19 +44,43 @@ describe('usePreparedDeliveryData', () => {
       expect(result.current).toEqual(
         expect.arrayContaining([
           expect.objectContaining({
-            name: list[0].dish.name,
-            quantity: list[0].quantity,
+            name: EXPECTED_NAME,
+            quantity: EXPECTED_QUANTITY,
           }),
         ]),
       );
     });
 
     it('should collect lunch', () => {
+      const LUNCH_NAME = 'Комплекс 1';
+      const { result } = renderHook(() => usePreparedDeliveryData(mockedData));
+
+      expect(result.current).toEqual(
+        expect.arrayContaining([expect.objectContaining({ name: LUNCH_NAME })]),
+      );
+    });
+
+    it('should change remove dish from list after collecting lunch', () => {
+      const { result } = renderHook(() => usePreparedDeliveryData(mockedData));
+
+      expect(result.current).not.toEqual(
+        expect.arrayContaining([
+          expect.objectContaining({ name: EXPECTED_NAME }),
+        ]),
+      );
+    });
+
+    it('should change quantity of a dish after collecting lunch', () => {
+      const DISH_NAME = 'Суп грибной';
+      const EXPECTED_UPDATED_QUANTITY = 1;
       const { result } = renderHook(() => usePreparedDeliveryData(mockedData));
 
       expect(result.current).toEqual(
         expect.arrayContaining([
-          expect.objectContaining({ name: 'Комплекс 1' }),
+          expect.objectContaining({
+            name: DISH_NAME,
+            quantity: EXPECTED_UPDATED_QUANTITY,
+          }),
         ]),
       );
     });
