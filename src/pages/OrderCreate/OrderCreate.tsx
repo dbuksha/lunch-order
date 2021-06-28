@@ -8,39 +8,29 @@ import {
   Theme,
 } from '@material-ui/core';
 import { useDispatch, useSelector } from 'react-redux';
-import { useHistory } from 'react-router-dom';
-import firebase from 'firebase/app';
 import dayjs from 'dayjs';
 
-import firebaseInstance, { Collections } from 'utils/firebase';
+import { getOrderDayNumber } from 'utils/time-helper';
+import { calculateOrderPrice } from 'utils/orders';
 // store
-import {
-  addOrder,
-  deleteOrder,
-  getCurrentOrder,
-  getUserOrder,
-  updateOrder,
-  updateDishesQuantity,
-  UpdateQuantityAction,
-} from 'store/orders';
+import { getCurrentOrder, getUserOrder } from 'store/orders';
+
+// selectors
 import { selectedOrderDishesIdsSet } from 'store/orders/orders-selectors';
-import { getCurrentUser } from 'store/users/users-selectors';
 
 // components
 import ListDishes from 'pages/OrderCreate/ListDishes';
 import StyledPaper from 'components/StyledPaper';
+import Ruble from 'components/Ruble';
 
 // entities
 import { Lunch } from 'entities/Lunch';
-import { Dish } from 'entities/Dish';
-import { OrderFirebase } from 'entities/Order';
-import { getOrderDayNumber, isTimeForTodayLunch } from 'utils/time-helper';
-import { useTodayLunches } from 'use/useTodayLunches';
-import Ruble from 'components/Ruble';
-import { calculateOrderPrice } from 'utils/orders';
 
-const findLunchById = (lunches: Lunch[], lunchId: string): Lunch | null =>
-  lunches.find((lunch: Lunch) => lunch.id === lunchId) || null;
+import { useTodayLunches } from 'use/useTodayLunches';
+import { useHandleOrder } from 'pages/OrderCreate/useHandleOrder';
+import { useUpdateOrder } from 'pages/OrderCreate/useUpadteOrder';
+import { getTodayDelivery } from 'store/deliveries/deliveries-selectors';
+import { Alert } from '@material-ui/lab';
 
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
@@ -64,11 +54,16 @@ const useStyles = makeStyles((theme: Theme) =>
 const OrderCreate: FC = () => {
   const dispatch = useDispatch();
   const classes = useStyles();
-  const history = useHistory();
-  const currentUser = useSelector(getCurrentUser);
   const todayLunches = useTodayLunches();
+  const todayDelivery = useSelector(getTodayDelivery);
   const order = useSelector(getCurrentOrder);
   const selectedDishes = useSelector(selectedOrderDishesIdsSet);
+  const { onCreateOrderSubmit, onDeleteOrder } = useHandleOrder(
+    selectedDishes,
+    todayLunches,
+    order,
+  );
+  const { onChangeDishQuantity, onDishSelect } = useUpdateOrder(todayLunches);
 
   const [calculatedPrice, setCalculatedPrice] = useState<number>(0);
 
@@ -85,96 +80,17 @@ const OrderCreate: FC = () => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [selectedDishes]);
 
-  const onCreateOrderSubmit = async () => {
-    // TODO: show an error popup
-    if (!currentUser || !selectedDishes) return;
-    const preparedDishes: any[] = [];
-
-    selectedDishes.forEach((quantity, id) => {
-      preparedDishes.push({
-        dishRef: firebaseInstance.doc(`${Collections.Dishes}/${id}`),
-        quantity,
-      });
-    });
-
-    // if lunch not for today: set tomorrow (8 a.m.)
-    const time = isTimeForTodayLunch()
-      ? dayjs().hour(8).startOf('h')
-      : dayjs().add(1, 'day').hour(8).startOf('h');
-
-    const orderData: OrderFirebase = {
-      date: firebase.firestore.Timestamp.fromDate(time.toDate()),
-      dishes: preparedDishes,
-      person: firebaseInstance.doc(`${Collections.Users}/${currentUser.id}`),
-    };
-
-    if (order) orderData.id = order.id;
-
-    try {
-      await dispatch(addOrder(orderData));
-      history.push('/');
-    } catch (e) {
-      // TODO: handle an error
-      console.log(e);
-    }
-  };
-
-  const onDishSelect = (
-    lunchId: string,
-    selected: boolean,
-    quantity: number,
-    dish?: Dish,
-  ) => {
-    let dishes = [];
-    if (!dish) {
-      const selectedLunch = findLunchById(todayLunches, lunchId);
-      if (!selectedLunch) return;
-      dishes = selectedLunch.dishes;
-    } else {
-      dishes = [dish];
-    }
-
-    dispatch(updateOrder({ dishes, selected, quantity }));
-  };
-
-  // TODO: show alerts
-  const onDeleteOrder = () => {
-    async function handleDeleteOrder() {
-      if (order?.id) {
-        await dispatch(deleteOrder(order.id));
-        history.push('/');
-      }
-    }
-
-    handleDeleteOrder();
-  };
-
-  const onChangeDishQuantity = (
-    lunchId: string,
-    type: UpdateQuantityAction,
-    dish?: Dish,
-  ) => {
-    let dishes = [];
-    if (!dish) {
-      const selectedLunch = findLunchById(todayLunches, lunchId);
-      if (!selectedLunch) return;
-      dishes = selectedLunch.dishes;
-    } else {
-      dishes = [dish];
-    }
-
-    dispatch(updateDishesQuantity({ dishes, type }));
-  };
-
   const dayName = dayjs()
     .weekday(getOrderDayNumber() - 1)
     .format('dddd');
+  const isOrderInAdvance = dayjs().day() !== getOrderDayNumber();
+  const isOrderDisabledForToday = !!todayDelivery && !isOrderInAdvance;
 
   return (
     <StyledPaper>
       <Typography className={classes.pageTitle} component="div" variant="h6">
         {dayName}
-        {dayjs().day() !== getOrderDayNumber() && '(предварительный заказ)'}
+        {isOrderInAdvance && '(предварительный заказ)'}
       </Typography>
       <Grid container spacing={2} justify="center">
         {todayLunches?.map((lunch: Lunch) => (
@@ -209,6 +125,13 @@ const OrderCreate: FC = () => {
           justify="flex-end"
           alignItems="baseline"
         >
+          {isOrderDisabledForToday && (
+            <Typography component="span" className="secondary">
+              <Alert severity="warning">
+                Заказ на сегодня уже был выполнен.
+              </Alert>
+            </Typography>
+          )}
           <Typography component="span" variant="h6" className={classes.item}>
             Итого:{' '}
             <strong>
@@ -230,7 +153,7 @@ const OrderCreate: FC = () => {
             variant="contained"
             color="primary"
             className={classes.item}
-            disabled={!calculatedPrice}
+            disabled={!calculatedPrice || isOrderDisabledForToday}
             onClick={onCreateOrderSubmit}
           >
             {order?.id ? 'Обновить заказ' : 'Заказать'}

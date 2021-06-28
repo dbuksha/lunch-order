@@ -8,6 +8,7 @@ import {
   Table,
   TableBody,
   TableRow,
+  Box,
 } from '@material-ui/core';
 import { Alert } from '@material-ui/lab';
 import { getIsLoading } from 'store/app';
@@ -17,6 +18,7 @@ import DeliveryItem from './DeliveryItem';
 import { useGroupedDishes } from './useGroupedDishes';
 import { usePreparedDeliveryData } from './usePreparedDeliveryData';
 import { useCalculatedDeliveryPrice } from './useCalculatedDeliveryPrice';
+import CompleteDeliveryButton from './CompleteDeliveryButton';
 
 const OrdersDelivery: FC = () => {
   const isLoading = useSelector(getIsLoading);
@@ -34,6 +36,9 @@ const OrdersDelivery: FC = () => {
 
   return (
     <TableContainer component={Paper}>
+      <Box m={2} mb={0}>
+        <CompleteDeliveryButton />
+      </Box>
       <Table aria-label="simple table">
         <caption>
           {' '}

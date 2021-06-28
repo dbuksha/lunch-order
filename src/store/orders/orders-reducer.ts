@@ -130,6 +130,10 @@ const ordersSlice = createSlice({
     clearOrdersList(state) {
       state.orders = [];
     },
+
+    clearCurrentOrder(state) {
+      state.currentOrder = initOrder;
+    },
   },
 
   extraReducers: (builder) => {
@@ -159,5 +163,6 @@ export const {
   updateOrder,
   clearOrdersList,
   updateDishesQuantity,
+  clearCurrentOrder,
 } = ordersSlice.actions;
 export default ordersSlice.reducer;

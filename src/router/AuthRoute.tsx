@@ -9,6 +9,7 @@ import { fetchDishes } from 'store/dishes';
 import { getCurrentUser } from 'store/users';
 
 import StyledLoader from 'components/StyledLoader';
+import { fetchTodayDelivery } from 'store/deliveries';
 
 const AuthRoute: FC<RouteProps> = (props) => {
   const dispatch = useDispatch();
@@ -21,6 +22,7 @@ const AuthRoute: FC<RouteProps> = (props) => {
     async function preloadData() {
       await dispatch(fetchDishes());
       await dispatch(fetchLunches());
+      dispatch(fetchTodayDelivery());
     }
 
     if (!isDataPreloaded) preloadData();

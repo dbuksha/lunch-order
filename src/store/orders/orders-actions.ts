@@ -31,7 +31,7 @@ const isTodayOrTomorrowOrderExists = (date: number) => {
   const tomorrow = dayjs().add(1, 'd').startOf('d');
 
   return isTimeForTodayLunch()
-    ? dayjs(date).isBetween(todayStartOrderTime, todayEndOrderTime)
+    ? dayjs(date).isBetween(todayStartOrderTime, todayEndOrderTime, null, '[]')
     : dayjs(date).isSameOrAfter(tomorrow);
 };
 
