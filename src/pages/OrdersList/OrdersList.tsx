@@ -27,6 +27,8 @@ const OrdersList: FC = () => {
     );
   }
 
+  console.log('Orders - ', orders);
+
   return (
     <Grid container spacing={3} alignItems="stretch">
       {orders?.map((order) => (

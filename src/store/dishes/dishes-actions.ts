@@ -5,9 +5,11 @@ import firebaseInstance, {
   getCollectionEntries,
 } from 'utils/firebase';
 import { Dish } from 'entities/Dish';
+// import { hideLoader, showLoader, showSnackBar, StatusTypes } from 'store/app';
 
 enum ActionTypes {
   FETCH_DISHES = 'dishes/fetchDishes',
+  // ADD_DISH = 'dishes/addDish',
 }
 
 const dishesCollection = firebaseInstance.collection(Collections.Dishes);
@@ -24,3 +26,31 @@ export const fetchDishes = createAsyncThunk(
     }, {});
   },
 );
+
+// export const addDish = createAsyncThunk(
+//   ActionTypes.ADD_DISH,
+//   async (newDish: Dish, { rejectWithValue, dispatch }) => {
+//     try {
+//       dispatch(showLoader());
+//       await dishesCollection.add(newDish);
+
+//       dispatch(
+//         showSnackBar({
+//           status: StatusTypes.success,
+//           message: 'Новое блюдо успешно создано.',
+//         }),
+//       );
+
+//       dispatch(hideLoader());
+//     } catch (err) {
+//       dispatch(hideLoader());
+//       dispatch(
+//         showSnackBar({
+//           status: StatusTypes.error,
+//           message: err.response.data.message,
+//         }),
+//       );
+//       return rejectWithValue(err.response.data);
+//     }
+//   },
+// );

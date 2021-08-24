@@ -170,6 +170,11 @@ const OrderCreate: FC = () => {
     .weekday(getOrderDayNumber() - 1)
     .format('dddd');
 
+  console.log('currentUser - ', currentUser);
+  console.log('todayLunches - ', todayLunches);
+  console.log('order - ', order);
+  console.log('selectedDishes - ', selectedDishes);
+
   return (
     <StyledPaper>
       <Typography className={classes.pageTitle} component="div" variant="h6">

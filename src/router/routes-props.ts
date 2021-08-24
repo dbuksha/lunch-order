@@ -3,6 +3,10 @@ import { FC, ComponentClass, LazyExoticComponent, lazy } from 'react';
 // components
 import { Home } from 'pages/Home';
 import Login from 'pages/Login';
+import Dashboard from 'pages/Dashboard';
+import DishesList from 'pages/DishesList';
+import DishesEdit from 'pages/DishesEdit';
+import DishesNew from 'pages/DishesNew';
 
 const OrdersList = lazy(() => import('pages/OrdersList'));
 const OrderCreate = lazy(() => import('pages/OrderCreate'));
@@ -40,6 +44,26 @@ export const routes: RouteProp[] = [
   {
     path: '/orders/delivery',
     component: OrdersDelivery,
+    auth: true,
+  },
+  {
+    path: '/dashboard',
+    component: Dashboard,
+    auth: true,
+  },
+  {
+    path: '/dishes',
+    component: DishesList,
+    auth: true,
+  },
+  {
+    path: '/dishes-edit/:id',
+    component: DishesNew,
+    auth: true,
+  },
+  {
+    path: '/dishes-new',
+    component: DishesNew,
     auth: true,
   },
 ];

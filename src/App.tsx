@@ -49,7 +49,11 @@ export const App: FC = () => {
   return (
     <Router>
       <CssBaseline />
-      <Container fixed component="main">
+      <>
+        <SnackBar />
+        <Routes />
+      </>
+      {/* <Container fixed component="main">
         <Link component={RouterLink} to="/" className={classes.appHeader}>
           <img src={logo} alt="Logo" className={classes.appLogo} />
           <Typography variant="h6" className={classes.appLabel}>
@@ -58,7 +62,7 @@ export const App: FC = () => {
         </Link>
         <SnackBar />
         <Routes />
-      </Container>
+      </Container> */}
     </Router>
   );
 };
