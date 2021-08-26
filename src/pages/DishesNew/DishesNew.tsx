@@ -1,3 +1,4 @@
+/* eslint-disable guard-for-in */
 import React, { FC, useState, useEffect } from 'react';
 import { useDispatch } from 'react-redux';
 import { Link, useHistory, useParams } from 'react-router-dom';
@@ -10,7 +11,6 @@ import firebaseInstance, { Collections } from 'utils/firebase';
 import {
   Box,
   Container,
-  FormControl,
   TextField,
   Select,
   Typography,
@@ -21,6 +21,7 @@ import {
   Breadcrumbs,
 } from '@material-ui/core';
 
+import Loader from '../../components/StyledLoader';
 import AdminLayout from '../../components/AdminComponenets/Layout/AdminLayout';
 
 interface IParamsURL {
@@ -90,6 +91,7 @@ const DishesNew: FC = () => {
   const history = useHistory();
   const paramsUrl = useParams() as IParamsURL;
   const [typePage, setTypePage] = useState(getCurrentTypePage(paramsUrl));
+  const [loadingStatus, setLoadingStatus] = useState(false);
 
   const formik = useFormik({
     initialValues: {
@@ -107,57 +109,54 @@ const DishesNew: FC = () => {
         weight: +values.weight,
       };
 
-      console.log('Данные с формы - ', newDish);
+      try {
+        await dispatch(showLoader());
 
-      // try {
-      //   await dispatch(showLoader());
+        if (typePage === 'new') {
+          await dishesCollection.add(newDish);
+        } else {
+          const { id } = paramsUrl;
+          await dishesCollection.doc(id).update(newDish);
+        }
 
-      //   if (typePage === 'new') {
-      //     await dishesCollection.add(newDish);
-      //   } else {
-      //     const { id } = paramsUrl;
-      //     await dishesCollection.doc(id).update(newDish);
-      //   }
+        await dispatch(
+          showSnackBar({
+            status: StatusTypes.success,
+            message:
+              typePage === 'new'
+                ? 'Новое блюдо успешно добавлено'
+                : 'Изменения успешно сохранены',
+          }),
+        );
 
-      //   await dispatch(
-      //     showSnackBar({
-      //       status: StatusTypes.success,
-      //       message:
-      //         typePage === 'new'
-      //           ? 'Новое блюдо успешно добавлено'
-      //           : 'Изменения успешно сохранены',
-      //     }),
-      //   );
+        await dispatch(hideLoader());
 
-      //   await dispatch(hideLoader());
-
-      //   if (typePage === 'new') {
-      //     // остаемся на странице и меняем статус на 'edit' и меняем url
-      //     // await history.push('/dishes');
-      //   }
-
-      //   await history.push('/dishes');
-      // } catch (e) {
-      //   // TODO: handle an error
-      //   console.log(e);
-      // }
+        if (typePage === 'new') {
+          await history.push('/dishes');
+        }
+      } catch (e) {
+        // TODO: handle an error
+        console.log(e);
+      }
     },
   });
 
   useEffect(() => {
     (async function () {
+      setLoadingStatus(true);
+
       if (paramsUrl.id) {
-        // get current dish
-        // const currentDish = await dishesCollection.doc(paramsUrl.id).get();
-        setTimeout(() => {
-          // console.log(currentDish);
-          formik.setFieldValue('name', 'Салат');
-        }, 3000);
+        const currentDish = await dishesCollection.doc(paramsUrl.id).get();
+        const result = currentDish.data();
+
+        // eslint-disable-next-line no-restricted-syntax
+        for (const key in result) {
+          formik.setFieldValue(`${key}`, `${result[key]}`);
+        }
       }
+      setLoadingStatus(false);
     })();
   }, []);
-
-  // console.log('collectionRef - ', dishesCollection);
 
   return (
     <AdminLayout>
@@ -170,105 +169,102 @@ const DishesNew: FC = () => {
       </Helmet>
       <Box
         sx={{
-          // backgroundColor: 'background.default',
           minHeight: 'calc(100vh - 64px)',
           py: 3,
         }}
       >
-        <Container className="">
-          <Breadcrumbs aria-label="breadcrumb">
-            <Link to="/dishes" className={classes.link}>
-              Список блюд
-            </Link>
-            <Typography variant="body1">
-              {typePage === 'new'
-                ? 'Добавление нового блюда'
-                : formik.values.name}
-            </Typography>
-          </Breadcrumbs>
-          <form
-            onSubmit={formik.handleSubmit}
-            className={classes.formBlock}
-            autoComplete="off"
-          >
-            <Box className={classes.selectField}>
-              <Select
-                native
-                value={formik.values.category}
-                onChange={formik.handleChange}
-                onBlur={formik.handleBlur}
-                variant="outlined"
-                fullWidth
-                inputProps={{
-                  name: 'category',
-                }}
-              >
-                <option value="main">Главное блюдо</option>
-                <option value="soup">Певрое блюдо</option>
-                <option value="side">Гарнир</option>
-                <option value="salad">Салат</option>
-                <option value="dessert">Десерт</option>
-              </Select>
-            </Box>
-            <Box className={classes.fieldBox}>
-              <TextField
-                value={formik.values.name}
-                onChange={formik.handleChange}
-                error={formik.touched.name && Boolean(formik.errors.name)}
-                // helperText={formik.touched.name && formik.errors.name}
-                name="name"
-                classes={{ root: classes.textField }}
-                fullWidth
-                // placeholder="Название блюда"
-                autoComplete="off"
-                label="Название блюда"
-                variant="outlined"
-              />
-              <span className={classes.fieldError}>
-                {formik.touched.name && formik.errors.name}
-              </span>
-            </Box>
-            <Box className={classes.fieldBox}>
-              <TextField
-                value={formik.values.price}
-                onChange={formik.handleChange}
-                error={formik.touched.price && Boolean(formik.errors.price)}
-                // helperText={formik.touched.price && formik.errors.price}
-                name="price"
-                classes={{ root: classes.textField }}
-                fullWidth
-                // placeholder="Цена (руб.)"
-                autoComplete="off"
-                label="Цена (руб.)"
-                variant="outlined"
-              />
-              <span className={classes.fieldError}>
-                {formik.touched.price && formik.errors.price}
-              </span>
-            </Box>
-            <Box className={classes.fieldBox}>
-              <TextField
-                value={formik.values.weight}
-                onChange={formik.handleChange}
-                error={formik.touched.weight && Boolean(formik.errors.weight)}
-                // helperText={formik.touched.weight && formik.errors.weight}
-                name="weight"
-                classes={{ root: classes.textField }}
-                fullWidth
-                // placeholder="Вес (гр.)"
-                autoComplete="off"
-                label="Вес (гр.)"
-                variant="outlined"
-              />
-              <span className={classes.fieldError}>
-                {formik.touched.weight && formik.errors.weight}
-              </span>
-            </Box>
-            <Button fullWidth color="primary" type="submit">
-              {typePage === 'new' ? 'Добавить' : 'Сохранить'}
-            </Button>
-          </form>
-        </Container>
+        {loadingStatus ? (
+          <Loader />
+        ) : (
+          <Container>
+            <Breadcrumbs aria-label="breadcrumb">
+              <Link to="/dishes" className={classes.link}>
+                Список блюд
+              </Link>
+              <Typography variant="body1">
+                {typePage === 'new'
+                  ? 'Добавление нового блюда'
+                  : formik.values.name}
+              </Typography>
+            </Breadcrumbs>
+            <form
+              onSubmit={formik.handleSubmit}
+              className={classes.formBlock}
+              autoComplete="off"
+            >
+              <Box className={classes.selectField}>
+                <Select
+                  native
+                  value={formik.values.category}
+                  onChange={formik.handleChange}
+                  onBlur={formik.handleBlur}
+                  variant="outlined"
+                  fullWidth
+                  inputProps={{
+                    name: 'category',
+                  }}
+                >
+                  <option value="main">Главное блюдо</option>
+                  <option value="soup">Певрое блюдо</option>
+                  <option value="side">Гарнир</option>
+                  <option value="salad">Салат</option>
+                  <option value="dessert">Десерт</option>
+                </Select>
+              </Box>
+              <Box className={classes.fieldBox}>
+                <TextField
+                  value={formik.values.name}
+                  onChange={formik.handleChange}
+                  error={formik.touched.name && Boolean(formik.errors.name)}
+                  name="name"
+                  classes={{ root: classes.textField }}
+                  fullWidth
+                  autoComplete="off"
+                  label="Название блюда"
+                  variant="outlined"
+                />
+                <span className={classes.fieldError}>
+                  {formik.touched.name && formik.errors.name}
+                </span>
+              </Box>
+              <Box className={classes.fieldBox}>
+                <TextField
+                  value={formik.values.price}
+                  onChange={formik.handleChange}
+                  error={formik.touched.price && Boolean(formik.errors.price)}
+                  name="price"
+                  classes={{ root: classes.textField }}
+                  fullWidth
+                  autoComplete="off"
+                  label="Цена (руб.)"
+                  variant="outlined"
+                />
+                <span className={classes.fieldError}>
+                  {formik.touched.price && formik.errors.price}
+                </span>
+              </Box>
+              <Box className={classes.fieldBox}>
+                <TextField
+                  value={formik.values.weight}
+                  onChange={formik.handleChange}
+                  error={formik.touched.weight && Boolean(formik.errors.weight)}
+                  name="weight"
+                  classes={{ root: classes.textField }}
+                  fullWidth
+                  autoComplete="off"
+                  label="Вес (гр.)"
+                  variant="outlined"
+                />
+                <span className={classes.fieldError}>
+                  {formik.touched.weight && formik.errors.weight}
+                </span>
+              </Box>
+              <Button fullWidth color="primary" type="submit">
+                {typePage === 'new' ? 'Добавить' : 'Сохранить'}
+              </Button>
+            </form>
+          </Container>
+        )}
       </Box>
     </AdminLayout>
   );

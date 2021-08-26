@@ -5,7 +5,6 @@ import { Home } from 'pages/Home';
 import Login from 'pages/Login';
 import Dashboard from 'pages/Dashboard';
 import DishesList from 'pages/DishesList';
-import DishesEdit from 'pages/DishesEdit';
 import DishesNew from 'pages/DishesNew';
 
 const OrdersList = lazy(() => import('pages/OrdersList'));

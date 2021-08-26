@@ -1,16 +1,25 @@
 import React, { FC } from 'react';
-import { Avatar, Box, Divider, List, Typography } from '@material-ui/core';
+import {
+  Avatar,
+  Box,
+  Divider,
+  List,
+  Typography,
+  createStyles,
+  makeStyles,
+} from '@material-ui/core';
 import FastfoodOutlinedIcon from '@material-ui/icons/FastfoodOutlined';
 import { BarChart as BarChartIcon } from 'react-feather';
 import NavItem from './NavItem';
 
+// temp data
 const user = {
   avatar: 'https://ca.slack-edge.com/T03G61VPV-UL0LZHA6Q-d497cf66f4d9-512',
   jobTitle: 'oleg.babenko@distillery.com',
   name: 'Олег Бабенко',
 };
 
-const items = [
+const menuItem = [
   {
     href: '/dashboard',
     Icon: BarChartIcon,
@@ -23,47 +32,57 @@ const items = [
   },
 ];
 
-const DashboardSidebarContent: FC = () => (
-  <Box
-    sx={{
+const useStyles = makeStyles(() =>
+  createStyles({
+    container: {
       display: 'flex',
       flexDirection: 'column',
       height: '100%',
       width: 256,
       paddingTop: 64,
-    }}
-  >
-    <Box
-      sx={{
-        alignItems: 'center',
-        display: 'flex',
-        flexDirection: 'column',
-        p: 2,
-      }}
-    >
-      <Avatar src={user.avatar} style={{ width: 64, height: 64 }} />
-      <Typography color="textPrimary" variant="h5">
-        {user.name}
-      </Typography>
-      <Typography color="textSecondary" variant="body2">
-        {user.jobTitle}
-      </Typography>
-    </Box>
-    <Divider />
-    <Box sx={{ p: 2 }}>
-      <List>
-        {items.map((item) => (
-          <NavItem
-            href={item.href}
-            key={item.title}
-            title={item.title}
-            Icon={item.Icon}
-          />
-        ))}
-      </List>
-    </Box>
-    <Box sx={{ flexGrow: 1 }} />
-  </Box>
+    },
+    content: {
+      alignItems: 'center',
+      display: 'flex',
+      flexDirection: 'column',
+    },
+    logo: {
+      width: 64,
+      height: 64,
+    },
+  }),
 );
+
+const DashboardSidebarContent: FC = () => {
+  const classes = useStyles();
+
+  return (
+    <Box className={classes.container}>
+      <Box className={classes.content} sx={{ p: 2 }}>
+        <Avatar src={user.avatar} className={classes.logo} />
+        <Typography color="textPrimary" variant="h5">
+          {user.name}
+        </Typography>
+        <Typography color="textSecondary" variant="body2">
+          {user.jobTitle}
+        </Typography>
+      </Box>
+      <Divider />
+      <Box sx={{ p: 2 }}>
+        <List>
+          {menuItem.map((item) => (
+            <NavItem
+              href={item.href}
+              key={item.title}
+              title={item.title}
+              Icon={item.Icon}
+            />
+          ))}
+        </List>
+      </Box>
+      <Box sx={{ flexGrow: 1 }} />
+    </Box>
+  );
+};
 
 export default DashboardSidebarContent;

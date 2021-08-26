@@ -2,10 +2,6 @@ import React, { FC } from 'react';
 import { Helmet } from 'react-helmet';
 import { Box, Container, Grid } from '@material-ui/core';
 import AdminLayout from '../../components/AdminComponenets/Layout/AdminLayout';
-// import LatestOrders from 'src/components/dashboard//LatestOrders';
-// import Sales from 'src/components/dashboard//Sales';
-// import TotalCustomers from 'src/components/dashboard//TotalCustomers';
-// import TotalProfit from 'src/components/dashboard//TotalProfit';
 
 const Dashboard: FC = () => (
   <AdminLayout>
@@ -14,7 +10,6 @@ const Dashboard: FC = () => (
     </Helmet>
     <Box
       sx={{
-        // backgroundColor: 'background.default',
         minHeight: '100%',
         py: 3,
       }}

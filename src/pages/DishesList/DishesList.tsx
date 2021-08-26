@@ -3,6 +3,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import { Link } from 'react-router-dom';
 import { Helmet } from 'react-helmet';
 import { Alert, Pagination } from '@material-ui/lab';
+import firebaseInstance, { Collections } from 'utils/firebase';
 import {
   Box,
   Button,
@@ -29,13 +30,15 @@ import DishCard from '../../components/AdminComponenets/Cards/DishCard';
 const perPage = 12;
 const minLenghtSeach = 3;
 
-const renderDish = (dish: Dish) => {
-  return (
-    <Grid item key={dish.id} lg={3} md={6} xs={12}>
-      <DishCard data={dish} />
-    </Grid>
-  );
-};
+const dishesCollection = firebaseInstance.collection(Collections.Dishes);
+
+// const renderDish = (dish: Dish) => {
+//   return (
+//     <Grid item key={dish.id} lg={3} md={6} xs={12}>
+//       <DishCard data={dish} />
+//     </Grid>
+//   );
+// };
 
 const getTotalpage = (arr: Dish[]) => {
   return +(arr.length / perPage).toFixed();
@@ -68,7 +71,25 @@ const Dashboard: FC = () => {
   const [currentDishes, setCurrentDishes] = useState(
     getCurrentDishes(dishes, page),
   );
+  const [searchStatus, setSearchStatus] = useState(false);
   const [searchStr, setSearchStr] = useState('');
+
+  const deleteDishHandler = (id: string) => {
+    dishesCollection.doc(id).delete();
+
+    // update local list
+    const newCurrentDishes: Dish[] = [];
+
+    currentDishes.forEach((el) => {
+      if (el.id !== id) {
+        newCurrentDishes.push(el);
+      }
+    });
+
+    // testing!!!
+    dispatch(fetchDishes());
+    setCurrentDishes(newCurrentDishes);
+  };
 
   useEffect(() => {
     dispatch(fetchDishes());
@@ -80,8 +101,6 @@ const Dashboard: FC = () => {
       setTotal(getTotalpage(currentDishes));
     }
   }, [currentDishes]);
-
-  console.log(currentDishes);
 
   return (
     <AdminLayout>
@@ -115,11 +134,12 @@ const Dashboard: FC = () => {
               </Box>
               <Box sx={{ mt: 3 }}>
                 <Card>
-                  <CardContent style={{ position: 'relative' }}>
+                  <CardContent
+                    style={{ position: 'relative', display: 'flex' }}
+                  >
                     <Box sx={{ maxWidth: 400 }}>
                       <TextField
-                        fullWidth
-                        // style={{ paddingRight: 40 }}
+                        style={{ width: 300 }}
                         value={searchStr}
                         InputProps={{
                           startAdornment: (
@@ -136,6 +156,7 @@ const Dashboard: FC = () => {
                         onKeyPress={(event) => {
                           if (event.key === 'Enter') {
                             if (searchStr.length >= minLenghtSeach) {
+                              setSearchStatus(true);
                               setCurrentDishes(
                                 getSearchData(dishes, searchStr),
                               );
@@ -154,16 +175,32 @@ const Dashboard: FC = () => {
                           background: '#fff',
                           position: 'absolute',
                           top: 30,
-                          left: 380,
+                          left: 280,
                         }}
                         onClick={() => {
-                          setPage(1);
-                          setTotal(getTotalpage(dishes));
-                          setCurrentDishes(getCurrentDishes(dishes, page));
+                          // setPage(1);
+                          // setTotal(getTotalpage(dishes));
+                          // setCurrentDishes(getCurrentDishes(dishes, page));
+                          // setSearchStatus(false);
                           setSearchStr('');
                         }}
                       >
                         <ClearIcon />
+                      </Button>
+                    ) : null}
+                    {searchStatus ? (
+                      <Button
+                        variant="contained"
+                        onClick={() => {
+                          setPage(1);
+                          setTotal(getTotalpage(dishes));
+                          setCurrentDishes(getCurrentDishes(dishes, page));
+                          setSearchStatus(false);
+                          setSearchStr('');
+                        }}
+                        style={{ marginLeft: 20 }}
+                      >
+                        Сбросить
                       </Button>
                     ) : null}
                   </CardContent>
@@ -172,14 +209,15 @@ const Dashboard: FC = () => {
               <Box sx={{ pt: 3 }}>
                 {currentDishes.length ? (
                   <Grid container spacing={3}>
-                    {currentDishes.map(renderDish, page)}
+                    {currentDishes.map((el) => (
+                      <Grid item key={el.id} lg={3} md={6} xs={12}>
+                        <DishCard data={el} deleteDish={deleteDishHandler} />
+                      </Grid>
+                    ))}
                   </Grid>
                 ) : (
                   <p>По результатам поиска ничего не найдено</p>
                 )}
-                {/* <Grid container spacing={3}>
-                  {currentDishes.map(renderDish, page)}
-                </Grid> */}
               </Box>
               {total > 1 ? (
                 <Box display="flex" justifyContent="flex-end" sx={{ pt: 3 }}>

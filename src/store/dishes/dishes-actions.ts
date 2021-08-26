@@ -20,6 +20,8 @@ export const fetchDishes = createAsyncThunk(
     const data = await dishesCollection.get();
     const dishes = getCollectionEntries<Dish>(data);
 
+    console.log(999);
+
     return dishes.reduce((acc: Record<string, Dish>, dish) => {
       acc[dish.id] = dish;
       return acc;
