@@ -51,18 +51,15 @@ export const Home: FC = () => {
         Заказать доставку
       </Button>
 
-      {/* if user === admin (check email) */}
-      {currentUser && currentUser.phone.toString() === '9518357686' ? (
-        <Button
-          component={Link}
-          to="dashboard"
-          fullWidth
-          variant="contained"
-          color="primary"
-        >
-          Администрирование
-        </Button>
-      ) : null}
+      <Button
+        component={Link}
+        to="dashboard"
+        fullWidth
+        variant="contained"
+        color="primary"
+      >
+        Администрирование
+      </Button>
     </Container>
   );
 };
