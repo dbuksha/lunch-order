@@ -11,11 +11,17 @@ import {
   createStyles,
   makeStyles,
 } from '@material-ui/core';
+import dayjs from 'dayjs';
 
-import { Dish } from 'entities/Dish';
+import { Lunch } from 'entities/Lunch';
 
 import DeleteIcon from '@material-ui/icons/Delete';
 import DeleteDishAlert from '../Alerts/DeleteDishAlert';
+
+interface Props {
+  data: Lunch;
+  deleteLunch: (id: string) => void;
+}
 
 const useStyles = makeStyles(() =>
   createStyles({
@@ -32,6 +38,10 @@ const useStyles = makeStyles(() =>
       justifyContent: 'space-between',
       alignItems: 'center',
     },
+    containerComplex: {
+      display: 'flex',
+      flexDirection: 'column',
+    },
     deleteBtn: {
       width: 40,
       minWidth: 40,
@@ -40,13 +50,13 @@ const useStyles = makeStyles(() =>
   }),
 );
 
-interface Props {
-  data: Dish;
-  deleteDish: (id: string) => void;
-}
-
-const DishesCard: FC<Props> = ({ data, deleteDish }) => {
+const ComplexCard: FC<Props> = ({ data, deleteLunch }) => {
   const classes = useStyles();
+
+  const dayName = dayjs()
+    .weekday(data.dayNumber - 1)
+    .format('dddd');
+
   const [dialogStatus, setDialogStatus] = useState(false);
 
   const openDialog = () => {
@@ -59,38 +69,44 @@ const DishesCard: FC<Props> = ({ data, deleteDish }) => {
 
   const deleteDishHandler = () => {
     setDialogStatus(false);
-    deleteDish(data.id);
+    deleteLunch(data.id);
   };
 
   return (
     <Card>
       <CardContent>
         <Typography align="left" color="textPrimary" gutterBottom variant="h5">
-          {data.name}
+          {`${data.name} - ${dayName}`}
         </Typography>
-        <Typography
-          align="left"
-          color="textPrimary"
-          variant="body1"
-          className={classes.params}
-        >
-          {`Цена: ${data.price} p.`}
-        </Typography>
-        <Typography
-          align="left"
-          color="textPrimary"
-          variant="body1"
-          className={classes.params}
-        >
-          {`Вес: ${data.weight} гр.`}
-        </Typography>
+        <Box className={classes.containerComplex}>
+          {data.dishes.map((el) => (
+            <Box sx={{ pt: 2 }} display="flex" justifyContent="space-between">
+              <Typography
+                align="left"
+                color="textPrimary"
+                variant="body2"
+                className={classes.params}
+              >
+                {el.name}
+              </Typography>
+              <Typography
+                align="left"
+                color="textPrimary"
+                variant="body2"
+                className={classes.params}
+              >
+                {`${el.weight}гр. / ${el.price}р.`}
+              </Typography>
+            </Box>
+          ))}
+        </Box>
       </CardContent>
       <Box sx={{ flexGrow: 1 }} />
       <Divider />
       <Box sx={{ p: 2 }}>
         <Grid container spacing={1} className={classes.containerEvents}>
           <Grid item>
-            <Link className={classes.link} to={`/dishes-edit/${data.id}`}>
+            <Link className={classes.link} to={`/complex-edit/${data.id}`}>
               Редактировать
             </Link>
           </Grid>
@@ -103,8 +119,8 @@ const DishesCard: FC<Props> = ({ data, deleteDish }) => {
       </Box>
       <DeleteDishAlert
         status={dialogStatus}
-        title="Вы уверены, что хотите удалить данное блюдо?"
-        desc="Данное блюдо будет навсегда удалено из базы данных и из комплексов, которые включали это блюдо."
+        title="Вы уверены, что хотите удалить данный комплекс?"
+        desc="Данный компелкс будет навсегда удален из базы данных"
         closeAlert={closeDialog}
         confirmEvent={deleteDishHandler}
       />
@@ -112,4 +128,4 @@ const DishesCard: FC<Props> = ({ data, deleteDish }) => {
   );
 };
 
-export default DishesCard;
+export default ComplexCard;

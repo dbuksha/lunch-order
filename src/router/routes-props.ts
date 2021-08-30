@@ -6,16 +6,23 @@ import Login from 'pages/Login';
 import Dashboard from 'pages/Dashboard';
 import DishesList from 'pages/DishesList';
 import DishesNew from 'pages/DishesNew';
+import ComplexList from 'pages/ComplexList';
 
 const OrdersList = lazy(() => import('pages/OrdersList'));
 const OrderCreate = lazy(() => import('pages/OrderCreate'));
 const OrdersDelivery = lazy(() => import('pages/OrdersDelivery'));
+
+export type RouteItem = {
+  path: string;
+  component: FC | ComponentClass | LazyExoticComponent<any>;
+};
 
 export type RouteProp = {
   path: string;
   exact?: boolean;
   auth?: boolean;
   component: FC | ComponentClass | LazyExoticComponent<any>;
+  routes?: Array<RouteItem>;
 };
 
 export const routes: RouteProp[] = [
@@ -46,9 +53,23 @@ export const routes: RouteProp[] = [
     auth: true,
   },
   {
-    path: '/dashboard',
+    path: '/admin',
     component: Dashboard,
     auth: true,
+    // routes: [
+    //   {
+    //     path: '/admin/dishes',
+    //     component: DishesList,
+    //   },
+    //   {
+    //     path: '/admin/dishes-edit/:id',
+    //     component: DishesNew,
+    //   },
+    //   {
+    //     path: '/admin/dishes-new',
+    //     component: DishesNew,
+    //   },
+    // ],
   },
   {
     path: '/dishes',
@@ -63,6 +84,11 @@ export const routes: RouteProp[] = [
   {
     path: '/dishes-new',
     component: DishesNew,
+    auth: true,
+  },
+  {
+    path: '/complex',
+    component: ComplexList,
     auth: true,
   },
 ];

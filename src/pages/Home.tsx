@@ -1,65 +1,66 @@
 import React, { FC } from 'react';
-import Button from '@material-ui/core/Button';
 import { Link } from 'react-router-dom';
-import { createStyles, makeStyles, Theme, Container } from '@material-ui/core';
-import { useSelector } from 'react-redux';
-import { getCurrentUser } from 'store/users';
+import {
+  createStyles,
+  makeStyles,
+  Theme,
+  Container,
+  Box,
+  Button,
+} from '@material-ui/core';
 
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
     root: {
+      height: '100vh',
+      display: 'flex',
+      justifyContent: 'center',
+      alignItems: 'center',
+      flexWrap: 'wrap',
       '& .MuiButton-root': {
-        marginTop: theme.spacing(2),
+        marginTop: theme.spacing(3),
       },
     },
+    btnContainer: {},
   }),
 );
 
 export const Home: FC = () => {
   const classes = useStyles();
-  const currentUser = useSelector(getCurrentUser);
 
   return (
     <Container className={classes.root} maxWidth="xs">
-      <Button
-        component={Link}
-        to="/orders/new"
-        fullWidth
-        variant="contained"
-        color="primary"
-      >
-        Сделать Заказ
-      </Button>
+      <Box>
+        <Button
+          component={Link}
+          to="/orders/new"
+          fullWidth
+          variant="contained"
+          color="primary"
+        >
+          Сделать Заказ
+        </Button>
 
-      <Button
-        component={Link}
-        to="/orders"
-        fullWidth
-        variant="contained"
-        color="primary"
-      >
-        Список заказов
-      </Button>
+        <Button
+          component={Link}
+          to="/orders"
+          fullWidth
+          variant="contained"
+          color="primary"
+        >
+          Список заказов
+        </Button>
 
-      <Button
-        component={Link}
-        to="/orders/delivery"
-        fullWidth
-        variant="contained"
-        color="primary"
-      >
-        Заказать доставку
-      </Button>
-
-      <Button
-        component={Link}
-        to="dashboard"
-        fullWidth
-        variant="contained"
-        color="primary"
-      >
-        Администрирование
-      </Button>
+        <Button
+          component={Link}
+          to="/orders/delivery"
+          fullWidth
+          variant="contained"
+          color="primary"
+        >
+          Заказать доставку
+        </Button>
+      </Box>
     </Container>
   );
 };

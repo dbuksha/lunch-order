@@ -9,7 +9,10 @@ import {
   makeStyles,
 } from '@material-ui/core';
 import FastfoodOutlinedIcon from '@material-ui/icons/FastfoodOutlined';
-import { BarChart as BarChartIcon } from 'react-feather';
+import {
+  BarChart as BarChartIcon,
+  ShoppingBag as ShoppingBagIcon,
+} from 'react-feather';
 import NavItem from './NavItem';
 
 // temp data
@@ -21,7 +24,7 @@ const user = {
 
 const menuItem = [
   {
-    href: '/dashboard',
+    href: '/admin',
     Icon: BarChartIcon,
     title: 'Главная',
   },
@@ -29,6 +32,11 @@ const menuItem = [
     href: '/dishes',
     Icon: FastfoodOutlinedIcon,
     title: 'Список блюд',
+  },
+  {
+    href: '/complex',
+    Icon: ShoppingBagIcon,
+    title: 'Комплексы',
   },
 ];
 
