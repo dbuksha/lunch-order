@@ -1,0 +1,103 @@
+import React, { FC } from 'react';
+import { useSelector } from 'react-redux';
+import { Link as RouterLink } from 'react-router-dom';
+import {
+  AppBar,
+  Avatar,
+  Box,
+  Button,
+  Toolbar,
+  Typography,
+  createStyles,
+  makeStyles,
+} from '@material-ui/core';
+
+import { getUserSelector } from 'store/users';
+
+import ExitToAppIcon from '@material-ui/icons/ExitToApp';
+
+import { logout } from 'utils/checkAuth';
+
+import LogoImg from '../../logo.svg';
+
+const useStyles = makeStyles(() =>
+  createStyles({
+    container: {
+      display: 'flex',
+      alignItems: 'center',
+      textDecoration: 'none',
+    },
+    logo: {
+      width: '50px',
+      height: '50px',
+    },
+    title: {
+      fontFamily: 'Roboto, Helvetica, Arial, sans-serif',
+      fontSize: 24,
+      fontWeight: 700,
+      color: '#fff',
+      marginLeft: 8,
+      textDeraration: 'none',
+    },
+    userBlock: {
+      display: 'flex',
+      alignItems: 'center',
+    },
+    avatar: {
+      width: 50,
+      height: 50,
+      marginRight: 8,
+    },
+    name: {
+      fontSize: 16,
+      color: '#fff',
+    },
+    btnExit: {
+      width: 40,
+      minWidth: 40,
+      height: 40,
+      marginLeft: 8,
+    },
+    exit: {
+      fill: '#fff',
+    },
+  }),
+);
+
+const SiteHeader: FC = () => {
+  const classes = useStyles();
+  const user = useSelector(getUserSelector);
+
+  return (
+    <AppBar elevation={0}>
+      <Toolbar>
+        <RouterLink to="/" className={classes.container}>
+          <Avatar src={LogoImg} className={classes.logo} />
+          <Typography className={classes.title} component="span" variant="h2">
+            Lanchos
+          </Typography>
+        </RouterLink>
+        <Box sx={{ flexGrow: 1 }} />
+        <Box className={classes.userBlock}>
+          {user ? (
+            <>
+              <Avatar src={user.avatar!} className={classes.avatar} />
+              <Typography
+                color="textPrimary"
+                variant="h5"
+                className={classes.name}
+              >
+                {user.name || ''}
+              </Typography>
+              <Button className={classes.btnExit} onClick={() => logout()}>
+                <ExitToAppIcon className={classes.exit} />
+              </Button>
+            </>
+          ) : null}
+        </Box>
+      </Toolbar>
+    </AppBar>
+  );
+};
+
+export default SiteHeader;

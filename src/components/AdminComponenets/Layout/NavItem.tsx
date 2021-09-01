@@ -37,7 +37,9 @@ const useStyles = makeStyles(() =>
         color: 'rgb(86, 100, 210)',
       },
     },
-    active: {},
+    icon: {
+      width: 24,
+    },
     text: {
       marginLeft: 6,
     },
@@ -62,7 +64,7 @@ const NavItem: FC<Props> = ({ href, Icon, title }) => {
         }}
         to={href}
       >
-        {Icon && <Icon size="20" />}
+        {Icon && <Icon className={classes.icon} />}
         <span style={{ marginLeft: 6 }}>{title}</span>
       </Button>
     </ListItem>

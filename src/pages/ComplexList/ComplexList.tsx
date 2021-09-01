@@ -20,13 +20,15 @@ const ComplexList: FC = () => {
   const isLoading = useSelector(getIsLoading);
   const lunches = useSelector(getLunches);
 
-  const deleteLunchHandler = (id: string) => {
-    lunchesCollection.doc(id).delete();
+  const deleteLunchHandler = async (id: string) => {
+    await lunchesCollection.doc(id).delete();
     // update list of lunches
-    dispatch(fetchLunches());
+    await dispatch(fetchLunches());
   };
 
   const sortLunches = lunches.slice().sort((a, b) => a.dayNumber - b.dayNumber);
+
+  // console.log('complexes', sortLunches);
 
   return (
     <AdminLayout>
@@ -51,7 +53,7 @@ const ComplexList: FC = () => {
                 <Typography variant="h4">Комплексы</Typography>
                 <Button
                   component={Link}
-                  to="/dishes-new"
+                  to="/complex-new"
                   variant="contained"
                   color="primary"
                 >
@@ -61,7 +63,7 @@ const ComplexList: FC = () => {
               <Box sx={{ pt: 3 }}>
                 <Grid container spacing={3}>
                   {sortLunches.map((el) => (
-                    <Grid item key={1} lg={6} md={6} xs={12}>
+                    <Grid item key={el.id} lg={6} md={6} xs={12}>
                       <ComplexCard data={el} deleteLunch={deleteLunchHandler} />
                     </Grid>
                   ))}

@@ -1,5 +1,6 @@
 import React, { FC } from 'react';
 import {
+  Avatar,
   makeStyles,
   Paper,
   Table,
@@ -11,6 +12,7 @@ import {
   Toolbar,
   Typography,
   Chip,
+  Box,
 } from '@material-ui/core';
 import { calculateDishesPrice } from 'utils/orders';
 import { Order } from 'entities/Order';
@@ -33,18 +35,33 @@ const useStyles = makeStyles({
     display: 'flex',
     justifyContent: 'space-between',
   },
+  justifyFlexStart: {
+    display: 'flex',
+    justifyContent: 'flex-start',
+    alignItems: 'center',
+  },
+  avatar: {
+    marginRight: 8,
+  },
 });
 const OrderCard: FC<OrderCardProps> = ({ order }) => {
   const classes = useStyles();
 
   const isTodayOrder = dayjs(order.date).day() === dayjs().day();
 
+  console.log(order);
+
   return (
     <Paper>
       <Toolbar className={classes.justifySpaceBetween}>
-        <Typography component="div" variant="subtitle1">
-          {order.person!.name}
-        </Typography>
+        {/* <Box className={classes.justifyFlexStart}>
+          {order.person!.avatar ? (
+            <Avatar src={order.person!.avatar} className={classes.avatar} />
+          ) : null}
+          <Typography component="div" variant="subtitle1">
+            {order.person!.name}
+          </Typography>
+        </Box> */}
         <Chip
           label={isTodayOrder ? 'Сегодня' : 'Завтра'}
           color={isTodayOrder ? 'primary' : 'default'}

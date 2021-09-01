@@ -1,12 +1,6 @@
 import React, { FC } from 'react';
-import { useSelector } from 'react-redux';
-import { Redirect } from 'react-router-dom';
 import { createStyles, makeStyles } from '@material-ui/core';
-
-import { getUserSelector } from 'store/users';
-
-import DashboardNavbar from './DashboardNavbar';
-import DashboardSidebar from './DashboardSidebar';
+import SiteHeader from './SiteHeader';
 
 const useStyles = makeStyles(() =>
   createStyles({
@@ -16,7 +10,6 @@ const useStyles = makeStyles(() =>
       width: '100%',
       overflow: 'hidden',
       position: 'relative',
-      backgroundColor: 'rgb(244, 246, 248)',
     },
     navigation: {
       position: 'fixed',
@@ -24,16 +17,9 @@ const useStyles = makeStyles(() =>
       left: 0,
       zIndex: 100,
     },
-    menu: {
-      position: 'fixed',
-      top: 64,
-      left: 0,
-      zIndex: 90,
-    },
     wrapper: {
       width: '100%',
       display: 'flex',
-      paddingLeft: 256,
     },
     content: {
       width: '100%',
@@ -43,21 +29,13 @@ const useStyles = makeStyles(() =>
   }),
 );
 
-const AdminLayout: FC = ({ children }) => {
+const MainLayout: FC = ({ children }) => {
   const classes = useStyles();
-  const user = useSelector(getUserSelector);
-
-  if (user && user.role !== 'admin') {
-    return <Redirect to={{ pathname: '/' }} />;
-  }
 
   return (
     <div className={classes.root}>
       <div className={classes.navigation}>
-        <DashboardNavbar />
-      </div>
-      <div className={classes.menu}>
-        <DashboardSidebar />
+        <SiteHeader />
       </div>
       <div className={classes.wrapper}>
         <div className={classes.content}>{children}</div>
@@ -66,4 +44,4 @@ const AdminLayout: FC = ({ children }) => {
   );
 };
 
-export default AdminLayout;
+export default MainLayout;

@@ -2,6 +2,7 @@ import React, { FC } from 'react';
 import { Link as RouterLink } from 'react-router-dom';
 import {
   AppBar,
+  Avatar,
   Box,
   Hidden,
   IconButton,
@@ -22,15 +23,15 @@ const useStyles = makeStyles(() =>
       textDecoration: 'none',
     },
     logo: {
-      width: '40px',
-      height: '40px',
+      width: 50,
+      height: 50,
     },
     title: {
       fontFamily: 'Roboto, Helvetica, Arial, sans-serif',
-      fontSize: '24px',
+      fontSize: 24,
       fontWeight: 700,
       color: '#fff',
-      marginLeft: '8px',
+      marginLeft: 8,
       textDeraration: 'none',
     },
   }),
@@ -43,7 +44,7 @@ const DashboardNavbar: FC = () => {
     <AppBar elevation={0}>
       <Toolbar>
         <RouterLink to="/" className={classes.container}>
-          <img alt="Logo" src={LogoImg} className={classes.logo} />
+          <Avatar alt="Logo" src={LogoImg} className={classes.logo} />
           <Typography className={classes.title} component="span" variant="h3">
             Lanchos
           </Typography>

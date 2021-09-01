@@ -15,7 +15,7 @@ import { RouteProp } from '../router/routes-props';
 // };
 
 const RouteWithSubRoutes = (route: RouteProp) => {
-  console.log(route.routes, route.path);
+  // console.log(route.routes, route.path);
 
   // return (
   //   <Route

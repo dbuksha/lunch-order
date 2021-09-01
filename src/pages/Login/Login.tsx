@@ -3,7 +3,7 @@ import { Box } from '@material-ui/core';
 import { Redirect } from 'react-router-dom';
 import { checkAuth } from 'utils/checkAuth';
 
-import LoginFormNew from './LoginFormNew';
+import LoginForm from './LoginForm';
 
 const Login: FC = () => {
   if (checkAuth()) {
@@ -12,7 +12,7 @@ const Login: FC = () => {
 
   return (
     <Box>
-      <LoginFormNew />
+      <LoginForm />
     </Box>
   );
 };

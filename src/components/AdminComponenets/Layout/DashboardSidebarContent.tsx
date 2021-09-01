@@ -1,4 +1,5 @@
 import React, { FC } from 'react';
+import { useSelector } from 'react-redux';
 import {
   Avatar,
   Box,
@@ -9,18 +10,13 @@ import {
   makeStyles,
 } from '@material-ui/core';
 import FastfoodOutlinedIcon from '@material-ui/icons/FastfoodOutlined';
+import AccountCircleOutlinedIcon from '@material-ui/icons/AccountCircleOutlined';
 import {
   BarChart as BarChartIcon,
   ShoppingBag as ShoppingBagIcon,
 } from 'react-feather';
+import { getUserSelector } from 'store/users';
 import NavItem from './NavItem';
-
-// temp data
-const user = {
-  avatar: 'https://ca.slack-edge.com/T03G61VPV-UL0LZHA6Q-d497cf66f4d9-512',
-  jobTitle: 'oleg.babenko@distillery.com',
-  name: 'Олег Бабенко',
-};
 
 const menuItem = [
   {
@@ -34,9 +30,14 @@ const menuItem = [
     title: 'Список блюд',
   },
   {
-    href: '/complex',
+    href: '/complexes',
     Icon: ShoppingBagIcon,
     title: 'Комплексы',
+  },
+  {
+    href: '/user-list',
+    Icon: AccountCircleOutlinedIcon,
+    title: 'Пользователи',
   },
 ];
 
@@ -54,27 +55,31 @@ const useStyles = makeStyles(() =>
       display: 'flex',
       flexDirection: 'column',
     },
-    logo: {
-      width: 64,
-      height: 64,
+    avatar: {
+      width: 80,
+      height: 80,
+      marginBottom: 12,
     },
   }),
 );
 
 const DashboardSidebarContent: FC = () => {
   const classes = useStyles();
+  const user = useSelector(getUserSelector);
 
   return (
     <Box className={classes.container}>
-      <Box className={classes.content} sx={{ p: 2 }}>
-        <Avatar src={user.avatar} className={classes.logo} />
-        <Typography color="textPrimary" variant="h5">
-          {user.name}
-        </Typography>
-        <Typography color="textSecondary" variant="body2">
-          {user.jobTitle}
-        </Typography>
-      </Box>
+      {user ? (
+        <Box className={classes.content} sx={{ p: 2 }}>
+          <Avatar src={user.avatar!} className={classes.avatar} />
+          <Typography color="textPrimary" variant="h5">
+            {user.name || 'Администратор'}
+          </Typography>
+          <Typography color="textSecondary" variant="body2">
+            {user.email || ''}
+          </Typography>
+        </Box>
+      ) : null}
       <Divider />
       <Box sx={{ p: 2 }}>
         <List>

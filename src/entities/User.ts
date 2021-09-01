@@ -1,8 +1,8 @@
-export type User = {
-  id: string;
-  name: string;
-  phone: string;
-};
+// export type User = {
+//   id: string;
+//   name: string;
+//   phone: string;
+// };
 
 export type UserNew = {
   id?: string;

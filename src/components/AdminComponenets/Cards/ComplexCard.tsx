@@ -80,15 +80,20 @@ const ComplexCard: FC<Props> = ({ data, deleteLunch }) => {
         </Typography>
         <Box className={classes.containerComplex}>
           {data.dishes.map((el) => (
-            <Box sx={{ pt: 2 }} display="flex" justifyContent="space-between">
-              <Typography
+            <Box
+              sx={{ pt: 2 }}
+              key={el.id}
+              display="flex"
+              justifyContent="space-between"
+            >
+              {/* <Typography
                 align="left"
                 color="textPrimary"
                 variant="body2"
                 className={classes.params}
               >
                 {el.name}
-              </Typography>
+              </Typography> */}
               <Typography
                 align="left"
                 color="textPrimary"

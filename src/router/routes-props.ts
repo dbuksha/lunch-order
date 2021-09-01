@@ -7,6 +7,8 @@ import Dashboard from 'pages/Dashboard';
 import DishesList from 'pages/DishesList';
 import DishesNew from 'pages/DishesNew';
 import ComplexList from 'pages/ComplexList';
+import СomplexNewEdit from 'pages/ComplexNewEdit';
+import UserList from 'pages/UserList';
 
 const OrdersList = lazy(() => import('pages/OrdersList'));
 const OrderCreate = lazy(() => import('pages/OrderCreate'));
@@ -87,8 +89,23 @@ export const routes: RouteProp[] = [
     auth: true,
   },
   {
-    path: '/complex',
+    path: '/complexes',
     component: ComplexList,
+    auth: true,
+  },
+  {
+    path: '/complex-edit/:id',
+    component: СomplexNewEdit,
+    auth: true,
+  },
+  {
+    path: '/complex-new',
+    component: СomplexNewEdit,
+    auth: true,
+  },
+  {
+    path: '/user-list',
+    component: UserList,
     auth: true,
   },
 ];
