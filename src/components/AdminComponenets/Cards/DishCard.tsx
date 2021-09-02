@@ -4,7 +4,6 @@ import {
   Box,
   Card,
   CardContent,
-  Divider,
   Grid,
   Typography,
   Button,
@@ -15,7 +14,7 @@ import {
 import { Dish } from 'entities/Dish';
 
 import DeleteIcon from '@material-ui/icons/Delete';
-import DeleteDishAlert from '../Alerts/DeleteDishAlert';
+import DeleteAlert from '../Alerts/DeleteAlert';
 
 const useStyles = makeStyles(() =>
   createStyles({
@@ -112,7 +111,7 @@ const DishesCard: FC<Props> = ({ data, deleteDish }) => {
           </Grid>
         </Grid>
       </Box>
-      <DeleteDishAlert
+      <DeleteAlert
         status={dialogStatus}
         title="Вы уверены, что хотите удалить данное блюдо?"
         desc="Данное блюдо будет навсегда удалено из базы данных и из комплексов, которые включали это блюдо."

@@ -1,4 +1,6 @@
-import React, { FC, useEffect, useState } from 'react';
+import React, { FC, useState } from 'react';
+import { useSelector } from 'react-redux';
+import firebaseInstance, { Collections } from 'utils/firebase';
 import {
   Avatar,
   Box,
@@ -12,6 +14,8 @@ import {
 
 import { UserNew } from 'entities/User';
 
+import { getUserSelector } from 'store/users';
+
 const useStyles = makeStyles(() =>
   createStyles({
     user: {
@@ -19,7 +23,11 @@ const useStyles = makeStyles(() =>
       alignItems: 'center',
     },
     avatar: {
-      marginRight: 4,
+      marginRight: 8,
+    },
+    adminAvatar: {
+      marginRight: 8,
+      border: '2px solid #3f51b5',
     },
   }),
 );
@@ -28,18 +36,27 @@ interface Props {
   user: UserNew;
 }
 
+const usersCollection = firebaseInstance.collection(Collections.Users);
+
 const UserRow: FC<Props> = ({ user }) => {
   const classes = useStyles();
+  const currentUser = useSelector(getUserSelector);
   const [role, setRole] = useState(user.role || 'user');
 
-  useEffect(() => {});
+  const changeRole = (role: string) => {
+    setRole(role);
+    usersCollection.doc(user.id).update({ role });
+  };
 
   return (
     <TableRow>
       <TableCell>{user.id}</TableCell>
       <TableCell>
         <Box className={classes.user}>
-          <Avatar src={user.avatar!} className={classes.avatar} />
+          <Avatar
+            src={user.avatar!}
+            className={role === 'admin' ? classes.adminAvatar : classes.avatar}
+          />
           <Typography color="textPrimary" variant="body2">
             {user.name}
           </Typography>
@@ -50,15 +67,13 @@ const UserRow: FC<Props> = ({ user }) => {
         <Select
           native
           value={role}
-          onChange={(event) => {
-            console.log(event.target.value);
-            setRole(`${event.target.value}`);
-          }}
+          onChange={(event) => changeRole(`${event.target.value}`)}
           variant="outlined"
           fullWidth
           inputProps={{
             name: 'role',
           }}
+          disabled={user.email === currentUser!.email}
         >
           <option value="user">Пользователь</option>
           <option value="admin">Админ</option>

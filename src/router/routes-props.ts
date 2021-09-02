@@ -58,20 +58,6 @@ export const routes: RouteProp[] = [
     path: '/admin',
     component: Dashboard,
     auth: true,
-    // routes: [
-    //   {
-    //     path: '/admin/dishes',
-    //     component: DishesList,
-    //   },
-    //   {
-    //     path: '/admin/dishes-edit/:id',
-    //     component: DishesNew,
-    //   },
-    //   {
-    //     path: '/admin/dishes-new',
-    //     component: DishesNew,
-    //   },
-    // ],
   },
   {
     path: '/dishes',

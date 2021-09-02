@@ -22,7 +22,6 @@ export const logout = (): void => {
       window.location.href = '/login';
     })
     .catch((error) => {
-      // An error happened.
-      console.log(error);
+      console.log('auth error - ', error);
     });
 };

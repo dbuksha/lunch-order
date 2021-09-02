@@ -84,7 +84,6 @@ const LoginForm: FC = () => {
       .auth()
       .signInWithPopup(provider)
       .then((result) => {
-        /** @type {firebase.auth.OAuthCredential} */
         const { user } = result;
 
         const credential = result.credential as firebase.auth.OAuthCredential;
@@ -110,7 +109,7 @@ const LoginForm: FC = () => {
         // Handle Errors here.
         const errorCode = error.code;
         const errorMessage = error.message;
-        console.log(errorMessage);
+        console.log(errorCode, errorMessage);
         // The email of the user's account used.
         // const email = error.email;
         // The firebase.auth.AuthCredential type that was used.

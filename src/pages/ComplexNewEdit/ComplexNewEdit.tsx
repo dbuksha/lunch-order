@@ -50,7 +50,6 @@ const useStyles = makeStyles((theme: Theme) =>
       position: 'relative',
     },
     textField: {
-      // margin: theme.spacing(2),
       marginBottom: 40,
     },
     selectField: {
@@ -111,8 +110,6 @@ const ComplexNewEdit: FC = () => {
         dishes: dishRefs,
       };
 
-      // console.log('Отправляем данные = ', complex);
-
       try {
         await dispatch(showLoader());
         if (typePage === 'new') {
@@ -136,12 +133,8 @@ const ComplexNewEdit: FC = () => {
           await history.push('/complexes');
         }
       } catch (e) {
-        // TODO: handle an error
         console.log(e);
       }
-    },
-    validate: (values) => {
-      console.log(values);
     },
   });
 
@@ -167,15 +160,8 @@ const ComplexNewEdit: FC = () => {
             });
           });
 
-          console.log(arrDishes);
-
           setDishComplex(arrDishes);
         }
-
-        // // eslint-disable-next-line no-restricted-syntax
-        // for (const key in result) {
-        //   formik.setFieldValue(`${key}`, `${result[key]}`);
-        // }
       }
       setLoadingStatus(false);
     })();
@@ -261,11 +247,8 @@ const ComplexNewEdit: FC = () => {
                     // eslint-disable-next-line @typescript-eslint/ban-types
                     event: {},
                     value: any,
-                    reason: string,
                   ): void => {
-                    console.log('onChange', event, value, reason, value.id);
                     formik.setFieldValue('multiDishes', value);
-                    console.log(formik);
                   }}
                   onOpen={formik.handleBlur}
                   includeInputInList

@@ -16,7 +16,7 @@ interface Props {
   confirmEvent: () => void;
 }
 
-const DeleteDishAlert: FC<Props> = ({
+const DeleteAlert: FC<Props> = ({
   status,
   title,
   desc,
@@ -50,4 +50,4 @@ const DeleteDishAlert: FC<Props> = ({
   );
 };
 
-export default DeleteDishAlert;
+export default DeleteAlert;

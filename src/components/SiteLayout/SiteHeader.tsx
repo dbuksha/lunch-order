@@ -16,7 +16,7 @@ import { getUserSelector } from 'store/users';
 
 import ExitToAppIcon from '@material-ui/icons/ExitToApp';
 
-import { logout } from 'utils/checkAuth';
+import { logout } from 'utils/auth';
 
 import LogoImg from '../../logo.svg';
 

@@ -15,6 +15,8 @@ import {
   TextField,
   InputAdornment,
   SvgIcon,
+  createStyles,
+  makeStyles,
 } from '@material-ui/core';
 import ClearIcon from '@material-ui/icons/Clear';
 import { Search as SearchIcon } from 'react-feather';
@@ -32,13 +34,37 @@ const minLenghtSeach = 3;
 
 const dishesCollection = firebaseInstance.collection(Collections.Dishes);
 
-// const renderDish = (dish: Dish) => {
-//   return (
-//     <Grid item key={dish.id} lg={3} md={6} xs={12}>
-//       <DishCard data={dish} />
-//     </Grid>
-//   );
-// };
+const useStyles = makeStyles(() =>
+  createStyles({
+    container: {
+      width: '100%',
+      height: '100vh',
+      display: 'flex',
+      justifyContent: 'center',
+      alignItems: 'center',
+    },
+    card: {
+      display: 'flex',
+      position: 'relative',
+    },
+    fieldSearch: {
+      width: 300,
+    },
+    clearBtn: {
+      width: 20,
+      minWidth: 30,
+      height: 30,
+      padding: 0,
+      background: '#fff',
+      position: 'absolute',
+      top: 30,
+      left: 280,
+    },
+    resetBtn: {
+      marginLeft: 20,
+    },
+  }),
+);
 
 const getTotalpage = (arr: Dish[]) => {
   return +(arr.length / perPage).toFixed();
@@ -63,6 +89,7 @@ const getSearchData = (arr: Dish[], search: string) => {
 };
 
 const Dashboard: FC = () => {
+  const classes = useStyles();
   const dispatch = useDispatch();
   const isLoading = useSelector(getIsLoading);
   const dishes = useSelector(getDishesList);
@@ -77,7 +104,6 @@ const Dashboard: FC = () => {
   const deleteDishHandler = (id: string) => {
     dishesCollection.doc(id).delete();
 
-    // update local list
     const newCurrentDishes: Dish[] = [];
 
     currentDishes.forEach((el) => {
@@ -86,7 +112,6 @@ const Dashboard: FC = () => {
       }
     });
 
-    // testing!!!
     dispatch(fetchDishes());
     setCurrentDishes(newCurrentDishes);
   };
@@ -134,12 +159,10 @@ const Dashboard: FC = () => {
               </Box>
               <Box sx={{ mt: 3 }}>
                 <Card>
-                  <CardContent
-                    style={{ position: 'relative', display: 'flex' }}
-                  >
+                  <CardContent className={classes.card}>
                     <Box sx={{ maxWidth: 400 }}>
                       <TextField
-                        style={{ width: 300 }}
+                        className={classes.fieldSearch}
                         value={searchStr}
                         InputProps={{
                           startAdornment: (
@@ -167,29 +190,15 @@ const Dashboard: FC = () => {
                     </Box>
                     {searchStr !== '' ? (
                       <Button
-                        style={{
-                          width: 20,
-                          minWidth: 30,
-                          height: 30,
-                          padding: 0,
-                          background: '#fff',
-                          position: 'absolute',
-                          top: 30,
-                          left: 280,
-                        }}
-                        onClick={() => {
-                          // setPage(1);
-                          // setTotal(getTotalpage(dishes));
-                          // setCurrentDishes(getCurrentDishes(dishes, page));
-                          // setSearchStatus(false);
-                          setSearchStr('');
-                        }}
+                        className={classes.clearBtn}
+                        onClick={() => setSearchStr('')}
                       >
                         <ClearIcon />
                       </Button>
                     ) : null}
                     {searchStatus ? (
                       <Button
+                        className={classes.resetBtn}
                         variant="contained"
                         onClick={() => {
                           setPage(1);
@@ -198,7 +207,6 @@ const Dashboard: FC = () => {
                           setSearchStatus(false);
                           setSearchStr('');
                         }}
-                        style={{ marginLeft: 20 }}
                       >
                         Сбросить
                       </Button>

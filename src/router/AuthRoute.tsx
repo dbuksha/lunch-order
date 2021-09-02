@@ -10,7 +10,7 @@ import { fetchLunches } from 'store/lunches';
 import { fetchDishes } from 'store/dishes';
 import { fetchUserInfo } from 'store/users';
 
-import { checkAuth, logout } from 'utils/checkAuth';
+import { checkAuth, logout } from 'utils/auth';
 
 import StyledLoader from 'components/StyledLoader';
 
@@ -34,29 +34,6 @@ const AuthRoute: FC<RouteProps> = (props) => {
     }
 
     if (!isDataPreloaded) preloadData();
-
-    // async(() => {
-    //   await dispatch(fetchDishes());
-    //   await dispatch(fetchLunches());
-    // });
-    // if (isDataPreloaded) {
-    //   return;
-    // }
-
-    // const authStateSubscriber = await firebase
-    //   .auth()
-    //   .onAuthStateChanged((user) => {
-    //     if (user) {
-    //       dispatch(fetchUserInfo(user.email!));
-    //     } else {
-    //       logout();
-    //     }
-    //   });
-
-    // eslint-disable-next-line consistent-return
-    // return () => {
-    //   authStateSubscriber();
-    // };
   }, [dispatch, isDataPreloaded]);
 
   if (!isDataPreloaded) return <StyledLoader />;
@@ -71,6 +48,3 @@ const AuthRoute: FC<RouteProps> = (props) => {
 };
 
 export default AuthRoute;
-function async(arg0: () => void) {
-  throw new Error('Function not implemented.');
-}

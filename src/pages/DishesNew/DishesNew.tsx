@@ -3,7 +3,6 @@ import React, { FC, useState, useEffect } from 'react';
 import { useDispatch } from 'react-redux';
 import { Link, useHistory, useParams } from 'react-router-dom';
 import { Helmet } from 'react-helmet';
-// import { addDish } from 'store/dishes';
 import { hideLoader, showLoader, showSnackBar, StatusTypes } from 'store/app';
 import { useFormik } from 'formik';
 import * as yup from 'yup';
@@ -52,7 +51,6 @@ const useStyles = makeStyles((theme: Theme) =>
       position: 'relative',
     },
     textField: {
-      // margin: theme.spacing(2),
       marginBottom: 40,
     },
     selectField: {
@@ -90,7 +88,7 @@ const DishesNew: FC = () => {
   const classes = useStyles();
   const history = useHistory();
   const paramsUrl = useParams() as IParamsURL;
-  const [typePage, setTypePage] = useState(getCurrentTypePage(paramsUrl));
+  const [typePage] = useState(getCurrentTypePage(paramsUrl));
   const [loadingStatus, setLoadingStatus] = useState(false);
 
   const formik = useFormik({

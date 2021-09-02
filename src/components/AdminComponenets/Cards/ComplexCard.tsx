@@ -16,7 +16,7 @@ import dayjs from 'dayjs';
 import { Lunch } from 'entities/Lunch';
 
 import DeleteIcon from '@material-ui/icons/Delete';
-import DeleteDishAlert from '../Alerts/DeleteDishAlert';
+import DeleteAlert from '../Alerts/DeleteAlert';
 
 interface Props {
   data: Lunch;
@@ -86,14 +86,14 @@ const ComplexCard: FC<Props> = ({ data, deleteLunch }) => {
               display="flex"
               justifyContent="space-between"
             >
-              {/* <Typography
+              <Typography
                 align="left"
                 color="textPrimary"
                 variant="body2"
                 className={classes.params}
               >
                 {el.name}
-              </Typography> */}
+              </Typography>
               <Typography
                 align="left"
                 color="textPrimary"
@@ -122,7 +122,7 @@ const ComplexCard: FC<Props> = ({ data, deleteLunch }) => {
           </Grid>
         </Grid>
       </Box>
-      <DeleteDishAlert
+      <DeleteAlert
         status={dialogStatus}
         title="Вы уверены, что хотите удалить данный комплекс?"
         desc="Данный компелкс будет навсегда удален из базы данных"

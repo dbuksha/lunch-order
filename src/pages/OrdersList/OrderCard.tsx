@@ -49,19 +49,17 @@ const OrderCard: FC<OrderCardProps> = ({ order }) => {
 
   const isTodayOrder = dayjs(order.date).day() === dayjs().day();
 
-  console.log(order);
-
   return (
     <Paper>
       <Toolbar className={classes.justifySpaceBetween}>
-        {/* <Box className={classes.justifyFlexStart}>
+        <Box className={classes.justifyFlexStart}>
           {order.person!.avatar ? (
             <Avatar src={order.person!.avatar} className={classes.avatar} />
           ) : null}
           <Typography component="div" variant="subtitle1">
             {order.person!.name}
           </Typography>
-        </Box> */}
+        </Box>
         <Chip
           label={isTodayOrder ? 'Сегодня' : 'Завтра'}
           color={isTodayOrder ? 'primary' : 'default'}

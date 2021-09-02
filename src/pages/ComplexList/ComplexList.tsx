@@ -22,13 +22,10 @@ const ComplexList: FC = () => {
 
   const deleteLunchHandler = async (id: string) => {
     await lunchesCollection.doc(id).delete();
-    // update list of lunches
     await dispatch(fetchLunches());
   };
 
   const sortLunches = lunches.slice().sort((a, b) => a.dayNumber - b.dayNumber);
-
-  // console.log('complexes', sortLunches);
 
   return (
     <AdminLayout>

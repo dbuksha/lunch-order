@@ -1,9 +1,3 @@
-// export type User = {
-//   id: string;
-//   name: string;
-//   phone: string;
-// };
-
 export type UserNew = {
   id?: string;
   avatar: string | null;

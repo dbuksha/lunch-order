@@ -2,7 +2,6 @@ import React, { FC, useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { Helmet } from 'react-helmet';
 import {
-  Avatar,
   Box,
   Container,
   TableContainer,
@@ -11,11 +10,7 @@ import {
   TableBody,
   TableRow,
   TableCell,
-  Select,
   Typography,
-  makeStyles,
-  createStyles,
-  Theme,
 } from '@material-ui/core';
 
 import { UserNew } from 'entities/User';
@@ -25,22 +20,7 @@ import { fetchAllUsers, getAllUserSelector } from 'store/users';
 import AdminLayout from '../../components/AdminComponenets/Layout/AdminLayout';
 import UserRow from './UserRow';
 
-const useStyles = makeStyles((theme: Theme) =>
-  createStyles({
-    user: {
-      display: 'flex',
-      alignItems: 'center',
-    },
-    avatar: {
-      //   width: theme.spacing(3),
-      //   height: theme.spacing(3),
-      marginRight: 4,
-    },
-  }),
-);
-
 const UserList: FC = () => {
-  const classes = useStyles();
   const dispatch = useDispatch();
   const users = useSelector(getAllUserSelector);
 
