@@ -15,7 +15,11 @@ import {
 
 import { UserNew } from 'entities/User';
 
-import { fetchAllUsers, getAllUserSelector } from 'store/users';
+import {
+  fetchAllUsers,
+  getAllUserSelector,
+  getUserSelector,
+} from 'store/users';
 
 import AdminLayout from '../../components/AdminComponenets/Layout/AdminLayout';
 import UserRow from './UserRow';
@@ -23,6 +27,7 @@ import UserRow from './UserRow';
 const UserList: FC = () => {
   const dispatch = useDispatch();
   const users = useSelector(getAllUserSelector);
+  const currentUser = useSelector(getUserSelector);
 
   useEffect(() => {
     dispatch(fetchAllUsers());
@@ -63,7 +68,15 @@ const UserList: FC = () => {
                 </TableRow>
               </TableHead>
               <TableBody>
-                {users && users.map((el: UserNew) => <UserRow user={el} />)}
+                {users &&
+                  currentUser &&
+                  users.map((el: UserNew) => (
+                    <UserRow
+                      user={el}
+                      key={el.id}
+                      admin={currentUser.email === el.email}
+                    />
+                  ))}
               </TableBody>
             </Table>
           </TableContainer>

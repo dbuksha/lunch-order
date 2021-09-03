@@ -1,5 +1,4 @@
 import React, { FC, useState } from 'react';
-import { useSelector } from 'react-redux';
 import firebaseInstance, { Collections } from 'utils/firebase';
 import {
   Avatar,
@@ -13,8 +12,6 @@ import {
 } from '@material-ui/core';
 
 import { UserNew } from 'entities/User';
-
-import { getUserSelector } from 'store/users';
 
 const useStyles = makeStyles(() =>
   createStyles({
@@ -34,13 +31,13 @@ const useStyles = makeStyles(() =>
 
 interface Props {
   user: UserNew;
+  admin: boolean;
 }
 
 const usersCollection = firebaseInstance.collection(Collections.Users);
 
-const UserRow: FC<Props> = ({ user }) => {
+const UserRow: FC<Props> = ({ user, admin }) => {
   const classes = useStyles();
-  const currentUser = useSelector(getUserSelector);
   const [role, setRole] = useState(user.role || 'user');
 
   const changeRole = (role: string) => {
@@ -73,7 +70,7 @@ const UserRow: FC<Props> = ({ user }) => {
           inputProps={{
             name: 'role',
           }}
-          disabled={user.email === currentUser!.email}
+          disabled={admin}
         >
           <option value="user">Пользователь</option>
           <option value="admin">Админ</option>
