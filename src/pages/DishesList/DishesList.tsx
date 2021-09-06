@@ -1,6 +1,6 @@
-import React, { FC, useEffect, useState } from 'react';
+import React, { ChangeEvent, FC, useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import { Link } from 'react-router-dom';
+import { Link, useHistory, useLocation } from 'react-router-dom';
 import { Helmet } from 'react-helmet';
 import { Alert, Pagination } from '@material-ui/lab';
 import firebaseInstance, { Collections } from 'utils/firebase';
@@ -66,40 +66,76 @@ const useStyles = makeStyles(() =>
   }),
 );
 
+const useQueryParams = () => {
+  const { search } = useLocation();
+
+  const page = Number(new URLSearchParams(search).get('page')) || 1;
+  const dish = new URLSearchParams(search).get('dish') || '';
+
+  return {
+    page,
+    dish,
+    dishStatus: dish !== '',
+  };
+};
+
 const getTotalpage = (arr: Dish[]) => {
   return +(arr.length / perPage).toFixed();
 };
 
-const getCurrentDishes = (arr: Dish[], currentPage: number) => {
+const getCurrentDishes = (
+  arr: Dish[],
+  currentPage: number,
+  searcStr: string,
+) => {
   const begin = (currentPage - 1) * perPage;
   const end = begin + perPage;
-  return arr.slice(begin, end);
-};
 
-const getSearchData = (arr: Dish[], search: string) => {
   const resultArr: Dish[] = [];
 
-  arr.forEach((el) => {
-    if (el.name.toLowerCase().indexOf(search.toLowerCase()) !== -1) {
-      resultArr.push(el);
-    }
-  });
+  if (searcStr !== '') {
+    arr.forEach((el) => {
+      if (el.name.toLowerCase().indexOf(searcStr.toLowerCase()) !== -1) {
+        resultArr.push(el);
+      }
+    });
 
-  return resultArr;
+    return resultArr;
+  }
+
+  return arr.slice(begin, end);
 };
 
 const Dashboard: FC = () => {
   const classes = useStyles();
+  const history = useHistory();
   const dispatch = useDispatch();
   const isLoading = useSelector(getIsLoading);
   const dishes = useSelector(getDishesList);
-  const [page, setPage] = useState(1);
+  const { page: initialPage, dish: initialDish, dishStatus } = useQueryParams();
+  const [page, setPage] = useState(initialPage);
   const [total, setTotal] = useState(getTotalpage(dishes));
+  const [searchStatus, setSearchStatus] = useState(dishStatus);
+  const [searchStr, setSearchStr] = useState(initialDish);
+
   const [currentDishes, setCurrentDishes] = useState(
-    getCurrentDishes(dishes, page),
+    getCurrentDishes(dishes, page, searchStr),
   );
-  const [searchStatus, setSearchStatus] = useState(false);
-  const [searchStr, setSearchStr] = useState('');
+
+  useEffect(() => {
+    dispatch(fetchDishes());
+  }, [dispatch]);
+
+  useEffect(() => {
+    if (searchStr !== '') {
+      setPage(1);
+      setTotal(getTotalpage(currentDishes));
+    }
+  }, [currentDishes]);
+
+  const changeSearchValue = (event: ChangeEvent<HTMLInputElement>) => {
+    setSearchStr(event.target.value);
+  };
 
   const deleteDishHandler = (id: string) => {
     dishesCollection.doc(id).delete();
@@ -116,16 +152,40 @@ const Dashboard: FC = () => {
     setCurrentDishes(newCurrentDishes);
   };
 
-  useEffect(() => {
-    dispatch(fetchDishes());
-  }, [dispatch]);
+  const changePageHandler = async (
+    event: React.ChangeEvent<unknown>,
+    page: number,
+  ) => {
+    await setPage(page);
+    await setCurrentDishes(getCurrentDishes(dishes, page, searchStr));
+    window.scrollTo(0, 0);
+    history.push(
+      `/dishes?page=${page}${searchStatus ? `&dish=${searchStr}` : ''}`,
+    );
+  };
 
-  useEffect(() => {
-    if (searchStr !== '') {
-      setPage(1);
-      setTotal(getTotalpage(currentDishes));
+  const searchDishHandler = (event: { key: string }) => {
+    if (event.key === 'Enter') {
+      if (searchStr.length >= minLenghtSeach) {
+        setSearchStatus(true);
+        setCurrentDishes(getCurrentDishes(dishes, page, searchStr));
+        history.push(`/dishes?dish=${searchStr}`);
+      }
     }
-  }, [currentDishes]);
+  };
+
+  const resetSearch = () => {
+    setPage(1);
+    setTotal(getTotalpage(dishes));
+    setSearchStatus(false);
+    setSearchStr('');
+    setCurrentDishes(getCurrentDishes(dishes, 1, ''));
+    history.push('/dishes');
+  };
+
+  const clearFieldSearch = () => {
+    setSearchStr('');
+  };
 
   return (
     <AdminLayout>
@@ -175,23 +235,14 @@ const Dashboard: FC = () => {
                         }}
                         placeholder="Поиск блюда"
                         variant="outlined"
-                        onChange={(event) => setSearchStr(event.target.value)}
-                        onKeyPress={(event) => {
-                          if (event.key === 'Enter') {
-                            if (searchStr.length >= minLenghtSeach) {
-                              setSearchStatus(true);
-                              setCurrentDishes(
-                                getSearchData(dishes, searchStr),
-                              );
-                            }
-                          }
-                        }}
+                        onChange={changeSearchValue}
+                        onKeyPress={searchDishHandler}
                       />
                     </Box>
                     {searchStr !== '' ? (
                       <Button
                         className={classes.clearBtn}
-                        onClick={() => setSearchStr('')}
+                        onClick={clearFieldSearch}
                       >
                         <ClearIcon />
                       </Button>
@@ -200,13 +251,7 @@ const Dashboard: FC = () => {
                       <Button
                         className={classes.resetBtn}
                         variant="contained"
-                        onClick={() => {
-                          setPage(1);
-                          setTotal(getTotalpage(dishes));
-                          setCurrentDishes(getCurrentDishes(dishes, page));
-                          setSearchStatus(false);
-                          setSearchStr('');
-                        }}
+                        onClick={resetSearch}
                       >
                         Сбросить
                       </Button>
@@ -232,14 +277,7 @@ const Dashboard: FC = () => {
                   <Pagination
                     count={total}
                     page={page}
-                    onChange={(
-                      event: React.ChangeEvent<unknown>,
-                      page: number,
-                    ): void => {
-                      setPage(page);
-                      setCurrentDishes(getCurrentDishes(dishes, page));
-                      window.scrollTo(0, 0);
-                    }}
+                    onChange={changePageHandler}
                   />
                 </Box>
               ) : null}

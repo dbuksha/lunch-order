@@ -10,6 +10,8 @@ export const useGroupedDishes = (): OrderDish[] => {
   const orders = useSelector(getTodayOrders);
   const [calculatedDishes, setCalculatedDishes] = useState<OrderDish[]>([]);
 
+  console.log(orders);
+
   // load order
   useEffect(() => {
     dispatch(fetchOrders());
@@ -24,6 +26,8 @@ export const useGroupedDishes = (): OrderDish[] => {
     if (!dishes.length) return;
     setCalculatedDishes(deliveryDataHelper.calculateDishesQuantity(dishes));
   }, [orders]);
+
+  console.log(calculatedDishes);
 
   return calculatedDishes;
 };
