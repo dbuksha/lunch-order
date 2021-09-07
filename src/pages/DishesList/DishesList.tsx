@@ -1,4 +1,10 @@
-import React, { ChangeEvent, FC, useEffect, useState } from 'react';
+import React, {
+  ChangeEvent,
+  FC,
+  useEffect,
+  useState,
+  useCallback,
+} from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { Link, useHistory, useLocation } from 'react-router-dom';
 import { Helmet } from 'react-helmet';
@@ -26,8 +32,8 @@ import { Dish } from 'entities/Dish';
 import { fetchDishes, getDishesList } from 'store/dishes';
 import { getIsLoading } from 'store/app';
 
-import AdminLayout from '../../components/AdminComponenets/Layout/AdminLayout';
-import DishCard from '../../components/AdminComponenets/Cards/DishCard';
+import AdminLayout from '../../components/AdminComponents/Layout/AdminLayout';
+import DishCard from '../../components/AdminComponents/Cards/DishCard';
 
 const perPage = 12;
 const minLenghtSeach = 3;
@@ -91,14 +97,11 @@ const getCurrentDishes = (
   const begin = (currentPage - 1) * perPage;
   const end = begin + perPage;
 
-  const resultArr: Dish[] = [];
-
   if (searcStr !== '') {
-    arr.forEach((el) => {
-      if (el.name.toLowerCase().indexOf(searcStr.toLowerCase()) !== -1) {
-        resultArr.push(el);
-      }
-    });
+    const resultArr = arr.filter(
+      (el: Dish) =>
+        el.name.toLowerCase().indexOf(searcStr.toLowerCase()) !== -1,
+    );
 
     return resultArr;
   }
@@ -137,7 +140,7 @@ const Dashboard: FC = () => {
     setSearchStr(event.target.value);
   };
 
-  const deleteDishHandler = (id: string) => {
+  const deleteDishHandler = useCallback((id: string) => {
     dishesCollection.doc(id).delete();
 
     const newCurrentDishes: Dish[] = [];
@@ -150,7 +153,7 @@ const Dashboard: FC = () => {
 
     dispatch(fetchDishes());
     setCurrentDishes(newCurrentDishes);
-  };
+  }, []);
 
   const changePageHandler = async (
     event: React.ChangeEvent<unknown>,

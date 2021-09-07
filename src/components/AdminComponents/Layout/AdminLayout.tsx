@@ -16,7 +16,7 @@ const useStyles = makeStyles(() =>
       width: '100%',
       overflow: 'hidden',
       position: 'relative',
-      backgroundColor: 'rgb(244, 246, 248)',
+      backgroundColor: '#f4f6f8',
     },
     navigation: {
       position: 'fixed',

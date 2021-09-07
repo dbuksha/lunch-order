@@ -12,8 +12,8 @@ export const checkAuth = (): boolean => {
   return false;
 };
 
-export const logout = (): void => {
-  firebase
+export const logout = async (): Promise<void> => {
+  await firebase
     .auth()
     .signOut()
     .then(() => {

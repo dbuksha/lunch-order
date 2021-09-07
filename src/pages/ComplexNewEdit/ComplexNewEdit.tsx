@@ -26,7 +26,7 @@ import { Dish } from 'entities/Dish';
 import { getDishesList } from 'store/dishes';
 import { fetchLunches } from 'store/lunches';
 import Loader from '../../components/StyledLoader';
-import AdminLayout from '../../components/AdminComponenets/Layout/AdminLayout';
+import AdminLayout from '../../components/AdminComponents/Layout/AdminLayout';
 
 interface IParamsURL {
   id?: string;
@@ -173,7 +173,7 @@ const ComplexNewEdit: FC = () => {
         <title>
           {typePage === 'new'
             ? 'Добавление нового комплекса'
-            : 'Редактирование компелкса'}
+            : 'Редактирование комплекса'}
         </title>
       </Helmet>
       <Box

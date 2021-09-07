@@ -10,12 +10,13 @@ import {
   Typography,
   createStyles,
   makeStyles,
+  Theme,
 } from '@material-ui/core';
 import MenuIcon from '@material-ui/icons/Menu';
 import InputIcon from '@material-ui/icons/Input';
-import LogoImg from '../../../logo.svg';
+import LogoImg from 'assets/images/logo.svg';
 
-const useStyles = makeStyles(() =>
+const useStyles = makeStyles((theme: Theme) =>
   createStyles({
     container: {
       display: 'flex',
@@ -25,14 +26,20 @@ const useStyles = makeStyles(() =>
     logo: {
       width: 50,
       height: 50,
+      [theme.breakpoints.down('sm')]: {
+        width: '30px',
+        height: '30px',
+      },
     },
     title: {
-      fontFamily: 'Roboto, Helvetica, Arial, sans-serif',
       fontSize: 24,
       fontWeight: 700,
       color: '#fff',
       marginLeft: 8,
       textDeraration: 'none',
+      [theme.breakpoints.down('sm')]: {
+        fontSize: 16,
+      },
     },
   }),
 );

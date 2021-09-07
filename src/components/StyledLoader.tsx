@@ -5,15 +5,15 @@ import { Box, createStyles, makeStyles } from '@material-ui/core';
 const useStyles = makeStyles(() =>
   createStyles({
     root: {
+      display: 'flex',
+      justifyContent: 'center',
+      alignItems: 'center',
+      background: 'rgba(255, 255, 255, 0.5)',
       position: 'absolute',
       top: 0,
       bottom: 0,
       right: 0,
       left: 0,
-      background: 'rgba(255,255,255,0.5)',
-      display: 'flex',
-      justifyContent: 'center',
-      alignItems: 'center',
     },
   }),
 );

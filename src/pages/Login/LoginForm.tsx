@@ -7,17 +7,18 @@ import {
   Button,
   createStyles,
   makeStyles,
+  Theme,
 } from '@material-ui/core';
 import { useDispatch } from 'react-redux';
 import { addNewUser } from 'store/users';
 import Cookies from 'js-cookie';
 
-import { UserNew } from '../../entities/User';
+import LogoImg from 'assets/images/logo.svg';
+import LogoGoogle from 'assets/images/google-icon.svg';
 
-import LogoImg from '../../logo.svg';
-import LogoGoogle from '../../google-icon.svg';
+import { UserNew } from 'entities/User';
 
-const useStyles = makeStyles(() =>
+const useStyles = makeStyles((theme: Theme) =>
   createStyles({
     container: {
       width: '100%',
@@ -35,6 +36,9 @@ const useStyles = makeStyles(() =>
       backgroundColor: '#fff',
       borderRadius: '2px',
       boxShadow: '0 8px 14px 3px rgb(0 0 0 / 5%)',
+      [theme.breakpoints.down('sm')]: {
+        width: '90%',
+      },
     },
     containerLogo: {
       width: '100%',
@@ -80,7 +84,7 @@ const LoginForm: FC = () => {
   const classes = useStyles();
 
   const loginHandler = async (provider: firebase.auth.AuthProvider) => {
-    firebase
+    await firebase
       .auth()
       .signInWithPopup(provider)
       .then((result) => {

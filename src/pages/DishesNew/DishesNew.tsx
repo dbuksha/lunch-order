@@ -21,7 +21,7 @@ import {
 } from '@material-ui/core';
 
 import Loader from '../../components/StyledLoader';
-import AdminLayout from '../../components/AdminComponenets/Layout/AdminLayout';
+import AdminLayout from '../../components/AdminComponents/Layout/AdminLayout';
 
 interface IParamsURL {
   id?: string;

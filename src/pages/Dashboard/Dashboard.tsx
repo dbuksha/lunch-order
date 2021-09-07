@@ -2,7 +2,7 @@ import React, { FC } from 'react';
 import { Helmet } from 'react-helmet';
 import { Box, Container, Grid, Typography } from '@material-ui/core';
 
-import AdminLayout from '../../components/AdminComponenets/Layout/AdminLayout';
+import AdminLayout from '../../components/AdminComponents/Layout/AdminLayout';
 
 const Dashboard: FC = () => (
   <AdminLayout>

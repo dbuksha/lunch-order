@@ -10,8 +10,8 @@ import { fetchLunches } from 'store/lunches';
 import { getLunches } from 'store/lunches/lunches-selectors';
 import { getIsLoading } from 'store/app';
 
-import ComplexCard from 'components/AdminComponenets/Cards/ComplexCard';
-import AdminLayout from '../../components/AdminComponenets/Layout/AdminLayout';
+import ComplexCard from 'components/AdminComponents/Cards/ComplexCard';
+import AdminLayout from '../../components/AdminComponents/Layout/AdminLayout';
 
 const lunchesCollection = firebaseInstance.collection(Collections.Lunches);
 
@@ -42,7 +42,7 @@ const ComplexList: FC = () => {
         <Container maxWidth={false}>
           {!lunches.length && !isLoading ? (
             <Alert variant="outlined" severity="info">
-              Список компелксов отсутствует
+              Список комплексов отсутствует
             </Alert>
           ) : (
             <>

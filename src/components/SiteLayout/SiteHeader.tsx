@@ -10,6 +10,7 @@ import {
   Typography,
   createStyles,
   makeStyles,
+  Theme,
 } from '@material-ui/core';
 
 import { getUserSelector } from 'store/users';
@@ -18,9 +19,9 @@ import ExitToAppIcon from '@material-ui/icons/ExitToApp';
 
 import { logout } from 'utils/auth';
 
-import LogoImg from '../../logo.svg';
+import LogoImg from 'assets/images/logo.svg';
 
-const useStyles = makeStyles(() =>
+const useStyles = makeStyles((theme: Theme) =>
   createStyles({
     container: {
       display: 'flex',
@@ -30,6 +31,10 @@ const useStyles = makeStyles(() =>
     logo: {
       width: '50px',
       height: '50px',
+      [theme.breakpoints.down('sm')]: {
+        width: '30px',
+        height: '30px',
+      },
     },
     title: {
       fontFamily: 'Roboto, Helvetica, Arial, sans-serif',
@@ -38,6 +43,9 @@ const useStyles = makeStyles(() =>
       color: '#fff',
       marginLeft: 8,
       textDeraration: 'none',
+      [theme.breakpoints.down('sm')]: {
+        fontSize: 16,
+      },
     },
     userBlock: {
       display: 'flex',
@@ -47,16 +55,28 @@ const useStyles = makeStyles(() =>
       width: 50,
       height: 50,
       marginRight: 8,
+      [theme.breakpoints.down('sm')]: {
+        display: 'none',
+      },
     },
     name: {
       fontSize: 16,
       color: '#fff',
+      [theme.breakpoints.down('sm')]: {
+        fontSize: 14,
+      },
     },
     btnExit: {
       width: 40,
       minWidth: 40,
       height: 40,
       marginLeft: 8,
+      [theme.breakpoints.down('sm')]: {
+        width: 30,
+        minWidth: 30,
+        height: 30,
+        marginLeft: 4,
+      },
     },
     exit: {
       fill: '#fff',

@@ -21,7 +21,7 @@ import {
   getUserSelector,
 } from 'store/users';
 
-import AdminLayout from '../../components/AdminComponenets/Layout/AdminLayout';
+import AdminLayout from '../../components/AdminComponents/Layout/AdminLayout';
 import UserRow from './UserRow';
 
 const UserList: FC = () => {

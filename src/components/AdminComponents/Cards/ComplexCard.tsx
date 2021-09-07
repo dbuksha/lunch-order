@@ -26,7 +26,7 @@ interface Props {
 const useStyles = makeStyles(() =>
   createStyles({
     link: {
-      color: 'rgba(0,0,0,.5)',
+      color: 'rgba(0, 0, 0, 0.5)',
       textDecoration: 'none',
       cursor: 'pointer',
     },
@@ -59,13 +59,7 @@ const ComplexCard: FC<Props> = ({ data, deleteLunch }) => {
 
   const [dialogStatus, setDialogStatus] = useState(false);
 
-  const openDialog = () => {
-    setDialogStatus(true);
-  };
-
-  const closeDialog = () => {
-    setDialogStatus(false);
-  };
+  const changeDialog = (state: boolean) => () => setDialogStatus(state);
 
   const deleteDishHandler = () => {
     setDialogStatus(false);
@@ -116,7 +110,7 @@ const ComplexCard: FC<Props> = ({ data, deleteLunch }) => {
             </Link>
           </Grid>
           <Grid item>
-            <Button className={classes.deleteBtn} onClick={() => openDialog()}>
+            <Button className={classes.deleteBtn} onClick={changeDialog(true)}>
               <DeleteIcon color="error" />
             </Button>
           </Grid>
@@ -125,8 +119,8 @@ const ComplexCard: FC<Props> = ({ data, deleteLunch }) => {
       <DeleteAlert
         status={dialogStatus}
         title="Вы уверены, что хотите удалить данный комплекс?"
-        desc="Данный компелкс будет навсегда удален из базы данных"
-        closeAlert={closeDialog}
+        desc="Данный комплекс будет навсегда удален из базы данных"
+        closeAlert={changeDialog(false)}
         confirmEvent={deleteDishHandler}
       />
     </Card>

@@ -52,14 +52,14 @@ const OrderCard: FC<OrderCardProps> = ({ order }) => {
   return (
     <Paper>
       <Toolbar className={classes.justifySpaceBetween}>
-        <Box className={classes.justifyFlexStart}>
+        {/* <Box className={classes.justifyFlexStart}>
           {order.person!.avatar ? (
             <Avatar src={order.person!.avatar} className={classes.avatar} />
           ) : null}
           <Typography component="div" variant="subtitle1">
             {order.person!.name}
           </Typography>
-        </Box>
+        </Box> */}
         <Chip
           label={isTodayOrder ? 'Сегодня' : 'Завтра'}
           color={isTodayOrder ? 'primary' : 'default'}

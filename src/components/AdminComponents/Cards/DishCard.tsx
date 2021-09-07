@@ -24,7 +24,7 @@ const useStyles = makeStyles(() =>
       position: 'relative',
     },
     link: {
-      color: 'rgba(0,0,0,.5)',
+      color: 'rgba(0, 0, 0, 0.5)',
       textDecoration: 'none',
       cursor: 'pointer',
     },
@@ -60,13 +60,7 @@ const DishesCard: FC<Props> = ({ data, deleteDish }) => {
   const classes = useStyles();
   const [dialogStatus, setDialogStatus] = useState(false);
 
-  const openDialog = () => {
-    setDialogStatus(true);
-  };
-
-  const closeDialog = () => {
-    setDialogStatus(false);
-  };
+  const changeDialog = (state: boolean) => () => setDialogStatus(state);
 
   const deleteDishHandler = () => {
     setDialogStatus(false);
@@ -105,7 +99,7 @@ const DishesCard: FC<Props> = ({ data, deleteDish }) => {
             </Link>
           </Grid>
           <Grid item>
-            <Button className={classes.deleteBtn} onClick={() => openDialog()}>
+            <Button className={classes.deleteBtn} onClick={changeDialog(true)}>
               <DeleteIcon color="error" />
             </Button>
           </Grid>
@@ -115,7 +109,7 @@ const DishesCard: FC<Props> = ({ data, deleteDish }) => {
         status={dialogStatus}
         title="Вы уверены, что хотите удалить данное блюдо?"
         desc="Данное блюдо будет навсегда удалено из базы данных и из комплексов, которые включали это блюдо."
-        closeAlert={closeDialog}
+        closeAlert={changeDialog(false)}
         confirmEvent={deleteDishHandler}
       />
     </Card>

@@ -31,10 +31,10 @@ const useStyles = makeStyles(() =>
       letterSpacing: 0,
       textTransform: 'none',
       width: '100%',
-      color: 'rgb(107, 119, 140)',
+      color: '#6b778c',
       '&$active': {
         fontWeight: 600,
-        color: 'rgb(86, 100, 210)',
+        color: '#5664d2',
       },
     },
     icon: {
@@ -59,7 +59,7 @@ const NavItem: FC<Props> = ({ href, Icon, title }) => {
         className={classes.link}
         style={{
           ...(active && {
-            color: 'rgb(86, 100, 210)',
+            color: '#5664d2',
           }),
         }}
         to={href}
