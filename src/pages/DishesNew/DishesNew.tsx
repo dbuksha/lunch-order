@@ -130,7 +130,7 @@ const DishesNew: FC = () => {
         await dispatch(hideLoader());
 
         if (typePage === 'new') {
-          await history.push('/dishes');
+          await history.push('admin/dishes');
         }
       } catch (e) {
         // TODO: handle an error
@@ -176,7 +176,7 @@ const DishesNew: FC = () => {
         ) : (
           <Container>
             <Breadcrumbs aria-label="breadcrumb">
-              <Link to="/dishes" className={classes.link}>
+              <Link to="/admin/dishes" className={classes.link}>
                 Список блюд
               </Link>
               <Typography variant="body1">
@@ -203,7 +203,7 @@ const DishesNew: FC = () => {
                   }}
                 >
                   <option value="main">Главное блюдо</option>
-                  <option value="soup">Певрое блюдо</option>
+                  <option value="soup">Первое блюдо</option>
                   <option value="side">Гарнир</option>
                   <option value="salad">Салат</option>
                   <option value="dessert">Десерт</option>

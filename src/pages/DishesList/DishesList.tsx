@@ -36,7 +36,7 @@ import AdminLayout from '../../components/AdminComponents/Layout/AdminLayout';
 import DishCard from '../../components/AdminComponents/Cards/DishCard';
 
 const perPage = 12;
-const minLenghtSeach = 3;
+const minLengthSearch = 3;
 
 const dishesCollection = firebaseInstance.collection(Collections.Dishes);
 
@@ -163,16 +163,16 @@ const Dashboard: FC = () => {
     await setCurrentDishes(getCurrentDishes(dishes, page, searchStr));
     window.scrollTo(0, 0);
     history.push(
-      `/dishes?page=${page}${searchStatus ? `&dish=${searchStr}` : ''}`,
+      `/admin/dishes?page=${page}${searchStatus ? `&dish=${searchStr}` : ''}`,
     );
   };
 
   const searchDishHandler = (event: { key: string }) => {
     if (event.key === 'Enter') {
-      if (searchStr.length >= minLenghtSeach) {
+      if (searchStr.length >= minLengthSearch) {
         setSearchStatus(true);
         setCurrentDishes(getCurrentDishes(dishes, page, searchStr));
-        history.push(`/dishes?dish=${searchStr}`);
+        history.push(`/admin/dishes?dish=${searchStr}`);
       }
     }
   };
@@ -183,7 +183,7 @@ const Dashboard: FC = () => {
     setSearchStatus(false);
     setSearchStr('');
     setCurrentDishes(getCurrentDishes(dishes, 1, ''));
-    history.push('/dishes');
+    history.push('/admin/dishes');
   };
 
   const clearFieldSearch = () => {
@@ -213,7 +213,7 @@ const Dashboard: FC = () => {
                 <Typography variant="h4">Список блюд</Typography>
                 <Button
                   component={Link}
-                  to="/dishes-new"
+                  to="/admin/dishes-new"
                   variant="contained"
                   color="primary"
                 >

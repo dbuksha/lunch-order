@@ -105,7 +105,10 @@ const ComplexCard: FC<Props> = ({ data, deleteLunch }) => {
       <Box sx={{ p: 2 }}>
         <Grid container spacing={1} className={classes.containerEvents}>
           <Grid item>
-            <Link className={classes.link} to={`/complex-edit/${data.id}`}>
+            <Link
+              className={classes.link}
+              to={`/admin/complex-edit/${data.id}`}
+            >
               Редактировать
             </Link>
           </Grid>

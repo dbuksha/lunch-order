@@ -50,7 +50,7 @@ const ComplexList: FC = () => {
                 <Typography variant="h4">Комплексы</Typography>
                 <Button
                   component={Link}
-                  to="/complex-new"
+                  to="/admin/complex-new"
                   variant="contained"
                   color="primary"
                 >

@@ -94,7 +94,7 @@ const DishesCard: FC<Props> = ({ data, deleteDish }) => {
       <Box sx={{ p: 2 }} className={classes.blockEvents}>
         <Grid container spacing={1} className={classes.containerEvents}>
           <Grid item>
-            <Link className={classes.link} to={`/dishes-edit/${data.id}`}>
+            <Link className={classes.link} to={`/admin/dishes-edit/${data.id}`}>
               Редактировать
             </Link>
           </Grid>

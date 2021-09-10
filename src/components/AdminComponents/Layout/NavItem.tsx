@@ -1,9 +1,5 @@
 import React, { FC } from 'react';
-import {
-  NavLink as RouterLink,
-  matchPath,
-  useLocation,
-} from 'react-router-dom';
+import { NavLink as RouterLink, useLocation } from 'react-router-dom';
 import {
   Button,
   ListItem,
@@ -50,7 +46,7 @@ const NavItem: FC<Props> = ({ href, Icon, title }) => {
   const location = useLocation();
   const classes = useStyles();
 
-  const active = matchPath(location.pathname, { path: href });
+  const active = location.pathname === href;
 
   return (
     <ListItem disableGutters>

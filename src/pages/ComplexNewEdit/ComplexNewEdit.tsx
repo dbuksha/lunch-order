@@ -130,7 +130,7 @@ const ComplexNewEdit: FC = () => {
         await dispatch(hideLoader());
         await dispatch(fetchLunches());
         if (typePage === 'new') {
-          await history.push('/complexes');
+          await history.push('/admin/complexes');
         }
       } catch (e) {
         console.log(e);
@@ -187,7 +187,7 @@ const ComplexNewEdit: FC = () => {
         ) : (
           <Container>
             <Breadcrumbs aria-label="breadcrumb">
-              <Link to="/complexes" className={classes.link}>
+              <Link to="/admin/complexes" className={classes.link}>
                 Список комплексов
               </Link>
               <Typography variant="body1">

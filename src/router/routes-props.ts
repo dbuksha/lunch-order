@@ -7,7 +7,7 @@ import Dashboard from 'pages/Dashboard';
 import DishesList from 'pages/DishesList';
 import DishesNew from 'pages/DishesNew';
 import ComplexList from 'pages/ComplexList';
-import СomplexNewEdit from 'pages/ComplexNewEdit';
+import ComplexNewEdit from 'pages/ComplexNewEdit';
 import UserList from 'pages/UserList';
 
 const OrdersList = lazy(() => import('pages/OrdersList'));
@@ -58,40 +58,35 @@ export const routes: RouteProp[] = [
     path: '/admin',
     component: Dashboard,
     auth: true,
-  },
-  {
-    path: '/dishes',
-    component: DishesList,
-    auth: true,
-  },
-  {
-    path: '/dishes-edit/:id',
-    component: DishesNew,
-    auth: true,
-  },
-  {
-    path: '/dishes-new',
-    component: DishesNew,
-    auth: true,
-  },
-  {
-    path: '/complexes',
-    component: ComplexList,
-    auth: true,
-  },
-  {
-    path: '/complex-edit/:id',
-    component: СomplexNewEdit,
-    auth: true,
-  },
-  {
-    path: '/complex-new',
-    component: СomplexNewEdit,
-    auth: true,
-  },
-  {
-    path: '/user-list',
-    component: UserList,
-    auth: true,
+    routes: [
+      {
+        path: '/admin/dishes',
+        component: DishesList,
+      },
+      {
+        path: '/admin/dishes-edit/:id',
+        component: DishesNew,
+      },
+      {
+        path: '/admin/dishes-new',
+        component: DishesNew,
+      },
+      {
+        path: '/admin/complexes',
+        component: ComplexList,
+      },
+      {
+        path: '/admin/complex-edit/:id',
+        component: ComplexNewEdit,
+      },
+      {
+        path: '/admin/complex-new',
+        component: ComplexNewEdit,
+      },
+      {
+        path: '/admin/user-list',
+        component: UserList,
+      },
+    ],
   },
 ];

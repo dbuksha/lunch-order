@@ -1,4 +1,9 @@
-import React, { FC, useEffect } from 'react';
+import React, {
+  FC,
+  useEffect,
+  ComponentClass,
+  LazyExoticComponent,
+} from 'react';
 import firebase from 'firebase/app';
 import 'firebase/auth';
 
@@ -13,12 +18,23 @@ import { fetchUserInfo } from 'store/users';
 import { checkAuth, logout } from 'utils/auth';
 
 import StyledLoader from 'components/StyledLoader';
+import Dashboard from 'pages/Dashboard';
 
-const AuthRoute: FC<RouteProps> = (props) => {
+export type RouteItem = {
+  path: string;
+  component: FC | ComponentClass | LazyExoticComponent<any>;
+};
+
+interface RoutePropsWithSubRoutes extends RouteProps {
+  routes?: RouteItem[];
+}
+
+const AuthRoute: FC<RoutePropsWithSubRoutes> = (props) => {
   const dispatch = useDispatch();
   const isDataPreloaded = useSelector(
     (state: RootState) => state.lunches.isPreloaded,
   );
+  const routes: RouteItem[] = props?.routes || [];
 
   useEffect(() => {
     async function preloadData() {
@@ -38,11 +54,28 @@ const AuthRoute: FC<RouteProps> = (props) => {
 
   if (!isDataPreloaded) return <StyledLoader />;
 
+  if (!routes.length) {
+    return (
+      <Route
+        path={props.path}
+        exact={props.exact}
+        render={() => (checkAuth() ? props.children : <Redirect to="/login" />)}
+      />
+    );
+  }
+
   return (
     <Route
       path={props.path}
       exact={props.exact}
-      render={() => (checkAuth() ? props.children : <Redirect to="/login" />)}
+      render={() => (
+        <>
+          <Route path={props.path} component={Dashboard} exact />
+          {routes.map((route) => (
+            <Route path={`${route.path}`} component={route.component} />
+          ))}
+        </>
+      )}
     />
   );
 };

@@ -17,9 +17,15 @@ export const Routes: FC = () => {
         {routes.map((route) => {
           const Component = route.auth ? AuthRoute : Route;
           const Child = route.component;
+          const adminRoutes = route?.routes || [];
 
           return (
-            <Component exact={route.exact} path={route.path} key={route.path}>
+            <Component
+              exact={route.exact}
+              path={route.path}
+              key={route.path}
+              {...{ routes: adminRoutes }}
+            >
               <Child />
             </Component>
           );

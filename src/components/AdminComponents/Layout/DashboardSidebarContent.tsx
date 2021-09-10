@@ -25,17 +25,17 @@ const menuItem = [
     title: 'Главная',
   },
   {
-    href: '/dishes',
+    href: '/admin/dishes',
     Icon: FastfoodOutlinedIcon,
     title: 'Список блюд',
   },
   {
-    href: '/complexes',
+    href: '/admin/complexes',
     Icon: ShoppingBagIcon,
     title: 'Комплексы',
   },
   {
-    href: '/user-list',
+    href: '/admin/user-list',
     Icon: AccountCircleOutlinedIcon,
     title: 'Пользователи',
   },
