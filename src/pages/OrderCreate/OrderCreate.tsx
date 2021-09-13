@@ -24,10 +24,11 @@ import {
   UpdateQuantityAction,
 } from 'store/orders';
 import { selectedOrderDishesIdsSet } from 'store/orders/orders-selectors';
-import { getCurrentUser } from 'store/users/users-selectors';
+import { getUserSelector } from 'store/users/users-selectors';
 import * as deliveryDataHelper from 'pages/OrdersDelivery/collectDeliveryDataHelper';
 
 // components
+import MainLayout from 'components/SiteLayout/MainLayout';
 import ListDishes from 'pages/OrderCreate/ListDishes';
 import StyledPaper from 'components/StyledPaper';
 
@@ -52,11 +53,17 @@ const useStyles = makeStyles((theme: Theme) =>
     item: {
       margin: theme.spacing(1),
     },
+    total: {
+      width: 120,
+    },
     pageTitle: {
       '&:first-letter': {
         textTransform: 'capitalize',
       },
       wordWrap: 'break-word',
+    },
+    main: {
+      margin: '40px auto',
     },
   }),
 );
@@ -65,7 +72,7 @@ const OrderCreate: FC = () => {
   const dispatch = useDispatch();
   const classes = useStyles();
   const history = useHistory();
-  const currentUser = useSelector(getCurrentUser);
+  const currentUser = useSelector(getUserSelector);
   const todayLunches = useTodayLunches();
   const order = useSelector(getCurrentOrder);
   const selectedDishes = useSelector(selectedOrderDishesIdsSet);
@@ -171,73 +178,79 @@ const OrderCreate: FC = () => {
     .format('dddd');
 
   return (
-    <StyledPaper>
-      <Typography className={classes.pageTitle} component="div" variant="h6">
-        {dayName}
-        {dayjs().day() !== getOrderDayNumber() && '(предварительный заказ)'}
-      </Typography>
-      <Grid container spacing={2} justify="center">
-        {todayLunches?.map((lunch: Lunch) => (
-          <Grid item xs={12} sm={6} md={4} key={lunch.name}>
-            <Typography
-              component="div"
-              variant="subtitle1"
-              color="textSecondary"
-            >
-              {lunch.name}
-            </Typography>
-            <ListDishes
-              key={lunch.name}
-              dishes={lunch.dishes}
-              selectedDishes={selectedDishes}
-              selectDish={(selected, quantity, dish) =>
-                onDishSelect(lunch.id, selected, quantity, dish)
-              }
-              updateDishQuantity={(type, dish) =>
-                onChangeDishQuantity(lunch.id, type, dish)
-              }
-            />
-          </Grid>
-        ))}
-        <Grid
-          item
-          className={classes.root}
-          container
-          sm={12}
-          md={12}
-          lg={12}
-          justify="flex-end"
-          alignItems="baseline"
-        >
-          <Typography component="span" variant="h6" className={classes.item}>
-            Итого:{' '}
-            <strong>
-              {calculatedPrice}
-              <Ruble />
-            </strong>
-          </Typography>
-          {order?.id && (
-            <Button
-              className={classes.item}
-              variant="outlined"
-              color="secondary"
-              onClick={onDeleteOrder}
-            >
-              Отменить заказ
-            </Button>
-          )}
-          <Button
-            variant="contained"
-            color="primary"
-            className={classes.item}
-            disabled={!calculatedPrice}
-            onClick={onCreateOrderSubmit}
+    <MainLayout>
+      <StyledPaper className={classes.main}>
+        <Typography className={classes.pageTitle} component="div" variant="h6">
+          {dayName}
+          {dayjs().day() !== getOrderDayNumber() && '(предварительный заказ)'}
+        </Typography>
+        <Grid container spacing={2} justifyContent="center">
+          {todayLunches?.map((lunch: Lunch) => (
+            <Grid item xs={12} sm={6} md={4} key={lunch.name}>
+              <Typography
+                component="div"
+                variant="subtitle1"
+                color="textSecondary"
+              >
+                {lunch.name}
+              </Typography>
+              <ListDishes
+                key={lunch.name}
+                dishes={lunch.dishes}
+                selectedDishes={selectedDishes}
+                selectDish={(selected, quantity, dish) =>
+                  onDishSelect(lunch.id, selected, quantity, dish)
+                }
+                updateDishQuantity={(type, dish) =>
+                  onChangeDishQuantity(lunch.id, type, dish)
+                }
+              />
+            </Grid>
+          ))}
+          <Grid
+            item
+            className={classes.root}
+            container
+            sm={12}
+            md={12}
+            lg={12}
+            justifyContent="flex-end"
+            alignItems="baseline"
           >
-            {order?.id ? 'Обновить заказ' : 'Заказать'}
-          </Button>
+            <Typography
+              component="span"
+              variant="h6"
+              className={(classes.item, classes.total)}
+            >
+              Итого:{' '}
+              <strong>
+                {calculatedPrice}
+                <Ruble />
+              </strong>
+            </Typography>
+            {order?.id && (
+              <Button
+                className={classes.item}
+                variant="outlined"
+                color="secondary"
+                onClick={onDeleteOrder}
+              >
+                Отменить заказ
+              </Button>
+            )}
+            <Button
+              variant="contained"
+              color="primary"
+              className={classes.item}
+              disabled={!calculatedPrice}
+              onClick={onCreateOrderSubmit}
+            >
+              {order?.id ? 'Обновить заказ' : 'Заказать'}
+            </Button>
+          </Grid>
         </Grid>
-      </Grid>
-    </StyledPaper>
+      </StyledPaper>
+    </MainLayout>
   );
 };
 

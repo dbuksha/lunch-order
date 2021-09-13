@@ -13,7 +13,7 @@ const getSelectedLunchDishes = (
   );
 
   return new Map(
-    [...selectedDishes].filter(([k, v]) => selectedLunchDishes.indexOf(k) > -1),
+    [...selectedDishes].filter(([k]) => selectedLunchDishes.indexOf(k) > -1),
   );
 };
 

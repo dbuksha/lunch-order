@@ -1,87 +1,146 @@
 import React, { FC } from 'react';
+import firebase from 'firebase/app';
+import 'firebase/auth';
 import {
-  TextField,
+  Box,
+  Typography,
   Button,
   createStyles,
   makeStyles,
   Theme,
-  FormControl,
-  Container,
 } from '@material-ui/core';
-import { useFormik } from 'formik';
-import * as yup from 'yup';
 import { useDispatch } from 'react-redux';
+import { addNewUser } from 'store/users';
+import Cookies from 'js-cookie';
 
-import { addUser } from 'store/users';
-import NumberFormat from 'react-number-format';
+import LogoImg from 'assets/images/logo.svg';
+import LogoGoogle from 'assets/images/google-icon.svg';
 
-const validationSchema = yup.object({
-  name: yup.string().required('is required'),
-  phone: yup.string(),
-});
-
-const initialValues = {
-  name: '',
-  phone: '',
-};
+import { UserNew } from 'entities/User';
 
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
-    textField: {
-      margin: theme.spacing(1),
-    },
-    formControl: {
-      margin: theme.spacing(1),
+    container: {
       width: '100%',
+      height: '100vh',
+      display: 'flex',
+      justifyContent: 'center',
+      alignItems: 'center',
+    },
+    card: {
+      width: 400,
+      display: 'flex',
+      justifyContent: 'center',
+      flexWrap: 'wrap',
+      padding: '40px 32px',
+      backgroundColor: '#fff',
+      borderRadius: '2px',
+      boxShadow: '0 8px 14px 3px rgb(0 0 0 / 5%)',
+      [theme.breakpoints.down('sm')]: {
+        width: '90%',
+      },
+    },
+    containerLogo: {
+      width: '100%',
+      display: 'flex',
+      justifyContent: 'center',
+      alignItems: 'center',
+      textDecoration: 'none',
+      marginBottom: 40,
+    },
+    logo: {
+      width: '60px',
+      height: '60px',
+    },
+    title: {
+      fontFamily: 'Roboto, Helvetica, Arial, sans-serif',
+      fontSize: '28px',
+      fontWeight: 700,
+      color: '#000',
+      marginLeft: '12px',
+      textDeraration: 'none',
+    },
+    btn: {
+      width: '100%',
+      textTransform: 'none',
+      backgroundColor: '#eee',
+      padding: '6px 12px',
+      '&:hover': {
+        backgroundColor: '#ebebeb',
+      },
+    },
+    googleLogo: {
+      width: '28px',
+      height: '28px',
+      marginRight: 8,
     },
   }),
 );
+
+const provider = new firebase.auth.GoogleAuthProvider();
 
 const LoginForm: FC = () => {
   const dispatch = useDispatch();
   const classes = useStyles();
 
-  const formik = useFormik({
-    initialValues,
-    validationSchema,
-    onSubmit: (values) => {
-      dispatch(addUser(values));
-    },
-  });
+  const loginHandler = async (provider: firebase.auth.AuthProvider) => {
+    await firebase
+      .auth()
+      .signInWithPopup(provider)
+      .then((result) => {
+        const { user } = result;
+
+        const credential = result.credential as firebase.auth.OAuthCredential;
+        const token = credential.accessToken;
+
+        Cookies.set('token', token!);
+
+        if (user) {
+          const userData: UserNew = {
+            avatar: user.photoURL,
+            createDate: firebase.firestore.Timestamp.now().toMillis(),
+            email: user.email,
+            phone: `${user.phoneNumber}`,
+            name: user.displayName,
+            role: 'user',
+            uid: user.uid,
+          };
+
+          dispatch(addNewUser(userData));
+        }
+      })
+      .catch((error) => {
+        // Handle Errors here.
+        const errorCode = error.code;
+        const errorMessage = error.message;
+        console.log(errorCode, errorMessage);
+        // The email of the user's account used.
+        // const email = error.email;
+        // The firebase.auth.AuthCredential type that was used.
+        // const credential = error.credential;
+      });
+  };
 
   return (
-    <Container maxWidth="sm">
-      <form onSubmit={formik.handleSubmit}>
-        <TextField
-          value={formik.values.name}
-          onChange={formik.handleChange}
-          error={formik.touched.name && Boolean(formik.errors.name)}
-          helperText={formik.touched.name && formik.errors.name}
-          name="name"
-          classes={{ root: classes.textField }}
-          required
-          fullWidth
-          placeholder="Имя"
-        />
-
-        <FormControl classes={{ root: classes.formControl }}>
-          <NumberFormat
-            value={formik.values.phone}
-            id="phoneInput"
-            placeholder="Телефон"
-            customInput={TextField}
-            onValueChange={(val) =>
-              formik.setFieldValue('phone', val.floatValue)
-            }
-            format="+7 (###) ###-####"
-          />
-        </FormControl>
-
-        <Button fullWidth color="primary" type="submit">
-          Sign In
-        </Button>
-      </form>
-    </Container>
+    <Box className={classes.container}>
+      <Box className={classes.card}>
+        <Box className={classes.containerLogo}>
+          <img alt="Logo" src={LogoImg} className={classes.logo} />
+          <Typography className={classes.title} component="span" variant="h3">
+            Lanchos
+          </Typography>
+        </Box>
+        <Box>
+          <Button
+            onClick={() => loginHandler(provider)}
+            className={classes.btn}
+          >
+            <img src={LogoGoogle} alt="" className={classes.googleLogo} />
+            <span>Log in with Google</span>
+          </Button>
+        </Box>
+      </Box>
+    </Box>
   );
 };
 

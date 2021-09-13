@@ -2,12 +2,12 @@ import firebase from 'firebase/app';
 import { DocumentData, DocumentReference } from 'utils/firebase';
 
 import { OrderDish } from './Dish';
-import { User } from './User';
+import { UserNew } from './User';
 
 export type Order = {
   id?: string;
   dishes: OrderDish[];
-  person?: User;
+  person?: UserNew;
   date?: number;
 };
 

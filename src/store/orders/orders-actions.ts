@@ -17,7 +17,7 @@ import { showLoader, hideLoader, showSnackBar, StatusTypes } from 'store/app';
 import { UsersState } from 'store/users';
 // entities
 import { Order, OrderFirebase } from 'entities/Order';
-import { User } from 'entities/User';
+import { UserNew } from 'entities/User';
 
 enum ActionTypes {
   FETCH_ORDERS = 'orders/fetchOrders',
@@ -99,7 +99,7 @@ export const getUserOrder = createAsyncThunk(
 
     const result = await collectionRef
       .where(
-        'person',
+        'users',
         '==',
         firebaseInstance.doc(`${Collections.Users}/${currentUser.id}`),
       )
@@ -148,7 +148,9 @@ export const fetchOrders = createAsyncThunk(
     if (!orders.length) return [];
 
     const usersCollection = firebaseInstance.collection(Collections.Users);
-    const usersResult = getCollectionEntries<User>(await usersCollection.get());
+    const usersResult = getCollectionEntries<UserNew>(
+      await usersCollection.get(),
+    );
 
     return orders.map((order) => {
       const person = usersResult.find((u) => u.id === order.person.id);

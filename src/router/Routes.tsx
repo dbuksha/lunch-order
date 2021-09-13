@@ -14,12 +14,18 @@ export const Routes: FC = () => {
     <React.Suspense fallback={<StyledLoader />}>
       {isLoading && <StyledLoader />}
       <Switch>
-        {routes.map(({ component, exact, path, auth }) => {
-          const Component = auth ? AuthRoute : Route;
-          const Child = component;
+        {routes.map((route) => {
+          const Component = route.auth ? AuthRoute : Route;
+          const Child = route.component;
+          const adminRoutes = route?.routes || [];
 
           return (
-            <Component exact={exact} path={path} key={path}>
+            <Component
+              exact={route.exact}
+              path={route.path}
+              key={route.path}
+              {...{ routes: adminRoutes }}
+            >
               <Child />
             </Component>
           );

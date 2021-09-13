@@ -1,12 +1,25 @@
 import React, { FC, useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { fetchOrders, clearOrdersList, getOrdersList } from 'store/orders';
-import { Grid } from '@material-ui/core';
+import { Grid, makeStyles, createStyles } from '@material-ui/core';
 import { Alert } from '@material-ui/lab';
 import { getIsLoading } from 'store/app';
+import MainLayout from 'components/SiteLayout/MainLayout';
 import OrderCard from 'pages/OrdersList/OrderCard';
 
+const useStyles = makeStyles(() =>
+  createStyles({
+    root: {
+      padding: 20,
+    },
+    alert: {
+      margin: '20px auto',
+    },
+  }),
+);
+
 const OrdersList: FC = () => {
+  const classes = useStyles();
   const dispatch = useDispatch();
   const isLoading = useSelector(getIsLoading);
   const orders = useSelector(getOrdersList);
@@ -21,20 +34,30 @@ const OrdersList: FC = () => {
 
   if (!orders.length && !isLoading) {
     return (
-      <Alert variant="outlined" severity="info">
-        На сегодня еще нет заказов.
-      </Alert>
+      <MainLayout>
+        <Alert variant="outlined" severity="info" className={classes.alert}>
+          На сегодня еще нет заказов.
+        </Alert>
+      </MainLayout>
     );
   }
 
   return (
-    <Grid container spacing={3} alignItems="stretch">
-      {orders?.map((order) => (
-        <Grid item key={order.id} xs={12} sm={6} lg={3}>
-          <OrderCard order={order} />
-        </Grid>
-      ))}
-    </Grid>
+    <MainLayout>
+      <Grid container spacing={3} alignItems="stretch" className={classes.root}>
+        {orders?.map((order) => {
+          if (order.person) {
+            return (
+              <Grid item key={order.id} xs={12} sm={6} lg={4}>
+                <OrderCard order={order} />
+              </Grid>
+            );
+          }
+
+          return null;
+        })}
+      </Grid>
+    </MainLayout>
   );
 };
 

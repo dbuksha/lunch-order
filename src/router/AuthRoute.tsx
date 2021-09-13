@@ -1,4 +1,11 @@
-import React, { FC, useEffect } from 'react';
+import React, {
+  FC,
+  useEffect,
+  ComponentClass,
+  LazyExoticComponent,
+} from 'react';
+import firebase from 'firebase/app';
+import 'firebase/auth';
 
 import { Redirect, Route, RouteProps } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
@@ -6,21 +13,40 @@ import { useDispatch, useSelector } from 'react-redux';
 import { RootState } from 'store';
 import { fetchLunches } from 'store/lunches';
 import { fetchDishes } from 'store/dishes';
-import { getCurrentUser } from 'store/users';
+import { fetchUserInfo } from 'store/users';
+
+import { checkAuth, logout } from 'utils/auth';
 
 import StyledLoader from 'components/StyledLoader';
+import Dashboard from 'pages/Dashboard';
 
-const AuthRoute: FC<RouteProps> = (props) => {
+export type RouteItem = {
+  path: string;
+  component: FC | ComponentClass | LazyExoticComponent<any>;
+};
+
+interface RoutePropsWithSubRoutes extends RouteProps {
+  routes?: RouteItem[];
+}
+
+const AuthRoute: FC<RoutePropsWithSubRoutes> = (props) => {
   const dispatch = useDispatch();
-  const currentUser = useSelector(getCurrentUser);
   const isDataPreloaded = useSelector(
     (state: RootState) => state.lunches.isPreloaded,
   );
+  const routes: RouteItem[] = props?.routes || [];
 
   useEffect(() => {
     async function preloadData() {
       await dispatch(fetchDishes());
       await dispatch(fetchLunches());
+      await firebase.auth().onAuthStateChanged((user) => {
+        if (user) {
+          dispatch(fetchUserInfo(user.email!));
+        } else {
+          logout();
+        }
+      });
     }
 
     if (!isDataPreloaded) preloadData();
@@ -28,11 +54,28 @@ const AuthRoute: FC<RouteProps> = (props) => {
 
   if (!isDataPreloaded) return <StyledLoader />;
 
+  if (!routes.length) {
+    return (
+      <Route
+        path={props.path}
+        exact={props.exact}
+        render={() => (checkAuth() ? props.children : <Redirect to="/login" />)}
+      />
+    );
+  }
+
   return (
     <Route
       path={props.path}
       exact={props.exact}
-      render={() => (currentUser ? props.children : <Redirect to="/login" />)}
+      render={() => (
+        <>
+          <Route path={props.path} component={Dashboard} exact />
+          {routes.map((route) => (
+            <Route path={`${route.path}`} component={route.component} />
+          ))}
+        </>
+      )}
     />
   );
 };
