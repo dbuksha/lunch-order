@@ -99,7 +99,7 @@ export const getUserOrder = createAsyncThunk(
 
     const result = await collectionRef
       .where(
-        'users',
+        'person',
         '==',
         firebaseInstance.doc(`${Collections.Users}/${currentUser.id}`),
       )

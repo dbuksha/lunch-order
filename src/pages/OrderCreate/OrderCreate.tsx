@@ -78,10 +78,13 @@ const OrderCreate: FC = () => {
   const selectedDishes = useSelector(selectedOrderDishesIdsSet);
 
   const [calculatedPrice, setCalculatedPrice] = useState<number>(0);
+  const [sendLoading, setSendLoading] = useState(false);
 
   useEffect(() => {
-    dispatch(getUserOrder());
-  }, [dispatch]);
+    if (currentUser && currentUser.id) {
+      dispatch(getUserOrder());
+    }
+  }, [currentUser]);
 
   // recalculate order sum
   useEffect(() => {
@@ -96,6 +99,8 @@ const OrderCreate: FC = () => {
     // TODO: show an error popup
     if (!currentUser || !selectedDishes) return;
     const preparedDishes: any[] = [];
+
+    setSendLoading(true);
 
     selectedDishes.forEach((quantity, id) => {
       preparedDishes.push({
@@ -119,10 +124,12 @@ const OrderCreate: FC = () => {
 
     try {
       await dispatch(addOrder(orderData));
+      setSendLoading(false);
       history.push('/');
     } catch (e) {
       // TODO: handle an error
       console.log(e);
+      setSendLoading(false);
     }
   };
 
@@ -242,7 +249,7 @@ const OrderCreate: FC = () => {
               variant="contained"
               color="primary"
               className={classes.item}
-              disabled={!calculatedPrice}
+              disabled={!calculatedPrice || sendLoading || !currentUser}
               onClick={onCreateOrderSubmit}
             >
               {order?.id ? 'Обновить заказ' : 'Заказать'}
