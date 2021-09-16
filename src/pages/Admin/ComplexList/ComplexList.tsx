@@ -11,7 +11,7 @@ import { getLunches } from 'store/lunches/lunches-selectors';
 import { getIsLoading } from 'store/app';
 
 import ComplexCard from 'components/AdminComponents/Cards/ComplexCard';
-import AdminLayout from '../../components/AdminComponents/Layout/AdminLayout';
+import AdminLayout from '../../../components/AdminComponents/Layout/AdminLayout';
 
 const lunchesCollection = firebaseInstance.collection(Collections.Lunches);
 

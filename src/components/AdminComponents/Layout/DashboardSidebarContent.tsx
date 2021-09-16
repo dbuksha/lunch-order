@@ -14,6 +14,8 @@ import AccountCircleOutlinedIcon from '@material-ui/icons/AccountCircleOutlined'
 import {
   BarChart as BarChartIcon,
   ShoppingBag as ShoppingBagIcon,
+  Bookmark as BookmarkIcon,
+  Clock as ClockIcon,
 } from 'react-feather';
 import { getUserSelector } from 'store/users';
 import NavItem from './NavItem';
@@ -33,6 +35,16 @@ const menuItem = [
     href: '/admin/complexes',
     Icon: ShoppingBagIcon,
     title: 'Комплексы',
+  },
+  {
+    href: '/admin/orders',
+    Icon: BookmarkIcon,
+    title: 'Текущие заказы',
+  },
+  {
+    href: '/admin/history-orders',
+    Icon: ClockIcon,
+    title: 'История заказов',
   },
   {
     href: '/admin/user-list',
@@ -71,7 +83,9 @@ const DashboardSidebarContent: FC = () => {
     <Box className={classes.container}>
       {user ? (
         <Box className={classes.content} sx={{ p: 2 }}>
-          <Avatar src={user.avatar!} className={classes.avatar} />
+          {user.avatar ? (
+            <Avatar src={user.avatar} className={classes.avatar} />
+          ) : null}
           <Typography color="textPrimary" variant="h5">
             {user.name || 'Администратор'}
           </Typography>

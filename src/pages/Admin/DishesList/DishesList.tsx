@@ -32,8 +32,8 @@ import { Dish } from 'entities/Dish';
 import { fetchDishes, getDishesList } from 'store/dishes';
 import { getIsLoading } from 'store/app';
 
-import AdminLayout from '../../components/AdminComponents/Layout/AdminLayout';
-import DishCard from '../../components/AdminComponents/Cards/DishCard';
+import AdminLayout from '../../../components/AdminComponents/Layout/AdminLayout';
+import DishCard from '../../../components/AdminComponents/Cards/DishCard';
 
 const perPage = 12;
 const minLengthSearch = 3;
@@ -134,26 +134,29 @@ const Dashboard: FC = () => {
       setPage(1);
       setTotal(getTotalpage(currentDishes));
     }
-  }, [currentDishes]);
+  }, [searchStr, currentDishes]);
 
   const changeSearchValue = (event: ChangeEvent<HTMLInputElement>) => {
     setSearchStr(event.target.value);
   };
 
-  const deleteDishHandler = useCallback((id: string) => {
-    dishesCollection.doc(id).delete();
+  const deleteDishHandler = useCallback(
+    (id: string) => {
+      dishesCollection.doc(id).delete();
 
-    const newCurrentDishes: Dish[] = [];
+      const newCurrentDishes: Dish[] = [];
 
-    currentDishes.forEach((el) => {
-      if (el.id !== id) {
-        newCurrentDishes.push(el);
-      }
-    });
+      currentDishes.forEach((el) => {
+        if (el.id !== id) {
+          newCurrentDishes.push(el);
+        }
+      });
 
-    dispatch(fetchDishes());
-    setCurrentDishes(newCurrentDishes);
-  }, []);
+      dispatch(fetchDishes());
+      setCurrentDishes(newCurrentDishes);
+    },
+    [currentDishes, dispatch],
+  );
 
   const changePageHandler = async (
     event: React.ChangeEvent<unknown>,

@@ -84,7 +84,7 @@ const OrderCreate: FC = () => {
     if (currentUser && currentUser.id) {
       dispatch(getUserOrder());
     }
-  }, [currentUser]);
+  }, [currentUser, dispatch]);
 
   // recalculate order sum
   useEffect(() => {
@@ -109,10 +109,10 @@ const OrderCreate: FC = () => {
       });
     });
 
-    // if lunch not for today: set tomorrow (8 a.m.)
+    // if lunch not for today: set tomorrow (9 a.m.)
     const time = isTimeForTodayLunch()
       ? dayjs()
-      : dayjs().add(1, 'day').hour(8).startOf('h');
+      : dayjs().add(1, 'day').hour(9).startOf('h');
 
     const orderData: OrderFirebase = {
       date: firebase.firestore.Timestamp.fromDate(time.toDate()),
@@ -133,6 +133,7 @@ const OrderCreate: FC = () => {
     }
   };
 
+  // repeat
   const onDishSelect = (
     lunchId: string,
     selected: boolean,
@@ -163,6 +164,7 @@ const OrderCreate: FC = () => {
     handleDeleteOrder();
   };
 
+  // repeat
   const onChangeDishQuantity = (
     lunchId: string,
     type: UpdateQuantityAction,
@@ -180,6 +182,7 @@ const OrderCreate: FC = () => {
     dispatch(updateDishesQuantity({ dishes, type }));
   };
 
+  // repeat
   const dayName = dayjs()
     .weekday(getOrderDayNumber() - 1)
     .format('dddd');

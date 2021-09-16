@@ -3,12 +3,15 @@ import { FC, ComponentClass, LazyExoticComponent, lazy } from 'react';
 // components
 import { Home } from 'pages/Home';
 import Login from 'pages/Login';
-import Dashboard from 'pages/Dashboard';
-import DishesList from 'pages/DishesList';
-import DishesNew from 'pages/DishesNew';
-import ComplexList from 'pages/ComplexList';
-import ComplexNewEdit from 'pages/ComplexNewEdit';
-import UserList from 'pages/UserList';
+import Dashboard from 'pages/Admin/Dashboard';
+import DishesList from 'pages/Admin/DishesList';
+import DishesNew from 'pages/Admin/DishesNew';
+import ComplexList from 'pages/Admin/ComplexList';
+import ComplexNewEdit from 'pages/Admin/ComplexNewEdit';
+import Orders from 'pages/Admin/Orders/Orders';
+import OrderNewEdit from 'pages/Admin/OrderNewEdit/OrderNewEdit';
+import HistoryOrders from 'pages/Admin/HistoryOrders';
+import UserList from 'pages/Admin/UserList';
 
 const OrdersList = lazy(() => import('pages/OrdersList'));
 const OrderCreate = lazy(() => import('pages/OrderCreate'));
@@ -82,6 +85,22 @@ export const routes: RouteProp[] = [
       {
         path: '/admin/complex-new',
         component: ComplexNewEdit,
+      },
+      {
+        path: '/admin/orders',
+        component: Orders,
+      },
+      {
+        path: '/admin/order-edit/:id',
+        component: OrderNewEdit,
+      },
+      {
+        path: '/admin/order-new',
+        component: OrderNewEdit,
+      },
+      {
+        path: '/admin/history-orders',
+        component: HistoryOrders,
       },
       {
         path: '/admin/user-list',

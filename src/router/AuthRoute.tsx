@@ -18,7 +18,7 @@ import { fetchUserInfo } from 'store/users';
 import { checkAuth, logout } from 'utils/auth';
 
 import StyledLoader from 'components/StyledLoader';
-import Dashboard from 'pages/Dashboard';
+import Dashboard from 'pages/Admin/Dashboard';
 
 export type RouteItem = {
   path: string;
@@ -41,8 +41,8 @@ const AuthRoute: FC<RoutePropsWithSubRoutes> = (props) => {
       await dispatch(fetchDishes());
       await dispatch(fetchLunches());
       await firebase.auth().onAuthStateChanged((user) => {
-        if (user) {
-          dispatch(fetchUserInfo(user.email!));
+        if (user && user.email) {
+          dispatch(fetchUserInfo(user.email));
         } else {
           logout();
         }
@@ -72,7 +72,11 @@ const AuthRoute: FC<RoutePropsWithSubRoutes> = (props) => {
         <>
           <Route path={props.path} component={Dashboard} exact />
           {routes.map((route) => (
-            <Route path={`${route.path}`} component={route.component} />
+            <Route
+              path={`${route.path}`}
+              component={route.component}
+              key={route.path}
+            />
           ))}
         </>
       )}

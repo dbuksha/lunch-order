@@ -1,4 +1,4 @@
-import { createAsyncThunk } from '@reduxjs/toolkit';
+import { createAction, createAsyncThunk } from '@reduxjs/toolkit';
 import firebaseInstance, {
   Collections,
   getCollectionEntries,
@@ -21,9 +21,12 @@ import { UserNew } from 'entities/User';
 
 enum ActionTypes {
   FETCH_ORDERS = 'orders/fetchOrders',
+  FETCH_HISTORY_ORDERS = 'orders/fetchHistoryOrders',
   ADD_ORDER = 'orders/addOrder',
   GET_USER_ORDER = 'orders/getUserOrder',
+  GET_OPTION_ORDER = 'orders/getOptionOrder',
   DELETE_ORDER = 'orders/deleteOrder',
+  RESET_ORDER = 'orders/resetOrder',
 }
 
 // If today is later then 10:30 return condition of getting tomorrow order otherwise today's order
@@ -108,6 +111,49 @@ export const getUserOrder = createAsyncThunk(
     dispatch(hideLoader());
 
     const orders = getCollectionEntries<OrderFirebase>(result).map(
+      ({ person, ...order }) => {
+        return {
+          ...order,
+          date: order.date.toMillis(),
+        };
+      },
+    );
+
+    const selectedOrder = orders.find((order) =>
+      isTodayOrTomorrowOrderExists(order.date),
+    );
+
+    if (!selectedOrder) return null;
+
+    return {
+      ...selectedOrder,
+      dishes: selectedOrder.dishes.map((d) => ({
+        dish: dishesMap[d.dishRef.id],
+        quantity: d.quantity,
+      })),
+    } as Order;
+  },
+);
+
+export const getOptionOrder = createAsyncThunk(
+  ActionTypes.GET_OPTION_ORDER,
+  async (id: string, { getState, dispatch }) => {
+    const {
+      dishes: { dishesMap },
+    } = getState() as { dishes: DishesState };
+
+    // FIXME: should I show an error message?
+    if (!id) return null;
+
+    dispatch(showLoader());
+
+    const result = await collectionRef
+      .where('person', '==', firebaseInstance.doc(`${Collections.Users}/${id}`))
+      .get();
+
+    dispatch(hideLoader());
+
+    const orders = getCollectionEntries<OrderFirebase>(result).map(
       ({ person, ...order }) => ({
         ...order,
         date: order.date.toMillis(),
@@ -163,6 +209,44 @@ export const fetchOrders = createAsyncThunk(
   },
 );
 
+export const fetchHistoryOrders = createAsyncThunk(
+  ActionTypes.FETCH_HISTORY_ORDERS,
+  async (_, { getState, dispatch }) => {
+    const {
+      dishes: { dishesMap },
+    } = getState() as { users: UsersState; dishes: DishesState };
+
+    dispatch(showLoader());
+
+    const result = await collectionRef
+      .where('date', '<', todayStartOrderTime.toDate())
+      .orderBy('date', 'desc')
+      .limit(100)
+      .get();
+
+    dispatch(hideLoader());
+
+    const orders = getCollectionEntries<OrderFirebase>(result);
+    if (!orders.length) return [];
+
+    const usersCollection = firebaseInstance.collection(Collections.Users);
+    const usersResult = getCollectionEntries<UserNew>(
+      await usersCollection.get(),
+    );
+
+    return orders.map((order) => {
+      const person = usersResult.find((u) => u.id === order.person.id);
+      const dishes = order.dishes.map(({ quantity, dishRef }) => ({
+        quantity,
+        dish: dishesMap[dishRef.id],
+      }));
+      return { ...order, date: order.date.toMillis(), dishes, person };
+    });
+
+    // return orderWithPerson.filter((el) => el.person);
+  },
+);
+
 export const deleteOrder = createAsyncThunk(
   ActionTypes.DELETE_ORDER,
   async (id: string, { dispatch }) => {
@@ -185,3 +269,5 @@ export const deleteOrder = createAsyncThunk(
     }
   },
 );
+
+export const resetOrder = createAction(ActionTypes.RESET_ORDER);

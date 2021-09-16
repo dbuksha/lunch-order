@@ -71,7 +71,7 @@ export const usePreparedDeliveryData = (
 
     // set price and table data
     setDeliveryData([...deliveryDataMap.values()]);
-  }, [calculatedDishes]);
+  }, [calculatedDishes, lunches]);
 
   return deliveryData;
 };

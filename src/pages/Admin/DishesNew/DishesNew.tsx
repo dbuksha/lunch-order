@@ -20,8 +20,8 @@ import {
   Breadcrumbs,
 } from '@material-ui/core';
 
-import Loader from '../../components/StyledLoader';
-import AdminLayout from '../../components/AdminComponents/Layout/AdminLayout';
+import Loader from '../../../components/StyledLoader';
+import AdminLayout from '../../../components/AdminComponents/Layout/AdminLayout';
 
 interface IParamsURL {
   id?: string;
@@ -140,6 +140,7 @@ const DishesNew: FC = () => {
   });
 
   useEffect(() => {
+    // eslint-disable-next-line func-names
     (async function () {
       setLoadingStatus(true);
 

@@ -5,7 +5,7 @@ import { Grid, makeStyles, createStyles } from '@material-ui/core';
 import { Alert } from '@material-ui/lab';
 import { getIsLoading } from 'store/app';
 import MainLayout from 'components/SiteLayout/MainLayout';
-import OrderCard from 'pages/OrdersList/OrderCard';
+import OrderCard from 'components/Cards/OrderCard';
 
 const useStyles = makeStyles(() =>
   createStyles({
@@ -45,17 +45,11 @@ const OrdersList: FC = () => {
   return (
     <MainLayout>
       <Grid container spacing={3} alignItems="stretch" className={classes.root}>
-        {orders?.map((order) => {
-          if (order.person) {
-            return (
-              <Grid item key={order.id} xs={12} sm={6} lg={4}>
-                <OrderCard order={order} />
-              </Grid>
-            );
-          }
-
-          return null;
-        })}
+        {orders?.map((order) => (
+          <Grid item key={order.id} xs={12} sm={6} lg={4}>
+            <OrderCard order={order} adminMode={false} />
+          </Grid>
+        ))}
       </Grid>
     </MainLayout>
   );

@@ -23,14 +23,49 @@ export const selectedOrderDishesIdsSet = createSelector<
   },
 );
 
+export const selectedOptionOrderDishesIdsSet = createSelector<
+  RootState,
+  Order | null,
+  SelectedDishes
+>(
+  (state) => state.orders.optionOrder,
+  (order) => {
+    const selectedDishesMap = new Map();
+    if (!order) return selectedDishesMap;
+    order.dishes.forEach((dish) => {
+      selectedDishesMap.set(dish.dish.id, dish.quantity);
+    });
+
+    return selectedDishesMap;
+  },
+);
+
 export const getCurrentOrder = createSelector<RootState, OrderState, Order>(
   (state) => state.orders,
   (state) => state.currentOrder,
 );
 
+export const getOptionOrderSelector = createSelector<
+  RootState,
+  OrderState,
+  Order
+>(
+  (state) => state.orders,
+  (state) => state.optionOrder,
+);
+
 export const getOrdersList = createSelector<RootState, OrderState, Order[]>(
   (state) => state.orders,
   (state) => state.orders,
+);
+
+export const getHistoryOrdersList = createSelector<
+  RootState,
+  OrderState,
+  Order[]
+>(
+  (state) => state.orders,
+  (state) => state.historyOrders,
 );
 
 export const getTodayOrders = createSelector<RootState, OrderState, Order[]>(

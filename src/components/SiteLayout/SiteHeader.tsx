@@ -37,12 +37,11 @@ const useStyles = makeStyles((theme: Theme) =>
       },
     },
     title: {
-      fontFamily: 'Roboto, Helvetica, Arial, sans-serif',
       fontSize: 24,
       fontWeight: 700,
       color: '#fff',
       marginLeft: 8,
-      textDeraration: 'none',
+      textDecoration: 'none',
       [theme.breakpoints.down('sm')]: {
         fontSize: 16,
       },
@@ -101,7 +100,9 @@ const SiteHeader: FC = () => {
         <Box className={classes.userBlock}>
           {user ? (
             <>
-              <Avatar src={user.avatar!} className={classes.avatar} />
+              {user.avatar ? (
+                <Avatar src={user.avatar} className={classes.avatar} />
+              ) : null}
               <Typography
                 color="textPrimary"
                 variant="h5"

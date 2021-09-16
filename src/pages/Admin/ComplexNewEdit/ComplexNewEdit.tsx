@@ -25,8 +25,8 @@ import { Lunch } from 'entities/Lunch';
 import { Dish } from 'entities/Dish';
 import { getDishesList } from 'store/dishes';
 import { fetchLunches } from 'store/lunches';
-import Loader from '../../components/StyledLoader';
-import AdminLayout from '../../components/AdminComponents/Layout/AdminLayout';
+import Loader from '../../../components/StyledLoader';
+import AdminLayout from '../../../components/AdminComponents/Layout/AdminLayout';
 
 interface IParamsURL {
   id?: string;
@@ -139,6 +139,7 @@ const ComplexNewEdit: FC = () => {
   });
 
   useEffect(() => {
+    // eslint-disable-next-line func-names
     (async function () {
       setLoadingStatus(true);
 
