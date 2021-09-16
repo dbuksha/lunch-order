@@ -13,35 +13,28 @@ import firebase from 'firebase/app';
 import dayjs from 'dayjs';
 
 import firebaseInstance, { Collections } from 'utils/firebase';
-// store
+
 import {
   addOrder,
   deleteOrder,
   getCurrentOrder,
   getUserOrder,
-  updateOrder,
-  updateDishesQuantity,
-  UpdateQuantityAction,
 } from 'store/orders';
 import { selectedOrderDishesIdsSet } from 'store/orders/orders-selectors';
 import { getUserSelector } from 'store/users/users-selectors';
 import * as deliveryDataHelper from 'pages/OrdersDelivery/collectDeliveryDataHelper';
 
-// components
 import MainLayout from 'components/SiteLayout/MainLayout';
-import ListDishes from 'pages/OrderCreate/ListDishes';
 import StyledPaper from 'components/StyledPaper';
+import TodayLunches from 'components/TodayLunches';
 
-// entities
-import { Lunch } from 'entities/Lunch';
-import { Dish } from 'entities/Dish';
 import { OrderFirebase } from 'entities/Order';
-import { getOrderDayNumber, isTimeForTodayLunch } from 'utils/time-helper';
-import { useTodayLunches } from 'use/useTodayLunches';
+import {
+  getDayName,
+  getOrderDayNumber,
+  isTimeForTodayLunch,
+} from 'utils/time-helper';
 import Ruble from 'components/Ruble';
-
-const findLunchById = (lunches: Lunch[], lunchId: string): Lunch | null =>
-  lunches.find((lunch: Lunch) => lunch.id === lunchId) || null;
 
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
@@ -73,7 +66,6 @@ const OrderCreate: FC = () => {
   const classes = useStyles();
   const history = useHistory();
   const currentUser = useSelector(getUserSelector);
-  const todayLunches = useTodayLunches();
   const order = useSelector(getCurrentOrder);
   const selectedDishes = useSelector(selectedOrderDishesIdsSet);
 
@@ -133,26 +125,6 @@ const OrderCreate: FC = () => {
     }
   };
 
-  // repeat
-  const onDishSelect = (
-    lunchId: string,
-    selected: boolean,
-    quantity: number,
-    dish?: Dish,
-  ) => {
-    let dishes = [];
-    if (!dish) {
-      const selectedLunch = findLunchById(todayLunches, lunchId);
-      if (!selectedLunch) return;
-      dishes = selectedLunch.dishes;
-    } else {
-      dishes = [dish];
-    }
-
-    dispatch(updateOrder({ dishes, selected, quantity }));
-  };
-
-  // TODO: show alerts
   const onDeleteOrder = () => {
     async function handleDeleteOrder() {
       if (order?.id) {
@@ -164,59 +136,15 @@ const OrderCreate: FC = () => {
     handleDeleteOrder();
   };
 
-  // repeat
-  const onChangeDishQuantity = (
-    lunchId: string,
-    type: UpdateQuantityAction,
-    dish?: Dish,
-  ) => {
-    let dishes = [];
-    if (!dish) {
-      const selectedLunch = findLunchById(todayLunches, lunchId);
-      if (!selectedLunch) return;
-      dishes = selectedLunch.dishes;
-    } else {
-      dishes = [dish];
-    }
-
-    dispatch(updateDishesQuantity({ dishes, type }));
-  };
-
-  // repeat
-  const dayName = dayjs()
-    .weekday(getOrderDayNumber() - 1)
-    .format('dddd');
-
   return (
     <MainLayout>
       <StyledPaper className={classes.main}>
         <Typography className={classes.pageTitle} component="div" variant="h6">
-          {dayName}
+          {getDayName()}
           {dayjs().day() !== getOrderDayNumber() && '(предварительный заказ)'}
         </Typography>
         <Grid container spacing={2} justifyContent="center">
-          {todayLunches?.map((lunch: Lunch) => (
-            <Grid item xs={12} sm={6} md={4} key={lunch.name}>
-              <Typography
-                component="div"
-                variant="subtitle1"
-                color="textSecondary"
-              >
-                {lunch.name}
-              </Typography>
-              <ListDishes
-                key={lunch.name}
-                dishes={lunch.dishes}
-                selectedDishes={selectedDishes}
-                selectDish={(selected, quantity, dish) =>
-                  onDishSelect(lunch.id, selected, quantity, dish)
-                }
-                updateDishQuantity={(type, dish) =>
-                  onChangeDishQuantity(lunch.id, type, dish)
-                }
-              />
-            </Grid>
-          ))}
+          <TodayLunches />
           <Grid
             item
             className={classes.root}

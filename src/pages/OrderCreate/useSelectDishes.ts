@@ -1,6 +1,6 @@
 import { ChangeEvent, useEffect, useState } from 'react';
 import { sortBy } from 'lodash';
-import { ListDishesProps } from 'pages/OrderCreate/ListDishes';
+import { ListDishesProps } from 'components/ListDishes';
 
 const getSortedDishesString = (dishes: string[]) =>
   JSON.stringify(sortBy(dishes));

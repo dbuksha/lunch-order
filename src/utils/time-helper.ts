@@ -34,3 +34,8 @@ export const getDaysToAdd = (): number => {
   if (orderDayNumber === 1) return today.weekday(+7).diff(today, 'day');
   return 1;
 };
+
+export const getDayName = (): string =>
+  dayjs()
+    .weekday(getOrderDayNumber() - 1)
+    .format('dddd');

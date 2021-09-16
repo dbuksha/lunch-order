@@ -43,12 +43,16 @@ import * as deliveryDataHelper from 'pages/OrdersDelivery/collectDeliveryDataHel
 import { Lunch } from 'entities/Lunch';
 import { Dish } from 'entities/Dish';
 import { OrderFirebase } from 'entities/Order';
-import { getOrderDayNumber, isTimeForTodayLunch } from 'utils/time-helper';
+import {
+  getDayName,
+  getOrderDayNumber,
+  isTimeForTodayLunch,
+} from 'utils/time-helper';
 import { useTodayLunches } from 'use/useTodayLunches';
 
 import Ruble from 'components/Ruble';
 
-import ListDishes from 'pages/OrderCreate/ListDishes';
+import ListDishes from 'components/ListDishes';
 import Loader from '../../../components/StyledLoader';
 import AdminLayout from '../../../components/AdminComponents/Layout/AdminLayout';
 
@@ -250,10 +254,6 @@ const OrderNewEdit: FC = () => {
     dispatch(updateDishesQuantity({ dishes, type }));
   };
 
-  const dayName = dayjs()
-    .weekday(getOrderDayNumber() - 1)
-    .format('dddd');
-
   return (
     <AdminLayout>
       <Helmet>
@@ -289,7 +289,7 @@ const OrderNewEdit: FC = () => {
                 component="div"
                 variant="h6"
               >
-                {dayName}
+                {getDayName()}
                 {dayjs().day() !== getOrderDayNumber() &&
                   '(предварительный заказ)'}
               </Typography>
