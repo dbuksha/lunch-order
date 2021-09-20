@@ -116,15 +116,16 @@ const OrderCard: FC<OrderCardProps> = ({
       deleteOrder(order.id, order.person.id); // rewrite
   };
 
-  const EditButton = (
-    <Button
-      component={Link}
-      className={classes.editLink}
-      to={`/admin/order-edit/${order!.person!.id}`}
-    >
-      <EditIcon color="primary" />
-    </Button>
-  );
+  const EditButton =
+    order && order.person ? (
+      <Button
+        component={Link}
+        className={classes.editLink}
+        to={`/admin/order-edit/${order.person.id}`}
+      >
+        <EditIcon color="primary" />
+      </Button>
+    ) : null;
 
   return (
     <Paper className={classes.main}>
