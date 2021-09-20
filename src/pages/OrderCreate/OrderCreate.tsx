@@ -39,6 +39,7 @@ import { OrderFirebase } from 'entities/Order';
 import { getOrderDayNumber, isTimeForTodayLunch } from 'utils/time-helper';
 import { useTodayLunches } from 'use/useTodayLunches';
 import Ruble from 'components/Ruble';
+import { fetchUserInfo } from 'store/users';
 
 const findLunchById = (lunches: Lunch[], lunchId: string): Lunch | null =>
   lunches.find((lunch: Lunch) => lunch.id === lunchId) || null;
@@ -101,7 +102,7 @@ const OrderCreate: FC = () => {
 
     if (!currentUser.id) {
       alert('Пользователь не был найден, попробуйте снова');
-      dispatch(getUserOrder());
+      dispatch(fetchUserInfo(currentUser.email!));
       return;
     }
 
