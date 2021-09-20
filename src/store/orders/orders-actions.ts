@@ -61,7 +61,8 @@ export const addOrder = createAsyncThunk(
       dispatch(
         showSnackBar({
           status: StatusTypes.success,
-          message: 'Заказ был создан успешно.',
+          message:
+            'Заказ был создан успешно. Обязательно проверьте свой заказ в списке заказов',
         }),
       );
       dispatch(hideLoader());

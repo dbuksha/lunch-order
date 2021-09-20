@@ -35,6 +35,7 @@ import {
   isTimeForTodayLunch,
 } from 'utils/time-helper';
 import Ruble from 'components/Ruble';
+import { fetchUserInfo } from 'store/users';
 
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
@@ -76,7 +77,7 @@ const OrderCreate: FC = () => {
     if (currentUser && currentUser.id) {
       dispatch(getUserOrder());
     }
-  }, [currentUser, dispatch]);
+  }, [dispatch, currentUser]);
 
   // recalculate order sum
   useEffect(() => {
@@ -90,6 +91,13 @@ const OrderCreate: FC = () => {
   const onCreateOrderSubmit = async () => {
     // TODO: show an error popup
     if (!currentUser || !selectedDishes) return;
+
+    if (!currentUser.id) {
+      alert('Пользователь не был найден, попробуйте снова');
+      dispatch(fetchUserInfo(currentUser.email!));
+      return;
+    }
+
     const preparedDishes: any[] = [];
 
     setSendLoading(true);
