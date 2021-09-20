@@ -1,5 +1,7 @@
 import React, { FC, useState, useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
+import firebase from 'firebase/app';
+import firebaseInstance, { Collections } from 'utils/firebase';
 import {
   Paper,
   TableContainer,
@@ -15,8 +17,13 @@ import {
   FormControlLabel,
 } from '@material-ui/core';
 import { Alert } from '@material-ui/lab';
+import dayjs from 'utils/dayjs';
+
+import { DeliveryData } from 'entities/Delivery';
+import { UserNew } from 'entities/User';
 
 import { getIsLoading } from 'store/app';
+import { fetchDeliveryInfo, getDeliveryInfoSelector } from 'store/delivery';
 import { fetchAllUsers, getAllUserSelector } from 'store/users';
 
 import DeleteAlert from 'components/AdminComponents/Alerts/DeleteAlert';
@@ -44,6 +51,20 @@ const useStyles = makeStyles(() =>
   }),
 );
 
+const getNameUser = (arr: Array<UserNew>, id: string): string => {
+  let name = '';
+
+  arr.forEach((el: UserNew) => {
+    if (el.id === id) {
+      name = el.name || '';
+    }
+  });
+
+  return name;
+};
+
+const deliveryCollection = firebaseInstance.collection(Collections.Delivery);
+
 const OrdersDelivery: FC = () => {
   const dispatch = useDispatch();
   const classes = useStyles();
@@ -51,16 +72,33 @@ const OrdersDelivery: FC = () => {
   const gropedDishes = useGroupedDishes();
   const deliveryPrice = useCalculatedDeliveryPrice(gropedDishes);
   const deliveryData = usePreparedDeliveryData(gropedDishes);
+
+  const globalDelivery = useSelector(getDeliveryInfoSelector);
   const users = useSelector(getAllUserSelector);
   const [deliveryCompleted, setDeliveryCompleted] = useState(false);
+  const [tempPayer, setTempPayer] = useState('');
   const [payer, setPayer] = useState('default');
   const [dialogStatus, setDialogStatus] = useState('');
 
   useEffect(() => {
+    if (globalDelivery && globalDelivery.id) {
+      dispatch(fetchDeliveryInfo());
+    }
+
     if (!users.length) {
       dispatch(fetchAllUsers());
     }
   }, [dispatch]);
+
+  useEffect(() => {
+    if (globalDelivery && globalDelivery.id) {
+      setDeliveryCompleted(true);
+
+      if (globalDelivery.payer && globalDelivery.payer.id) {
+        setPayer(globalDelivery.payer.id);
+      }
+    }
+  }, [globalDelivery]);
 
   if (!deliveryData.length && !isLoading) {
     return (
@@ -73,25 +111,48 @@ const OrdersDelivery: FC = () => {
   }
 
   const toggleDialogHandler = (state: string) => () => {
-    if (deliveryCompleted) return;
-
-    // if (state === '') setPayer('default');
+    if (deliveryCompleted && state === 'delivery') return;
 
     setDialogStatus(state);
   };
 
-  const confirmDeliveryCompleted = () => {
-    setDeliveryCompleted(true);
-    toggleDialogHandler('')();
-  };
-
-  const handlePayerChange = (event: any) => {
-    setPayer(event.target.value as string);
+  const payerChange = (event: any) => {
+    setTempPayer(event.target.value as string);
     setDialogStatus('payer');
   };
 
-  const confirmSelectPayer = () => {
+  const confirmDeliveryCompleted = async () => {
+    await setDeliveryCompleted(true);
+    await toggleDialogHandler('')();
+
+    const deliveryRecord: DeliveryData = {
+      createDate: firebase.firestore.Timestamp.fromDate(dayjs().toDate()),
+      payer: null,
+      dishes: deliveryData,
+    };
+
+    await deliveryCollection.add(deliveryRecord);
+
+    await dispatch(fetchDeliveryInfo());
+  };
+
+  const confirmSelectPayer = async () => {
+    await setPayer(tempPayer);
+    await setTempPayer('');
+    await toggleDialogHandler('')();
+
+    await deliveryCollection.doc(globalDelivery!.id).update({
+      payer: firebaseInstance.doc(`${Collections.Users}/${tempPayer}`),
+    });
+  };
+
+  const cancelSelectedPayer = () => {
     toggleDialogHandler('')();
+
+    if (dialogStatus === 'payer') {
+      setTempPayer('');
+      setPayer('default');
+    }
   };
 
   return (
@@ -101,7 +162,7 @@ const OrdersDelivery: FC = () => {
           <TableHead>
             <TableRow>
               <TableCell align="left">
-                <b>Заказы</b>
+                <b>Наименование</b>
               </TableCell>
               <TableCell align="right">
                 <b>Кол-во</b>
@@ -144,12 +205,13 @@ const OrdersDelivery: FC = () => {
                 <Select
                   native
                   value={payer}
-                  onChange={handlePayerChange}
+                  onChange={payerChange}
                   variant="outlined"
                   fullWidth
                   inputProps={{
                     name: 'user',
                   }}
+                  disabled={payer !== 'default' || !deliveryCompleted}
                 >
                   <option value="default">Выберите пользователя</option>
                   {users.length
@@ -168,14 +230,20 @@ const OrdersDelivery: FC = () => {
         title={`${
           dialogStatus === 'delivery'
             ? 'Вы уверены, что вы заказали еду по телефону?'
-            : 'Вы уверены, что хотите выбрать этого получателя?'
+            : `Вы уверены, что хотите выбрать ${
+                users ? getNameUser(users, tempPayer) : 'этого пользователя'
+              }?`
         }`}
         desc={`${
           dialogStatus === 'delivery'
             ? 'После того, как подтвердите действие, заказ еды на сегодняшний день будет недоступен'
             : 'После того, как подтвердите действие изменить получателя будет невозможно'
         }`}
-        closeAlert={toggleDialogHandler('')}
+        closeAlert={
+          dialogStatus === 'delivery'
+            ? toggleDialogHandler('')
+            : cancelSelectedPayer
+        }
         confirmEvent={
           dialogStatus === 'delivery'
             ? confirmDeliveryCompleted

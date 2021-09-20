@@ -3,4 +3,5 @@ export enum Collections {
   Users = 'users',
   Lunches = 'dishsets',
   Orders = 'orders',
+  Delivery = 'delivery',
 }
