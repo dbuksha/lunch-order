@@ -48,7 +48,7 @@ const menuItem = [
     title: 'Завершенные заказы',
   },
   {
-    href: '/admin/history-orders',
+    href: '/admin/deliveries',
     Icon: ClockIcon,
     title: 'История доставок',
   },

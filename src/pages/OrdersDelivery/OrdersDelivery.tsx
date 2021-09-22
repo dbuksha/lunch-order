@@ -82,9 +82,9 @@ const OrdersDelivery: FC = () => {
   const [dialogStatus, setDialogStatus] = useState('');
 
   useEffect(() => {
-    // if (globalDelivery && globalDelivery.id) {
-    dispatch(fetchDeliveryInfo());
-    // }
+    if (globalDelivery === null) {
+      dispatch(fetchDeliveryInfo());
+    }
 
     if (!users.length) {
       dispatch(fetchAllUsers());
@@ -130,6 +130,7 @@ const OrdersDelivery: FC = () => {
       createDate: firebase.firestore.Timestamp.fromDate(dayjs().toDate()),
       payer: null,
       dishes: deliveryData,
+      total: deliveryPrice,
     };
 
     await deliveryCollection.add(deliveryRecord);
@@ -168,8 +169,6 @@ const OrdersDelivery: FC = () => {
       setPayer('default');
     }
   };
-
-  console.log(globalDelivery);
 
   return (
     <MainLayout>

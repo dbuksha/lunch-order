@@ -11,3 +11,12 @@ export const getDeliveryInfoSelector = createSelector<
   (state) => state.delivery,
   (state) => state.deliveryInfo,
 );
+
+export const getDeliveriesSelector = createSelector<
+  RootState,
+  DeliveryState,
+  Array<DeliveryData> | null
+>(
+  (state) => state.delivery,
+  (state) => state.deliveries,
+);

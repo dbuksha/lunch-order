@@ -104,7 +104,7 @@ export const routes: RouteProp[] = [
         component: CompletedOrders,
       },
       {
-        path: '/admin/history-orders',
+        path: '/admin/deliveries',
         component: HistoryOrders,
       },
       {
