@@ -11,8 +11,8 @@ import { Redirect, Route, RouteProps } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
 
 import { RootState } from 'store';
-import { fetchLunches } from 'store/lunches';
 import { fetchDishes } from 'store/dishes';
+import { fetchLunches } from 'store/lunches';
 import { fetchUserInfo } from 'store/users';
 
 import { checkAuth, logout } from 'utils/auth';

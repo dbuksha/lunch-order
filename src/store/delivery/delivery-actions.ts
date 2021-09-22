@@ -7,6 +7,7 @@ import { showSnackBar, StatusTypes } from 'store/app';
 import { DeliveryData } from 'entities/Delivery';
 // import { todayStartOrderTime } from 'utils/time-helper';
 import dayjs from 'utils/dayjs';
+import delivery from '.';
 
 enum ActionTypes {
   FETCH_DELIVERY_INFO = 'users/fetchDeliveryInfo',
@@ -19,11 +20,15 @@ export const fetchDeliveryInfo = createAsyncThunk(
   async (_, { dispatch }) => {
     try {
       const data = await collectionRef
-        .orderBy('createDate', 'desc')
-        .limit(1)
+        // .orderBy('createDate', 'desc')
+        // .limit(1)
         .get();
 
+      console.log('data = ', data);
+
       const deliveryData = getCollectionEntries<DeliveryData>(data);
+
+      console.log('deliveryData = ', deliveryData);
 
       const deliveryDataCreateDate = deliveryData[0].createDate.toMillis();
 

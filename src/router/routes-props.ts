@@ -10,6 +10,7 @@ import ComplexList from 'pages/Admin/ComplexList';
 import ComplexNewEdit from 'pages/Admin/ComplexNewEdit';
 import Orders from 'pages/Admin/Orders/Orders';
 import OrderNewEdit from 'pages/Admin/OrderNewEdit/OrderNewEdit';
+import CompletedOrders from 'pages/Admin/CompletedOrders';
 import HistoryOrders from 'pages/Admin/HistoryOrders';
 import UserList from 'pages/Admin/UserList';
 
@@ -97,6 +98,10 @@ export const routes: RouteProp[] = [
       {
         path: '/admin/order-new',
         component: OrderNewEdit,
+      },
+      {
+        path: '/admin/completed-orders',
+        component: CompletedOrders,
       },
       {
         path: '/admin/history-orders',

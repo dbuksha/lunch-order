@@ -126,10 +126,6 @@ const Dashboard: FC = () => {
   );
 
   useEffect(() => {
-    dispatch(fetchDishes());
-  }, [dispatch]);
-
-  useEffect(() => {
     if (searchStr !== '') {
       setPage(1);
       setTotal(getTotalpage(currentDishes));

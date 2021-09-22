@@ -18,6 +18,7 @@ import {
 } from '@material-ui/core';
 import { Alert } from '@material-ui/lab';
 import dayjs from 'utils/dayjs';
+import axios from 'axios';
 
 import { DeliveryData } from 'entities/Delivery';
 import { UserNew } from 'entities/User';
@@ -81,9 +82,9 @@ const OrdersDelivery: FC = () => {
   const [dialogStatus, setDialogStatus] = useState('');
 
   useEffect(() => {
-    if (globalDelivery && globalDelivery.id) {
-      dispatch(fetchDeliveryInfo());
-    }
+    // if (globalDelivery && globalDelivery.id) {
+    dispatch(fetchDeliveryInfo());
+    // }
 
     if (!users.length) {
       dispatch(fetchAllUsers());
@@ -144,6 +145,19 @@ const OrdersDelivery: FC = () => {
     await deliveryCollection.doc(globalDelivery!.id).update({
       payer: firebaseInstance.doc(`${Collections.Users}/${tempPayer}`),
     });
+
+    // https://hooks.slack.com/services/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
+    const data = {
+      text: `Тестовое сообщение. Деньги переводить - ${tempPayer}`,
+    };
+
+    await axios.post(
+      'https://hooks.slack.com/services/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',
+      JSON.stringify(data),
+      {
+        headers: { 'Content-Type': 'application/json' },
+      },
+    );
   };
 
   const cancelSelectedPayer = () => {
@@ -154,6 +168,8 @@ const OrdersDelivery: FC = () => {
       setPayer('default');
     }
   };
+
+  console.log(globalDelivery);
 
   return (
     <MainLayout>

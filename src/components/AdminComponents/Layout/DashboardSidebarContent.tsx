@@ -16,6 +16,7 @@ import {
   ShoppingBag as ShoppingBagIcon,
   Bookmark as BookmarkIcon,
   Clock as ClockIcon,
+  CheckCircle as CheckCircleIcon,
 } from 'react-feather';
 import { getUserSelector } from 'store/users';
 import NavItem from './NavItem';
@@ -42,9 +43,14 @@ const menuItem = [
     title: 'Текущие заказы',
   },
   {
+    href: '/admin/completed-orders',
+    Icon: CheckCircleIcon,
+    title: 'Завершенные заказы',
+  },
+  {
     href: '/admin/history-orders',
     Icon: ClockIcon,
-    title: 'История заказов',
+    title: 'История доставок',
   },
   {
     href: '/admin/user-list',
