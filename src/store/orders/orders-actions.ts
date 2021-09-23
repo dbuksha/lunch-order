@@ -18,6 +18,7 @@ import { UsersState } from 'store/users';
 // entities
 import { Order, OrderFirebase } from 'entities/Order';
 import { UserNew } from 'entities/User';
+import { DeliveryState } from 'store/delivery';
 
 enum ActionTypes {
   FETCH_ORDERS = 'orders/fetchOrders',
@@ -29,9 +30,16 @@ enum ActionTypes {
   RESET_ORDER = 'orders/resetOrder',
 }
 
-// If today is later then 10:30 return condition of getting tomorrow order otherwise today's order
-const isTodayOrTomorrowOrderExists = (date: number) => {
+// If today is later then 10:30 return or delivery was ordered condition of getting tomorrow order otherwise today's order
+const isTodayOrTomorrowOrderExists = (
+  deliveryStatus: boolean,
+  date: number,
+) => {
   const tomorrow = dayjs().add(1, 'd').startOf('d');
+
+  if (deliveryStatus) {
+    return dayjs(date).isSameOrAfter(tomorrow);
+  }
 
   return isTimeForTodayLunch()
     ? dayjs(date).isBetween(todayStartOrderTime, todayEndOrderTime)
@@ -94,7 +102,12 @@ export const getUserOrder = createAsyncThunk(
     const {
       users: { currentUser },
       dishes: { dishesMap },
-    } = getState() as { users: UsersState; dishes: DishesState };
+      delivery: { deliveryInfo },
+    } = getState() as {
+      users: UsersState;
+      dishes: DishesState;
+      delivery: DeliveryState;
+    };
 
     // FIXME: should I show an error message?
     if (!currentUser) return null;
@@ -121,7 +134,7 @@ export const getUserOrder = createAsyncThunk(
     );
 
     const selectedOrder = orders.find((order) =>
-      isTodayOrTomorrowOrderExists(order.date),
+      isTodayOrTomorrowOrderExists(deliveryInfo !== null, order.date),
     );
 
     if (!selectedOrder) return null;
@@ -141,7 +154,8 @@ export const getOptionOrder = createAsyncThunk(
   async (id: string, { getState, dispatch }) => {
     const {
       dishes: { dishesMap },
-    } = getState() as { dishes: DishesState };
+      delivery: { deliveryInfo },
+    } = getState() as { dishes: DishesState; delivery: DeliveryState };
 
     // FIXME: should I show an error message?
     if (!id) return null;
@@ -162,7 +176,7 @@ export const getOptionOrder = createAsyncThunk(
     );
 
     const selectedOrder = orders.find((order) =>
-      isTodayOrTomorrowOrderExists(order.date),
+      isTodayOrTomorrowOrderExists(deliveryInfo !== null, order.date),
     );
     if (!selectedOrder) return null;
 

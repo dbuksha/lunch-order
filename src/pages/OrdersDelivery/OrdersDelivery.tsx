@@ -147,18 +147,21 @@ const OrdersDelivery: FC = () => {
       payer: firebaseInstance.doc(`${Collections.Users}/${tempPayer}`),
     });
 
-    // https://hooks.slack.com/services/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
-    const data = {
-      text: `Тестовое сообщение. Деньги переводить - ${tempPayer}`,
-    };
+    try {
+      const data = {
+        text: `Тестовое сообщение. Деньги переводить - ${tempPayer}`,
+      };
 
-    await axios.post(
-      'https://hooks.slack.com/services/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',
-      JSON.stringify(data),
-      {
-        headers: { 'Content-Type': 'application/json' },
-      },
-    );
+      await axios.post(
+        `${process.env.REACT_APP_SLACK_URL}`,
+        JSON.stringify(data),
+        {
+          headers: { 'Content-Type': 'application/json' },
+        },
+      );
+    } catch {
+      console.log('slack: сообщение не отправилось');
+    }
   };
 
   const cancelSelectedPayer = () => {

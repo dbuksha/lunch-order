@@ -45,10 +45,11 @@ import { Dish } from 'entities/Dish';
 import { OrderFirebase } from 'entities/Order';
 import {
   getDayName,
-  getOrderDayNumber,
+  getOrderDayNumberNew,
   isTimeForTodayLunch,
 } from 'utils/time-helper';
 import { useTodayLunches } from 'use/useTodayLunches';
+import { getDeliveryInfoSelector } from 'store/delivery';
 
 import Ruble from 'components/Ruble';
 
@@ -81,6 +82,22 @@ const useStyles = makeStyles((theme: Theme) =>
     },
     main: {
       margin: '40px auto',
+    },
+    attention: {
+      border: '1px solid #f50057',
+      borderRadius: 8,
+      backgroundColor: 'rgba(255,255,255,.2)',
+      padding: '15px 30px',
+      marginBottom: 20,
+      textAlign: 'center',
+      [theme.breakpoints.down('sm')]: {
+        padding: '10px 20px',
+      },
+    },
+    attentionText: {
+      [theme.breakpoints.down('sm')]: {
+        fontSize: 12,
+      },
     },
     link: {
       textDecoration: 'none',
@@ -137,6 +154,7 @@ const OrderNewEdit: FC = () => {
   const todayLunches = useTodayLunches();
   const order = useSelector(getOptionOrderSelector);
   const selectedDishes = useSelector(selectedOptionOrderDishesIdsSet);
+  const deliveryStatus = useSelector(getDeliveryInfoSelector);
   const users = useSelector(getAllUserSelector);
   const [userSelected, setUserSelected] = useState('default');
   const [calculatedPrice, setCalculatedPrice] = useState<number>(0);
@@ -254,6 +272,9 @@ const OrderNewEdit: FC = () => {
     dispatch(updateDishesQuantity({ dishes, type }));
   };
 
+  const otherDayFlag =
+    dayjs().day() !== getOrderDayNumberNew(deliveryStatus !== null);
+
   return (
     <AdminLayout>
       <Helmet>
@@ -284,14 +305,23 @@ const OrderNewEdit: FC = () => {
               </Typography>
             </Breadcrumbs>
             <Box className={classes.main}>
+              {otherDayFlag || deliveryStatus ? (
+                <Box className={classes.attention}>
+                  <Typography variant="body1" className={classes.attentionText}>
+                    Внимание! На сегодня заказы больше не принимаются, но можно
+                    сделать предварительный заказ на завтрашний день.
+                  </Typography>
+                </Box>
+              ) : null}
               <Typography
                 className={classes.pageTitle}
                 component="div"
                 variant="h6"
               >
-                {getDayName()}
-                {dayjs().day() !== getOrderDayNumber() &&
-                  '(предварительный заказ)'}
+                {getDayName(deliveryStatus !== null)}
+                {otherDayFlag || deliveryStatus
+                  ? '(предварительный заказ)'
+                  : ''}
               </Typography>
               <Box className={classes.selectField}>
                 <Select

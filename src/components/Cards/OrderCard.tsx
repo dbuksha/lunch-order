@@ -16,7 +16,7 @@ import {
   Box,
   Button,
 } from '@material-ui/core';
-import { calculateDishesPrice } from 'utils/orders';
+import { calculatePriceCard } from 'utils/orders';
 import { isTimeForTodayLunch } from 'utils/time-helper';
 import { Order } from 'entities/Order';
 import OrderDishItem from 'pages/OrdersList/OrderDishItem';
@@ -127,6 +127,8 @@ const OrderCard: FC<OrderCardProps> = ({
       </Button>
     ) : null;
 
+  console.log('card-order = ', order, order.dishes);
+
   return (
     <Paper className={classes.main}>
       <Toolbar className={classes.justifySpaceBetween}>
@@ -182,7 +184,7 @@ const OrderCard: FC<OrderCardProps> = ({
         <Box>
           <p className={classes.resultCost}>
             <b>
-              Итого: {calculateDishesPrice(order.dishes.map((d) => d.dish))}
+              Итого: {calculatePriceCard(order.dishes)}
               <Ruble />
             </b>
           </p>

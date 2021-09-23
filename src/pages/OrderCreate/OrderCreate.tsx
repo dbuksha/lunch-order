@@ -32,7 +32,7 @@ import TodayLunches from 'components/TodayLunches';
 import { OrderFirebase } from 'entities/Order';
 import {
   getDayName,
-  getOrderDayNumber,
+  getOrderDayNumberNew,
   isTimeForTodayLunch,
 } from 'utils/time-helper';
 import Ruble from 'components/Ruble';
@@ -166,7 +166,8 @@ const OrderCreate: FC = () => {
     handleDeleteOrder();
   };
 
-  const otherDayFlag = dayjs().day() !== getOrderDayNumber();
+  const otherDayFlag =
+    dayjs().day() !== getOrderDayNumberNew(deliveryStatus !== null);
 
   return (
     <MainLayout>
@@ -180,8 +181,8 @@ const OrderCreate: FC = () => {
           </Box>
         ) : null}
         <Typography className={classes.pageTitle} component="div" variant="h6">
-          {getDayName()}
-          {otherDayFlag && '(предварительный заказ)'}
+          {getDayName(deliveryStatus !== null)}
+          {otherDayFlag || deliveryStatus ? '(предварительный заказ)' : ''}
         </Typography>
         <Grid container spacing={2} justifyContent="center">
           <TodayLunches />

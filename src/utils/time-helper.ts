@@ -26,6 +26,24 @@ export const getOrderDayNumber = (): number => {
   return dayNumber === 6 ? 1 : dayNumber;
 };
 
+export const getOrderDayNumberNew = (deliveryStatus: boolean): number => {
+  const todayNumber = dayjs().day();
+
+  // skip sunday and saturday
+  if ([0, 6].includes(todayNumber)) return 1;
+  let dayNumber: number;
+
+  if (deliveryStatus) {
+    dayNumber = todayNumber + 1;
+  } else if (isTimeForTodayLunch()) {
+    dayNumber = todayNumber;
+  } else {
+    dayNumber = todayNumber + 1;
+  }
+
+  return dayNumber === 6 ? 1 : dayNumber;
+};
+
 export const getDaysToAdd = (): number => {
   const today = dayjs();
   const orderDayNumber = getOrderDayNumber();
@@ -35,7 +53,7 @@ export const getDaysToAdd = (): number => {
   return 1;
 };
 
-export const getDayName = (): string =>
+export const getDayName = (deliveryStatus: boolean): string =>
   dayjs()
-    .weekday(getOrderDayNumber() - 1)
+    .weekday(getOrderDayNumberNew(deliveryStatus) - 1)
     .format('dddd');

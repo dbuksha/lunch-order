@@ -53,7 +53,10 @@ export const fetchDeliveries = createAsyncThunk(
   ActionTypes.FETCH_DELIVERIES,
   async (_, { dispatch }) => {
     try {
-      const data = await collectionRef.limit(10).get();
+      const data = await collectionRef
+        .orderBy('createDate', 'desc')
+        .limit(10)
+        .get();
       const deliveries = getCollectionEntries<DeliveryDataFirebase>(data);
 
       const usersCollection = firebaseInstance.collection(Collections.Users);
