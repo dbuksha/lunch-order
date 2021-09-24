@@ -175,8 +175,10 @@ const OrderCreate: FC = () => {
         {otherDayFlag || deliveryStatus ? (
           <Box className={classes.attention}>
             <Typography variant="body1" className={classes.attentionText}>
-              Внимание! На сегодня заказы больше не принимаются, но можно
-              сделать предварительный заказ на завтрашний день.
+              {`Внимание! На сегодня заказы больше не принимаются, но можно
+              сделать предварительный заказ на ${getDayName(
+                deliveryStatus !== null,
+              )}.`}
             </Typography>
           </Box>
         ) : null}

@@ -257,8 +257,6 @@ export const fetchHistoryOrders = createAsyncThunk(
       }));
       return { ...order, date: order.date.toMillis(), dishes, person };
     });
-
-    // return orderWithPerson.filter((el) => el.person);
   },
 );
 

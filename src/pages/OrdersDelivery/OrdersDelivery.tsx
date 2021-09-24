@@ -52,6 +52,9 @@ const useStyles = makeStyles(() =>
     alert: {
       margin: '20px auto',
     },
+    count: {
+      minWidth: 80,
+    },
   }),
 );
 
@@ -90,9 +93,7 @@ const OrdersDelivery: FC = () => {
       dispatch(fetchDeliveryInfo());
     }
 
-    if (!orders) {
-      dispatch(fetchOrders());
-    }
+    dispatch(fetchOrders());
 
     if (!users.length) {
       dispatch(fetchAllUsers());
@@ -125,7 +126,7 @@ const OrdersDelivery: FC = () => {
     setDialogStatus(state);
   };
 
-  const payerChange = (event: any) => {
+  const payerChange = (event: React.ChangeEvent<any>) => {
     setTempPayer(event.target.value as string);
     setDialogStatus('payer');
   };
@@ -190,7 +191,7 @@ const OrdersDelivery: FC = () => {
               <TableCell align="left">
                 <b>Наименование</b>
               </TableCell>
-              <TableCell align="right">
+              <TableCell align="right" className={classes.count}>
                 <b>Кол-во</b>
               </TableCell>
             </TableRow>
@@ -241,7 +242,7 @@ const OrdersDelivery: FC = () => {
                 >
                   <option value="default">Выберите пользователя</option>
                   {users.length
-                    ? users.map((el: any) => (
+                    ? users.map((el: UserNew) => (
                         <option value={el.id}>{el.name}</option>
                       ))
                     : null}

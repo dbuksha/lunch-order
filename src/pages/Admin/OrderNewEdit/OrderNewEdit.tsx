@@ -23,11 +23,9 @@ import {
 import {
   addOrder,
   deleteOrder,
-  // getCurrentOrder,
   getOptionOrder,
-  // updateOrder,
   updateOptionOrder,
-  updateDishesQuantity,
+  updateDishesQuantityOption,
   UpdateQuantityAction,
   resetOrder,
 } from 'store/orders';
@@ -43,6 +41,7 @@ import * as deliveryDataHelper from 'pages/OrdersDelivery/collectDeliveryDataHel
 import { Lunch } from 'entities/Lunch';
 import { Dish } from 'entities/Dish';
 import { OrderFirebase } from 'entities/Order';
+import { UserNew } from 'entities/User';
 import {
   getDayName,
   getOrderDayNumberNew,
@@ -269,7 +268,7 @@ const OrderNewEdit: FC = () => {
       dishes = [dish];
     }
 
-    dispatch(updateDishesQuantity({ dishes, type }));
+    dispatch(updateDishesQuantityOption({ dishes, type }));
   };
 
   const otherDayFlag =
@@ -308,8 +307,10 @@ const OrderNewEdit: FC = () => {
               {otherDayFlag || deliveryStatus ? (
                 <Box className={classes.attention}>
                   <Typography variant="body1" className={classes.attentionText}>
-                    Внимание! На сегодня заказы больше не принимаются, но можно
-                    сделать предварительный заказ на завтрашний день.
+                    {`Внимание! На сегодня заказы больше не принимаются, но можно
+                      сделать предварительный заказ на ${getDayName(
+                        deliveryStatus !== null,
+                      )}.`}
                   </Typography>
                 </Box>
               ) : null}
@@ -327,7 +328,9 @@ const OrderNewEdit: FC = () => {
                 <Select
                   native
                   value={userSelected}
-                  onChange={(event: any) => setUserSelected(event.target.value)}
+                  onChange={(event: React.ChangeEvent<any>) =>
+                    setUserSelected(event.target.value)
+                  }
                   variant="outlined"
                   fullWidth
                   inputProps={{
@@ -336,7 +339,7 @@ const OrderNewEdit: FC = () => {
                 >
                   <option value="default">Выберите пользователя</option>
                   {users.length
-                    ? users.map((el: any) => (
+                    ? users.map((el: UserNew) => (
                         <option value={el.id}>{el.name}</option>
                       ))
                     : null}

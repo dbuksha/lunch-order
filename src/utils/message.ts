@@ -14,13 +14,14 @@ export const getMessage = (
 
   let ordersStr = '';
 
-  orders.forEach((el: any) => {
-    ordersStr += `${el.person.name} - ${calculatePriceCard(el.dishes)}руб., `;
+  orders.forEach((el: Order) => {
+    ordersStr += `${el.person!.name} (ник) - ${calculatePriceCard(
+      el.dishes,
+    )}руб.\n`;
   });
 
-  message += `Всего получилось: ${totalSum} руб. `;
-  message += ordersStr.slice(0, -2);
-  message += ` Деньги за обед отдаем/переводим (желательно наличными) - ${
+  message += `Всего получилось - ${totalSum}руб.:\n${ordersStr}`;
+  message += `Деньги за обед отдаем/переводим (желательно наличными) >>> ${
     user!.name || 'Пользователь неизвестен'
   }.`;
 
