@@ -21,8 +21,6 @@ const HistoryOrders: FC = () => {
     }
   }, [dispatch]);
 
-  console.log(deliveries);
-
   return (
     <AdminLayout>
       <Helmet>

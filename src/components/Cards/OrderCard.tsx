@@ -127,8 +127,6 @@ const OrderCard: FC<OrderCardProps> = ({
       </Button>
     ) : null;
 
-  console.log('card-order = ', order, order.dishes);
-
   return (
     <Paper className={classes.main}>
       <Toolbar className={classes.justifySpaceBetween}>

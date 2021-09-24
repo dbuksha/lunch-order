@@ -26,6 +26,9 @@ import { UserNew } from 'entities/User';
 import { getIsLoading } from 'store/app';
 import { fetchDeliveryInfo, getDeliveryInfoSelector } from 'store/delivery';
 import { fetchAllUsers, getAllUserSelector } from 'store/users';
+import { fetchOrders, getOrdersList } from 'store/orders';
+
+import { getMessage } from 'utils/message';
 
 import DeleteAlert from 'components/AdminComponents/Alerts/DeleteAlert';
 import MainLayout from 'components/SiteLayout/MainLayout';
@@ -76,6 +79,7 @@ const OrdersDelivery: FC = () => {
 
   const globalDelivery = useSelector(getDeliveryInfoSelector);
   const users = useSelector(getAllUserSelector);
+  const orders = useSelector(getOrdersList);
   const [deliveryCompleted, setDeliveryCompleted] = useState(false);
   const [tempPayer, setTempPayer] = useState('');
   const [payer, setPayer] = useState('default');
@@ -84,6 +88,10 @@ const OrdersDelivery: FC = () => {
   useEffect(() => {
     if (globalDelivery === null) {
       dispatch(fetchDeliveryInfo());
+    }
+
+    if (!orders) {
+      dispatch(fetchOrders());
     }
 
     if (!users.length) {
@@ -149,7 +157,7 @@ const OrdersDelivery: FC = () => {
 
     try {
       const data = {
-        text: `Тестовое сообщение. Деньги переводить - ${tempPayer}`,
+        text: getMessage(tempPayer, deliveryPrice, orders, users),
       };
 
       await axios.post(
