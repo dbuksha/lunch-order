@@ -5,7 +5,7 @@ export const isTimeForTodayLunch = (): boolean => {
   return dayjs().isBefore(endLunchOrderTime);
 };
 
-export const todayStartOrderTime = dayjs().hour(8).startOf('h');
+export const todayStartOrderTime = dayjs().hour(6).startOf('h');
 export const todayEndOrderTime = dayjs().hour(10).minute(30).second(0);
 
 // If today is later then 10:30 or delivery ordered return condition of getting tomorrow order otherwise today's order

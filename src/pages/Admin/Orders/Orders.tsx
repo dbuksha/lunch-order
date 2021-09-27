@@ -18,6 +18,7 @@ import { getUserSelector } from 'store/users';
 
 import AdminLayout from 'components/AdminComponents/Layout/AdminLayout';
 import OrderCard from 'components/Cards/OrderCard';
+import { getDeliveryInfoSelector } from 'store/delivery';
 
 const ordersCollection = firebaseInstance.collection(Collections.Orders);
 
@@ -26,6 +27,7 @@ const Orders: FC = () => {
   const isLoading = useSelector(getIsLoading);
   const orders = useSelector(getOrdersList);
   const currentUser = useSelector(getUserSelector);
+  const deliveryStatus = useSelector(getDeliveryInfoSelector);
 
   useEffect(() => {
     dispatch(fetchOrders());
@@ -80,6 +82,7 @@ const Orders: FC = () => {
                       <OrderCard
                         order={order}
                         adminMode
+                        deleteMode={!deliveryStatus}
                         deleteOrder={deleteOrderHandler}
                       />
                     </Grid>
