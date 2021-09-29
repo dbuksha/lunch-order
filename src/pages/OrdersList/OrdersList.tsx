@@ -1,6 +1,6 @@
 import React, { FC, useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import { fetchOrders, clearOrdersList, getOrdersList } from 'store/orders';
+import { fetchOrders, getOrdersList } from 'store/orders';
 import { Grid, makeStyles, createStyles } from '@material-ui/core';
 import { Alert } from '@material-ui/lab';
 import { getIsLoading } from 'store/app';
@@ -25,11 +25,9 @@ const OrdersList: FC = () => {
   const orders = useSelector(getOrdersList);
 
   useEffect(() => {
-    dispatch(fetchOrders());
-
-    return () => {
-      dispatch(clearOrdersList());
-    };
+    if (!orders.length) {
+      dispatch(fetchOrders());
+    }
   }, [dispatch]);
 
   if (!orders.length && !isLoading) {

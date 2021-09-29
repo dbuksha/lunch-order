@@ -13,14 +13,15 @@ import ListDishes from 'components/ListDishes';
 // entities
 import { Lunch } from 'entities/Lunch';
 import { Dish } from 'entities/Dish';
-import { useTodayLunches } from 'use/useTodayLunches';
+// import { useTodayLunches } from 'use/useTodayLunches';
+import { useTodayLunchesNew } from 'use/useTodayLunchesNew';
 
 const findLunchById = (lunches: Lunch[], lunchId: string): Lunch | null =>
   lunches.find((lunch: Lunch) => lunch.id === lunchId) || null;
 
 const TodayLunches: FC = () => {
   const dispatch = useDispatch();
-  const todayLunches = useTodayLunches();
+  const todayLunches = useTodayLunchesNew();
   const selectedDishes = useSelector(selectedOrderDishesIdsSet);
 
   const onDishSelect = (

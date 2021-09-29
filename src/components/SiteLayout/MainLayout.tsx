@@ -1,8 +1,8 @@
 import React, { FC } from 'react';
-import { createStyles, makeStyles } from '@material-ui/core';
+import { createStyles, makeStyles, Theme } from '@material-ui/core';
 import SiteHeader from './SiteHeader';
 
-const useStyles = makeStyles(() =>
+const useStyles = makeStyles((theme: Theme) =>
   createStyles({
     root: {
       display: 'flex',
@@ -25,6 +25,9 @@ const useStyles = makeStyles(() =>
       width: '100%',
       display: 'flex',
       paddingTop: 64,
+      [theme.breakpoints.down('sm')]: {
+        paddingTop: 56,
+      },
     },
   }),
 );

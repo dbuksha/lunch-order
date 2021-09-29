@@ -36,7 +36,7 @@ const useStyles = makeStyles((theme: Theme) =>
       fontWeight: 700,
       color: '#fff',
       marginLeft: 8,
-      textDeraration: 'none',
+      textDecoration: 'none',
       [theme.breakpoints.down('sm')]: {
         fontSize: 16,
       },

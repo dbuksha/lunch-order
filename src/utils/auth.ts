@@ -17,7 +17,6 @@ export const logout = async (): Promise<void> => {
     .auth()
     .signOut()
     .then(() => {
-      // Sign-out successful.
       Cookies.remove('token');
       window.location.href = '/login';
     })

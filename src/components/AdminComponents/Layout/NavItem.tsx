@@ -28,10 +28,6 @@ const useStyles = makeStyles(() =>
       textTransform: 'none',
       width: '100%',
       color: '#6b778c',
-      // '&$active': {
-      //   fontWeight: 600,
-      //   color: '#5664d2',
-      // },
     },
     icon: {
       width: 24,

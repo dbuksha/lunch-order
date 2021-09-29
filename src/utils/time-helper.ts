@@ -5,10 +5,10 @@ export const isTimeForTodayLunch = (): boolean => {
   return dayjs().isBefore(endLunchOrderTime);
 };
 
-export const todayStartOrderTime = dayjs().hour(8).startOf('h');
+export const todayStartOrderTime = dayjs().hour(6).startOf('h');
 export const todayEndOrderTime = dayjs().hour(10).minute(30).second(0);
 
-// If today is later then 10:30 return condition of getting tomorrow order otherwise today's order
+// If today is later then 10:30 or delivery ordered return condition of getting tomorrow order otherwise today's order
 export const isTodayOrTomorrowOrderExists = (date: number): boolean => {
   const tomorrow = dayjs().add(1, 'd').startOf('d');
 
@@ -26,6 +26,24 @@ export const getOrderDayNumber = (): number => {
   return dayNumber === 6 ? 1 : dayNumber;
 };
 
+export const getOrderDayNumberNew = (deliveryStatus: boolean): number => {
+  const todayNumber = dayjs().day();
+
+  // skip sunday and saturday
+  if ([0, 6].includes(todayNumber)) return 1;
+  let dayNumber: number;
+
+  if (deliveryStatus) {
+    dayNumber = todayNumber + 1;
+  } else if (isTimeForTodayLunch()) {
+    dayNumber = todayNumber;
+  } else {
+    dayNumber = todayNumber + 1;
+  }
+
+  return dayNumber === 6 ? 1 : dayNumber;
+};
+
 export const getDaysToAdd = (): number => {
   const today = dayjs();
   const orderDayNumber = getOrderDayNumber();
@@ -35,7 +53,7 @@ export const getDaysToAdd = (): number => {
   return 1;
 };
 
-export const getDayName = (): string =>
+export const getDayName = (deliveryStatus: boolean): string =>
   dayjs()
-    .weekday(getOrderDayNumber() - 1)
+    .weekday(getOrderDayNumberNew(deliveryStatus) - 1)
     .format('dddd');

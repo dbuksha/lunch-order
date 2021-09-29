@@ -23,11 +23,9 @@ import {
 import {
   addOrder,
   deleteOrder,
-  // getCurrentOrder,
   getOptionOrder,
-  // updateOrder,
   updateOptionOrder,
-  updateDishesQuantity,
+  updateDishesQuantityOption,
   UpdateQuantityAction,
   resetOrder,
 } from 'store/orders';
@@ -43,12 +41,14 @@ import * as deliveryDataHelper from 'pages/OrdersDelivery/collectDeliveryDataHel
 import { Lunch } from 'entities/Lunch';
 import { Dish } from 'entities/Dish';
 import { OrderFirebase } from 'entities/Order';
+import { UserNew } from 'entities/User';
 import {
   getDayName,
-  getOrderDayNumber,
+  getOrderDayNumberNew,
   isTimeForTodayLunch,
 } from 'utils/time-helper';
 import { useTodayLunches } from 'use/useTodayLunches';
+import { getDeliveryInfoSelector } from 'store/delivery';
 
 import Ruble from 'components/Ruble';
 
@@ -81,6 +81,22 @@ const useStyles = makeStyles((theme: Theme) =>
     },
     main: {
       margin: '40px auto',
+    },
+    attention: {
+      border: '1px solid #f50057',
+      borderRadius: 8,
+      backgroundColor: 'rgba(255,255,255,.2)',
+      padding: '15px 30px',
+      marginBottom: 20,
+      textAlign: 'center',
+      [theme.breakpoints.down('sm')]: {
+        padding: '10px 20px',
+      },
+    },
+    attentionText: {
+      [theme.breakpoints.down('sm')]: {
+        fontSize: 12,
+      },
     },
     link: {
       textDecoration: 'none',
@@ -137,6 +153,7 @@ const OrderNewEdit: FC = () => {
   const todayLunches = useTodayLunches();
   const order = useSelector(getOptionOrderSelector);
   const selectedDishes = useSelector(selectedOptionOrderDishesIdsSet);
+  const deliveryStatus = useSelector(getDeliveryInfoSelector);
   const users = useSelector(getAllUserSelector);
   const [userSelected, setUserSelected] = useState('default');
   const [calculatedPrice, setCalculatedPrice] = useState<number>(0);
@@ -181,10 +198,10 @@ const OrderNewEdit: FC = () => {
       });
     });
 
-    // if lunch not for today: set tomorrow (8 a.m.)
+    // if lunch not for today: set tomorrow (9 a.m.)
     const time = isTimeForTodayLunch()
       ? dayjs()
-      : dayjs().add(1, 'day').hour(8).startOf('h');
+      : dayjs().add(1, 'day').hour(9).startOf('h');
 
     const orderData: OrderFirebase = {
       date: firebase.firestore.Timestamp.fromDate(time.toDate()),
@@ -251,8 +268,11 @@ const OrderNewEdit: FC = () => {
       dishes = [dish];
     }
 
-    dispatch(updateDishesQuantity({ dishes, type }));
+    dispatch(updateDishesQuantityOption({ dishes, type }));
   };
+
+  const otherDayFlag =
+    dayjs().day() !== getOrderDayNumberNew(deliveryStatus !== null);
 
   return (
     <AdminLayout>
@@ -284,20 +304,33 @@ const OrderNewEdit: FC = () => {
               </Typography>
             </Breadcrumbs>
             <Box className={classes.main}>
+              {otherDayFlag || deliveryStatus ? (
+                <Box className={classes.attention}>
+                  <Typography variant="body1" className={classes.attentionText}>
+                    {`Внимание! На сегодня заказы больше не принимаются, но можно
+                      сделать предварительный заказ на ${getDayName(
+                        deliveryStatus !== null,
+                      )}.`}
+                  </Typography>
+                </Box>
+              ) : null}
               <Typography
                 className={classes.pageTitle}
                 component="div"
                 variant="h6"
               >
-                {getDayName()}
-                {dayjs().day() !== getOrderDayNumber() &&
-                  '(предварительный заказ)'}
+                {getDayName(deliveryStatus !== null)}
+                {otherDayFlag || deliveryStatus
+                  ? '(предварительный заказ)'
+                  : ''}
               </Typography>
               <Box className={classes.selectField}>
                 <Select
                   native
                   value={userSelected}
-                  onChange={(event: any) => setUserSelected(event.target.value)}
+                  onChange={(event: React.ChangeEvent<any>) =>
+                    setUserSelected(event.target.value)
+                  }
                   variant="outlined"
                   fullWidth
                   inputProps={{
@@ -306,7 +339,7 @@ const OrderNewEdit: FC = () => {
                 >
                   <option value="default">Выберите пользователя</option>
                   {users.length
-                    ? users.map((el: any) => (
+                    ? users.map((el: UserNew) => (
                         <option value={el.id}>{el.name}</option>
                       ))
                     : null}

@@ -161,6 +161,29 @@ const ordersSlice = createSlice({
       };
     },
 
+    updateDishesQuantityOption(
+      state: OrderState,
+      {
+        payload: { dishes, type },
+      }: PayloadAction<{ dishes: Dish[]; type: UpdateQuantityAction }>,
+    ) {
+      const order = { ...current(state.optionOrder) };
+
+      const newDishes = getUpdatedQuantityDishesList(
+        order.dishes,
+        dishes,
+        type,
+      );
+
+      return {
+        ...state,
+        optionOrder: {
+          ...state.optionOrder,
+          dishes: newDishes,
+        },
+      };
+    },
+
     clearOrdersList(state) {
       state.orders = [];
     },
@@ -207,5 +230,6 @@ export const {
   updateOptionOrder,
   clearOrdersList,
   updateDishesQuantity,
+  updateDishesQuantityOption,
 } = ordersSlice.actions;
 export default ordersSlice.reducer;

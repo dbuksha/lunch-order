@@ -16,7 +16,7 @@ import {
   Box,
   Button,
 } from '@material-ui/core';
-import { calculateDishesPrice } from 'utils/orders';
+import { calculatePriceCard } from 'utils/orders';
 import { isTimeForTodayLunch } from 'utils/time-helper';
 import { Order } from 'entities/Order';
 import OrderDishItem from 'pages/OrdersList/OrderDishItem';
@@ -30,6 +30,7 @@ import DeleteAlert from 'components/AdminComponents/Alerts/DeleteAlert';
 type OrderCardProps = {
   order: Order;
   adminMode: boolean;
+  deleteMode?: boolean;
   historyMode?: boolean;
   deleteOrder?: (id: string, personID: string) => void;
 };
@@ -96,6 +97,7 @@ const useStyles = makeStyles({
 const OrderCard: FC<OrderCardProps> = ({
   order,
   adminMode,
+  deleteMode,
   historyMode,
   deleteOrder,
 }) => {
@@ -126,6 +128,8 @@ const OrderCard: FC<OrderCardProps> = ({
         <EditIcon color="primary" />
       </Button>
     ) : null;
+
+  console.log(deleteMode);
 
   return (
     <Paper className={classes.main}>
@@ -182,7 +186,7 @@ const OrderCard: FC<OrderCardProps> = ({
         <Box>
           <p className={classes.resultCost}>
             <b>
-              Итого: {calculateDishesPrice(order.dishes.map((d) => d.dish))}
+              Итого: {calculatePriceCard(order.dishes)}
               <Ruble />
             </b>
           </p>
@@ -191,9 +195,14 @@ const OrderCard: FC<OrderCardProps> = ({
           <Box className={classes.btnContainer}>
             {isTodayOrder && isTimeForTodayLunch() ? EditButton : null}
             {!isTodayOrder ? EditButton : null}
-            <Button className={classes.deleteBtn} onClick={changeDialog(true)}>
-              <DeleteIcon color="error" />
-            </Button>
+            {deleteMode && isTimeForTodayLunch() ? (
+              <Button
+                className={classes.deleteBtn}
+                onClick={changeDialog(true)}
+              >
+                <DeleteIcon color="error" />
+              </Button>
+            ) : null}
           </Box>
         ) : null}
       </Box>
