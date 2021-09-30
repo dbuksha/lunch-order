@@ -162,6 +162,7 @@ const ComplexNewEdit: FC = () => {
           });
 
           setDishComplex(arrDishes);
+          formik.setFieldValue('multiDishes', arrDishes);
         }
       }
       setLoadingStatus(false);
