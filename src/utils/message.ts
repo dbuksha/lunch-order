@@ -15,12 +15,12 @@ export const getMessage = (
   let ordersStr = '';
 
   orders.forEach((el: Order) => {
-    ordersStr += `${el.person!.name} (ник) - ${calculatePriceCard(
-      el.dishes,
-    )}руб.\n`;
+    ordersStr += `${el.person!.name}${
+      el.person!.slack_name ? ` (<@${el.person!.slack_name}>)` : ''
+    } - ${calculatePriceCard(el.dishes)}руб.\n`;
   });
 
-  message += `Всего получилось - ${totalSum}руб.:\n${ordersStr}`;
+  message += `Обед заказан :cool_doge: \nВсего получилось - ${totalSum}руб.:\n${ordersStr}`;
   message += `Деньги за обед отдаем/переводим (желательно наличными) >>> ${
     user!.name || 'Пользователь неизвестен'
   }.`;

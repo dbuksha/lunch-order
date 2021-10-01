@@ -30,6 +30,7 @@ const useStyles = makeStyles({
     position: 'relative',
   },
   tableCell: {
+    minWidth: 74,
     fontSize: 12,
     color: 'rgba(0, 0, 0, 0.54)',
   },
@@ -63,17 +64,6 @@ const useStyles = makeStyles({
   },
 });
 
-const dateChip = (dateInSeconds: number): string => {
-  if (dayjs(dateInSeconds).day() === dayjs().day()) {
-    return 'Сегодня';
-  }
-
-  if (dayjs(dateInSeconds).day() === dayjs().subtract(1, 'day').day()) {
-    return 'Вчера';
-  }
-  return dayjs(dateInSeconds).format('DD.MM.YYYY');
-};
-
 const DeliveryCard: FC<DeliveryCardProps> = ({ delivery }) => {
   const classes = useStyles();
 
@@ -97,7 +87,7 @@ const DeliveryCard: FC<DeliveryCardProps> = ({ delivery }) => {
           </>
         ) : null}
         <Chip
-          label={dateChip(delivery.createDate.toMillis())}
+          label={dayjs(delivery.createDate.toMillis()).format('DD.MM.YYYY')}
           color="primary"
         />
       </Toolbar>
