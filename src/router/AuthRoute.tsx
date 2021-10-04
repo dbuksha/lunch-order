@@ -15,6 +15,7 @@ import { fetchDishes } from 'store/dishes';
 import { fetchLunches } from 'store/lunches';
 import { fetchDeliveryInfo } from 'store/delivery';
 import { fetchUserInfo } from 'store/users';
+import { fetchOrders } from 'store/orders';
 
 import { checkAuth, logout } from 'utils/auth';
 
@@ -39,9 +40,6 @@ const AuthRoute: FC<RoutePropsWithSubRoutes> = (props) => {
 
   useEffect(() => {
     async function preloadData() {
-      await dispatch(fetchDishes());
-      await dispatch(fetchLunches());
-      await dispatch(fetchDeliveryInfo());
       await firebase.auth().onAuthStateChanged((user) => {
         if (user && user.email) {
           dispatch(fetchUserInfo(user.email));
@@ -49,6 +47,10 @@ const AuthRoute: FC<RoutePropsWithSubRoutes> = (props) => {
           logout();
         }
       });
+      await dispatch(fetchDishes());
+      await dispatch(fetchLunches());
+      await dispatch(fetchDeliveryInfo());
+      await dispatch(fetchOrders());
     }
 
     if (!isDataPreloaded) preloadData();

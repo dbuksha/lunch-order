@@ -104,6 +104,7 @@ const LoginForm: FC = () => {
             name: user.displayName,
             role: 'user',
             uid: user.uid,
+            balance: 0,
           };
 
           dispatch(addNewUser(userData));

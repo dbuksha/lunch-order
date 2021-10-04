@@ -13,6 +13,7 @@ import OrderNewEdit from 'pages/Admin/OrderNewEdit/OrderNewEdit';
 import CompletedOrders from 'pages/Admin/CompletedOrders';
 import HistoryOrders from 'pages/Admin/HistoryOrders';
 import UserList from 'pages/Admin/UserList';
+import Profile from 'pages/Profile';
 
 const OrdersList = lazy(() => import('pages/OrdersList'));
 const OrderCreate = lazy(() => import('pages/OrderCreate'));
@@ -56,6 +57,11 @@ export const routes: RouteProp[] = [
   {
     path: '/orders/delivery',
     component: OrdersDelivery,
+    auth: true,
+  },
+  {
+    path: '/profile',
+    component: Profile,
     auth: true,
   },
   {

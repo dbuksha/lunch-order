@@ -100,16 +100,20 @@ const SiteHeader: FC = () => {
         <Box className={classes.userBlock}>
           {user ? (
             <>
-              {user.avatar ? (
-                <Avatar src={user.avatar} className={classes.avatar} />
+              {window.location.pathname !== '/profile' ? (
+                <RouterLink to="/profile" className={classes.container}>
+                  {user.avatar ? (
+                    <Avatar src={user.avatar} className={classes.avatar} />
+                  ) : null}
+                  <Typography
+                    color="textPrimary"
+                    variant="h5"
+                    className={classes.name}
+                  >
+                    {user.name || ''}
+                  </Typography>
+                </RouterLink>
               ) : null}
-              <Typography
-                color="textPrimary"
-                variant="h5"
-                className={classes.name}
-              >
-                {user.name || ''}
-              </Typography>
               <Button className={classes.btnExit} onClick={() => logout()}>
                 <ExitToAppIcon className={classes.exit} />
               </Button>

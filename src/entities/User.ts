@@ -7,4 +7,5 @@ export type UserNew = {
   name: string | null;
   role: string | null;
   uid: string | null;
+  balance: number;
 };

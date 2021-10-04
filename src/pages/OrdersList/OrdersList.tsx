@@ -25,9 +25,7 @@ const OrdersList: FC = () => {
   const orders = useSelector(getOrdersList);
 
   useEffect(() => {
-    if (!orders.length) {
-      dispatch(fetchOrders());
-    }
+    dispatch(fetchOrders());
   }, [dispatch]);
 
   if (!orders.length && !isLoading) {
