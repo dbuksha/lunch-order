@@ -14,6 +14,7 @@ import CompletedOrders from 'pages/Admin/CompletedOrders';
 import HistoryOrders from 'pages/Admin/HistoryOrders';
 import UserList from 'pages/Admin/UserList';
 import Profile from 'pages/Profile';
+import Refill from 'pages/Admin/Refill';
 
 const OrdersList = lazy(() => import('pages/OrdersList'));
 const OrderCreate = lazy(() => import('pages/OrderCreate'));
@@ -116,6 +117,10 @@ export const routes: RouteProp[] = [
       {
         path: '/admin/user-list',
         component: UserList,
+      },
+      {
+        path: '/admin/refill',
+        component: Refill,
       },
     ],
   },

@@ -7,5 +7,6 @@ export type UserNew = {
   name: string | null;
   role: string | null;
   uid: string | null;
+  slack_name: string;
   balance: number;
 };

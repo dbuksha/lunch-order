@@ -1,4 +1,4 @@
-import React, { FC } from 'react';
+import React, { FC, useState } from 'react';
 import { useSelector } from 'react-redux';
 import {
   Avatar,
@@ -20,6 +20,12 @@ import { getUserSelector } from 'store/users';
 
 import MainLayout from 'components/SiteLayout/MainLayout';
 import Ruble from 'components/Ruble';
+
+import { numberWithSpaces } from '../../utils/orders/calculateDishesPrice';
+
+import SlackIcon from '../../assets/images/slack-logo.svg';
+
+import './profile.scss';
 
 const useStyles = makeStyles(() =>
   createStyles({
@@ -43,6 +49,9 @@ const useStyles = makeStyles(() =>
       flexDirection: 'column',
       alignItems: 'center',
     },
+    slackIcon: {
+      width: 18,
+    },
     balance: {
       display: 'flex',
       justifyContent: 'center',
@@ -51,6 +60,10 @@ const useStyles = makeStyles(() =>
     balanceText: {
       lineHeight: '24px',
       marginLeft: 4,
+    },
+    btnContainer: {
+      display: 'flex',
+      justifyContent: 'flex-end',
     },
     userTransactions: {
       width: 600,
@@ -72,13 +85,10 @@ const useStyles = makeStyles(() =>
   }),
 );
 
-function numberWithSpaces(x: number): string {
-  return x.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ' ');
-}
-
 const Profile: FC = () => {
   const classes = useStyles();
   const currentUser = useSelector(getUserSelector);
+  const [filterStatus, setFilterStatus] = useState('all');
 
   return (
     <MainLayout>
@@ -95,6 +105,22 @@ const Profile: FC = () => {
               <Typography color="textSecondary" variant="body2">
                 {currentUser.email || ''}
               </Typography>
+              {currentUser.slack_name ? (
+                <Box className={classes.balance}>
+                  <img
+                    src={SlackIcon}
+                    alt="slack-logo"
+                    className={classes.slackIcon}
+                  />
+                  <Typography
+                    color="textSecondary"
+                    variant="body2"
+                    className={classes.balanceText}
+                  >
+                    {currentUser.slack_name}
+                  </Typography>
+                </Box>
+              ) : null}
               <Box className={classes.balance}>
                 <AccountBalanceWalletOutlined color="primary" />
                 <Typography
@@ -108,7 +134,36 @@ const Profile: FC = () => {
               </Box>
             </Box>
           ) : null}
+
           <Box className={classes.userTransactions}>
+            <Box className={classes.btnContainer}>
+              <button
+                className={`btn-filter btn-filter__refill ${
+                  filterStatus === 'refill' ? 'btn-filter__refill--active' : ''
+                }`}
+                onClick={() => setFilterStatus('refill')}
+              >
+                Пополнения
+              </button>
+              <button
+                className={`btn-filter btn-filter__ordered ${
+                  filterStatus === 'ordered'
+                    ? 'btn-filter__ordered--active'
+                    : ''
+                }`}
+                onClick={() => setFilterStatus('ordered')}
+              >
+                Траты
+              </button>
+              <button
+                className={`btn-filter btn-filter__all ${
+                  filterStatus === 'all' ? 'btn-filter__all--active' : ''
+                }`}
+                onClick={() => setFilterStatus('all')}
+              >
+                Все
+              </button>
+            </Box>
             <TableContainer>
               <Table aria-label="simple table">
                 <TableHead>

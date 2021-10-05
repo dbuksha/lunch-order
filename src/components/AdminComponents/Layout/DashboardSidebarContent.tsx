@@ -1,5 +1,6 @@
 import React, { FC } from 'react';
 import { useSelector } from 'react-redux';
+import { Link as RouterLink } from 'react-router-dom';
 import {
   Avatar,
   Box,
@@ -17,6 +18,7 @@ import {
   Bookmark as BookmarkIcon,
   Clock as ClockIcon,
   CheckCircle as CheckCircleIcon,
+  DollarSign as DollarSignIcon,
 } from 'react-feather';
 import { getUserSelector } from 'store/users';
 import NavItem from './NavItem';
@@ -57,6 +59,11 @@ const menuItem = [
     Icon: AccountCircleOutlinedIcon,
     title: 'Пользователи',
   },
+  {
+    href: '/admin/refill',
+    Icon: DollarSignIcon,
+    title: 'Пополнение баланса',
+  },
 ];
 
 const useStyles = makeStyles(() =>
@@ -72,11 +79,19 @@ const useStyles = makeStyles(() =>
       alignItems: 'center',
       display: 'flex',
       flexDirection: 'column',
+      position: 'relative',
     },
     avatar: {
-      width: 80,
-      height: 80,
-      marginBottom: 12,
+      width: 70,
+      height: 70,
+      marginBottom: 10,
+    },
+    profileLink: {
+      width: '100%',
+      height: '100%',
+      position: 'absolute',
+      top: 0,
+      left: 0,
     },
   }),
 );
@@ -88,7 +103,7 @@ const DashboardSidebarContent: FC = () => {
   return (
     <Box className={classes.container}>
       {user ? (
-        <Box className={classes.content} sx={{ p: 2 }}>
+        <Box className={classes.content} sx={{ p: 1 }}>
           {user.avatar ? (
             <Avatar src={user.avatar} className={classes.avatar} />
           ) : null}
@@ -98,6 +113,7 @@ const DashboardSidebarContent: FC = () => {
           <Typography color="textSecondary" variant="body2">
             {user.email || ''}
           </Typography>
+          <RouterLink to="/profile" className={classes.profileLink} />
         </Box>
       ) : null}
       <Divider />

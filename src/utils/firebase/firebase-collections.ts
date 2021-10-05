@@ -4,4 +4,5 @@ export enum Collections {
   Lunches = 'dishsets',
   Orders = 'orders',
   Delivery = 'delivery',
+  Refill = 'refill',
 }

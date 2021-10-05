@@ -12,6 +12,9 @@ import {
 } from '@material-ui/core';
 
 import { UserNew } from 'entities/User';
+import Ruble from 'components/Ruble';
+
+import { numberWithSpaces } from 'utils/orders/calculateDishesPrice';
 
 const useStyles = makeStyles(() =>
   createStyles({
@@ -60,6 +63,10 @@ const UserRow: FC<Props> = ({ user, admin }) => {
         </Box>
       </TableCell>
       <TableCell>{user.email}</TableCell>
+      <TableCell>
+        {numberWithSpaces(user.balance)}
+        <Ruble />
+      </TableCell>
       <TableCell>
         <Select
           native
