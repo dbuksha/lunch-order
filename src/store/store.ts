@@ -7,6 +7,7 @@ import lunches from './lunches';
 import users from './users';
 import orders from './orders';
 import delivery from './delivery';
+import transactions from './transactions';
 
 const rootReducer = combineReducers({
   app,
@@ -15,6 +16,7 @@ const rootReducer = combineReducers({
   users,
   orders,
   delivery,
+  transactions,
 });
 
 export type RootState = ReturnType<typeof rootReducer>;

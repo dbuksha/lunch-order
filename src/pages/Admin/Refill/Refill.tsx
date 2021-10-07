@@ -94,7 +94,6 @@ const Refill: FC = () => {
     },
     validationSchema,
     onSubmit: async (values) => {
-      console.log(formik);
       try {
         await dispatch(showLoader());
 
