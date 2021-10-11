@@ -2,7 +2,8 @@ export enum Collections {
   Dishes = 'dishes',
   Users = 'users',
   Lunches = 'dishsets',
-  Orders = 'orders',
+  OldOrders = 'orders',
+  Orders = 'orders_new',
   Delivery = 'delivery',
   Refill = 'refill',
 }

@@ -113,7 +113,7 @@ export const Home: FC = () => {
             color="primary"
           >
             Заказать доставку
-            {orders && orders.length > 0 ? (
+            {todayOrders && todayOrders.length > 0 ? (
               <span className={classes.pinInfo}>{deliveryPrice} руб.</span>
             ) : null}
           </Button>

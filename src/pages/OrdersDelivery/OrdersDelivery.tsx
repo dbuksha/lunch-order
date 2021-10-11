@@ -22,6 +22,7 @@ import axios from 'axios';
 
 import { DeliveryData } from 'entities/Delivery';
 import { UserNew } from 'entities/User';
+import { Order } from 'entities/Order';
 
 import { getIsLoading } from 'store/app';
 import { fetchDeliveryInfo, getDeliveryInfoSelector } from 'store/delivery';
@@ -29,6 +30,7 @@ import { fetchAllUsers, getAllUserSelector } from 'store/users';
 import { fetchOrders, getOrdersList } from 'store/orders';
 
 import { getMessage } from 'utils/message';
+import { calculatePriceCard } from 'utils/orders';
 
 import DeleteAlert from 'components/AdminComponents/Alerts/DeleteAlert';
 import MainLayout from 'components/SiteLayout/MainLayout';
@@ -38,6 +40,9 @@ import DeliveryItem from './DeliveryItem';
 import { useGroupedDishes } from './useGroupedDishes';
 import { usePreparedDeliveryData } from './usePreparedDeliveryData';
 import { useCalculatedDeliveryPrice } from './useCalculatedDeliveryPrice';
+
+const deliveryCollection = firebaseInstance.collection(Collections.Delivery);
+const usersCollection = firebaseInstance.collection(Collections.Users);
 
 const useStyles = makeStyles(() =>
   createStyles({
@@ -70,7 +75,21 @@ const getNameUser = (arr: Array<UserNew>, id: string): string => {
   return name;
 };
 
-const deliveryCollection = firebaseInstance.collection(Collections.Delivery);
+// testing
+async function updateUsersBalances(orders: Array<Order>) {
+  // eslint-disable-next-line no-restricted-syntax
+  for (const order of orders) {
+    console.log(
+      order.person?.id,
+      order!.person!.balance,
+      calculatePriceCard(order.dishes),
+    );
+    // eslint-disable-next-line no-await-in-loop
+    usersCollection.doc(order.person?.id).update({
+      balance: order!.person!.balance - calculatePriceCard(order.dishes),
+    });
+  }
+}
 
 const OrdersDelivery: FC = () => {
   const dispatch = useDispatch();
@@ -95,9 +114,9 @@ const OrdersDelivery: FC = () => {
 
     dispatch(fetchOrders());
 
-    if (!users.length) {
-      dispatch(fetchAllUsers());
-    }
+    dispatch(fetchAllUsers());
+
+    updateUsersBalances(orders);
   }, [dispatch]);
 
   useEffect(() => {
@@ -145,6 +164,8 @@ const OrdersDelivery: FC = () => {
     await deliveryCollection.add(deliveryRecord);
 
     await dispatch(fetchDeliveryInfo());
+
+    // await updateUsersBalances(orders);
   };
 
   const confirmSelectPayer = async () => {
