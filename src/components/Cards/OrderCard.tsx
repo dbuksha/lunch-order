@@ -129,8 +129,6 @@ const OrderCard: FC<OrderCardProps> = ({
       </Button>
     ) : null;
 
-  console.log(deleteMode);
-
   return (
     <Paper className={classes.main}>
       <Toolbar className={classes.justifySpaceBetween}>

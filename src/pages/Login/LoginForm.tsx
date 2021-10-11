@@ -102,6 +102,7 @@ const LoginForm: FC = () => {
             email: user.email,
             phone: `${user.phoneNumber}`,
             name: user.displayName,
+            slack_name: null,
             role: 'user',
             uid: user.uid,
           };

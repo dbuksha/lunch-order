@@ -164,9 +164,6 @@ const OrdersDelivery: FC = () => {
       await axios.post(
         `${process.env.REACT_APP_SLACK_URL}`,
         JSON.stringify(data),
-        {
-          headers: { 'Content-Type': 'application/json' },
-        },
       );
     } catch {
       console.log('slack: сообщение не отправилось');
