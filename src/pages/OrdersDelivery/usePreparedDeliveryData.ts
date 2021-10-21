@@ -34,6 +34,7 @@ export const usePreparedDeliveryData = (
         lunch.dishes,
         deliveryDataStart,
       );
+
       if (!isFullExist) return;
 
       // get full lunch quantity

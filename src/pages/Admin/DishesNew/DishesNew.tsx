@@ -208,6 +208,7 @@ const DishesNew: FC = () => {
                   <option value="side">Гарнир</option>
                   <option value="salad">Салат</option>
                   <option value="dessert">Десерт</option>
+                  <option value="special">Специальное блюдо</option>
                 </Select>
               </Box>
               <Box className={classes.fieldBox}>

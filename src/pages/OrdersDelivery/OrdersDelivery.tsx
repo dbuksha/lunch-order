@@ -179,6 +179,9 @@ const OrdersDelivery: FC = () => {
     }
   };
 
+  // console.log('На входе gropedDishes = ', gropedDishes);
+  // console.log('На выходе deliveryData = ', deliveryData);
+
   return (
     <MainLayout>
       <TableContainer component={Paper} className={classes.root}>
