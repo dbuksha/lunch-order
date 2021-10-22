@@ -130,7 +130,7 @@ const DishesNew: FC = () => {
         await dispatch(hideLoader());
 
         if (typePage === 'new') {
-          await history.push('admin/dishes');
+          await history.push('/admin/dishes');
         }
       } catch (e) {
         // TODO: handle an error

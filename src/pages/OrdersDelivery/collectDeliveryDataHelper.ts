@@ -82,16 +82,11 @@ export const removeDishesWithLunchQuantity = (
   lunchDishes: OrderDish[],
   quantity: number,
 ): OrderDish[] => {
-  // console.log(dishes, lunchDishes, quantity);
   const dishesToRemove = lunchDishes.filter((d) => d.quantity === quantity);
   if (!dishesToRemove.length) return dishes;
 
   const dishesIdsToRemove = dishesToRemove.map(({ dish }) => dish.id);
 
-  // console.log(
-  //   'после удаления - ',
-  //   dishes.filter(({ dish }) => dishesIdsToRemove.indexOf(dish.id) === -1),
-  // );
   return dishes.filter(({ dish }) => dishesIdsToRemove.indexOf(dish.id) === -1);
 };
 
@@ -103,10 +98,8 @@ export const subtractLunchQuantityFromDish = (
   lunchDishesIds: string[],
   quantity: number,
 ): OrderDish[] => {
-  // console.log('qwerty = ', dishes);
   return dishes.map((d) => {
     if (lunchDishesIds.indexOf(d.dish.id) > -1) {
-      // console.log('dish - ', d);
       d = { ...d, quantity: d.quantity - quantity };
     }
     return d;
