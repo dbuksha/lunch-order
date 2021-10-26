@@ -12,6 +12,7 @@ export type OrderDish = {
   quantity: number;
   userID?: string;
   users?: string[];
+  status?: boolean;
 };
 
 export type SelectedDishes = Map<string, number>;

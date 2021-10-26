@@ -22,6 +22,27 @@ const checkUnique = (currentEl: OrderDish, arr: OrderDish[]): boolean => {
   return flag;
 };
 
+// выбираем лишние блюда
+const selectExtraDishes = (dishArr: OrderDish[], dishIndexArr: number[]) => {
+  const selectExtra: OrderDish[] = [];
+
+  dishArr.forEach((el, ind) => {
+    let flag = false;
+
+    dishIndexArr.forEach((index) => {
+      if (ind === index) {
+        flag = true;
+      }
+    });
+
+    if (!flag) {
+      selectExtra.push(el);
+    }
+  });
+
+  return selectExtra;
+};
+
 export const useGroupedDishes = (): OrderDish[] => {
   const dispatch = useDispatch();
   const orders = useSelector(getTodayOrders);
@@ -53,9 +74,30 @@ export const useGroupedDishes = (): OrderDish[] => {
       return temp;
     });
 
-    const dishes = tempDishes.flatMap((o) => o.dishesWithUser);
+    const result = tempDishes.flatMap((o) => o.dishesWithUser);
 
-    if (!dishes.length) return;
+    if (!result.length) return;
+
+    const addDish: OrderDish[] = [];
+
+    // преобразование списка к списку, в котором только единичные блюда
+    const mainDishes = result.map((el) => {
+      Object.defineProperty(el, 'quantity', {
+        writable: true,
+      });
+      if (el.quantity > 1) {
+        while (el.quantity > 1) {
+          addDish.push({ ...el, quantity: 1, status: false });
+          el.quantity -= 1;
+        }
+      }
+
+      el.status = false;
+
+      return el;
+    });
+
+    const dishes = [...mainDishes, ...addDish];
 
     // выбираем гарниры
     const garnirArr = dishes.filter((el) => el.dish.category === 'side');
@@ -68,9 +110,6 @@ export const useGroupedDishes = (): OrderDish[] => {
       (el) => el.dish.category !== 'main' && el.dish.category !== 'side',
     );
 
-    const garnirDontPair: OrderDish[] = [];
-    const mainDontPair: OrderDish[] = [];
-
     const garnirIndexArr: number[] = [];
     const mainIndexArr: number[] = [];
 
@@ -80,7 +119,7 @@ export const useGroupedDishes = (): OrderDish[] => {
     // выбираем пару: гарнир + главное блюдо
     garnirArr.forEach((garnir, ind) => {
       mainArr.forEach((main, key) => {
-        if (garnir.userID === main.userID) {
+        if (garnir.userID === main.userID && !garnir.status && !main.status) {
           fullCouples.push({
             dish: {
               id: `${garnir.dish.id}_${main.dish.id}`,
@@ -89,8 +128,11 @@ export const useGroupedDishes = (): OrderDish[] => {
               weight: garnir.dish.weight + main.dish.weight,
             },
             quantity: 1,
-            users: [garnir.userID],
+            users: [garnir.userID] as string[],
           });
+
+          garnir.status = true;
+          main.status = true;
 
           garnirIndexArr.push(ind);
           mainIndexArr.push(key);
@@ -113,41 +155,20 @@ export const useGroupedDishes = (): OrderDish[] => {
       }
     });
 
-    // лишние гарниры добавляем обратно в общий список
-    garnirArr.forEach((el, ind) => {
-      let flag = false;
-
-      garnirIndexArr.forEach((index) => {
-        if (ind === index) {
-          flag = true;
-        }
-      });
-
-      if (!flag) {
-        garnirDontPair.push(el);
-        otherArr.push(el);
-      }
-    });
-
-    // лишние главные блюда добавляем обратно в общий список
-    mainArr.forEach((el, ind) => {
-      let flag = false;
-
-      mainIndexArr.forEach((index) => {
-        if (ind === index) {
-          flag = true;
-        }
-      });
-
-      if (!flag) {
-        mainDontPair.push(el);
-        otherArr.push(el);
-      }
-    });
+    // выбираем лишние гарниры и главные блюда
+    const garnirDontPair: OrderDish[] = selectExtraDishes(
+      garnirArr,
+      garnirIndexArr,
+    );
+    const mainDontPair: OrderDish[] = selectExtraDishes(mainArr, mainIndexArr);
 
     setCalculatedDishes([
       ...unique,
-      ...deliveryDataHelper.calculateDishesQuantity(otherArr),
+      ...deliveryDataHelper.calculateDishesQuantity([
+        ...mainDontPair,
+        ...garnirDontPair,
+        ...otherArr,
+      ]),
     ]);
   }, [orders]);
 
