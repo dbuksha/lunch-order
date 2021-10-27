@@ -93,7 +93,7 @@ const DishesNew: FC = () => {
 
   const formik = useFormik({
     initialValues: {
-      category: '',
+      category: 'main',
       name: '',
       price: '',
       weight: '',
