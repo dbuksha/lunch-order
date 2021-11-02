@@ -42,6 +42,7 @@ export const isFullLunchExist = (
 /**
  * Calculate every dish quantity in delivery
  */
+
 export const calculateDishesQuantity = (dishes: OrderDish[]): OrderDish[] => {
   return chain(dishes)
     .groupBy((d) => d.dish.id)
@@ -51,7 +52,9 @@ export const calculateDishesQuantity = (dishes: OrderDish[]): OrderDish[] => {
         return acc;
       }, 0);
 
-      return { dish: value[0].dish, quantity: size };
+      const users = value.map((el) => el.userID) as string[];
+
+      return { dish: value[0].dish, quantity: size, users };
     })
     .value();
 };
@@ -83,6 +86,7 @@ export const removeDishesWithLunchQuantity = (
   if (!dishesToRemove.length) return dishes;
 
   const dishesIdsToRemove = dishesToRemove.map(({ dish }) => dish.id);
+
   return dishes.filter(({ dish }) => dishesIdsToRemove.indexOf(dish.id) === -1);
 };
 

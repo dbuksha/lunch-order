@@ -93,7 +93,7 @@ const DishesNew: FC = () => {
 
   const formik = useFormik({
     initialValues: {
-      category: '',
+      category: 'main',
       name: '',
       price: '',
       weight: '',
@@ -130,7 +130,7 @@ const DishesNew: FC = () => {
         await dispatch(hideLoader());
 
         if (typePage === 'new') {
-          await history.push('admin/dishes');
+          await history.push('/admin/dishes');
         }
       } catch (e) {
         // TODO: handle an error
@@ -208,6 +208,7 @@ const DishesNew: FC = () => {
                   <option value="side">Гарнир</option>
                   <option value="salad">Салат</option>
                   <option value="dessert">Десерт</option>
+                  <option value="special">Специальное блюдо</option>
                 </Select>
               </Box>
               <Box className={classes.fieldBox}>
