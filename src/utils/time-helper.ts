@@ -57,3 +57,17 @@ export const getDayName = (deliveryStatus: boolean): string =>
   dayjs()
     .weekday(getOrderDayNumberNew(deliveryStatus) - 1)
     .format('dddd');
+
+export const getStatusOfTransaction = (date: number): string => {
+  const tomorrow = dayjs().add(1, 'd').startOf('d');
+  const todayStatus =
+    dayjs().format('DD.MM.YYYY') === dayjs(date).format('DD.MM.YYYY');
+  const orderTomorrowStatus =
+    dayjs(tomorrow).format('DD.MM.YYYY') === dayjs(date).format('DD.MM.YYYY');
+
+  if (orderTomorrowStatus || (todayStatus && isTimeForTodayLunch())) {
+    return 'waiting';
+  }
+
+  return 'ordered';
+};

@@ -66,6 +66,9 @@ const UserList: FC = () => {
                     <b>Баланс</b>
                   </TableCell>
                   <TableCell>
+                    <b>Slack ID</b>
+                  </TableCell>
+                  <TableCell>
                     <b>Роль</b>
                   </TableCell>
                 </TableRow>

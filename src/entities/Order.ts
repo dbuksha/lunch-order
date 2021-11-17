@@ -7,6 +7,7 @@ import { UserNew } from './User';
 export type Order = {
   id?: string;
   dishes: OrderDish[];
+  dishesWithUser?: OrderDish[];
   person?: UserNew;
   date?: number;
 };

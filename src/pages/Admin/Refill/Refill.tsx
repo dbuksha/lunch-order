@@ -174,7 +174,9 @@ const Refill: FC = () => {
                 <option value="">Выберите пользователя</option>
                 {users.length
                   ? users.map((el: UserNew) => (
-                      <option value={el.id}>{el.name}</option>
+                      <option
+                        value={el.id}
+                      >{`${el.name} (${el.email})`}</option>
                     ))
                   : null}
               </Select>

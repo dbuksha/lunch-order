@@ -5,8 +5,8 @@ export type UserNew = {
   email: string | null;
   phone: string | null;
   name: string | null;
+  slack_id: string | null;
   role: string | null;
   uid: string | null;
-  slack_name: string;
   balance: number;
 };

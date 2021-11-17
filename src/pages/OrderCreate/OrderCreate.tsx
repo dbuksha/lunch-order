@@ -35,9 +35,10 @@ import {
   getOrderDayNumberNew,
   isTimeForTodayLunch,
 } from 'utils/time-helper';
-import Ruble from 'components/Ruble';
 import { fetchUserInfo } from 'store/users';
 import { getDeliveryInfoSelector } from 'store/delivery';
+import Ruble from 'components/Ruble';
+import AccountBalanceWalletOutlined from '@material-ui/icons/AccountBalanceWalletOutlined';
 
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
@@ -80,6 +81,12 @@ const useStyles = makeStyles((theme: Theme) =>
         fontSize: 12,
       },
     },
+    balance: {
+      display: 'flex',
+      justifyContent: 'flex-end',
+      marginBottom: 20,
+    },
+    balanceText: {},
   }),
 );
 
@@ -172,64 +179,86 @@ const OrderCreate: FC = () => {
   return (
     <MainLayout>
       <StyledPaper className={classes.main}>
-        {otherDayFlag || deliveryStatus ? (
+        <Box className={classes.balance}>
+          <AccountBalanceWalletOutlined color="primary" />
+          <Typography variant="body1" className={classes.balanceText}>
+            {currentUser?.balance}
+            <Ruble />
+          </Typography>
+        </Box>
+        {currentUser && currentUser?.balance < 0 ? (
           <Box className={classes.attention}>
             <Typography variant="body1" className={classes.attentionText}>
-              {`Внимание! На сегодня заказы больше не принимаются, но можно
-              сделать предварительный заказ на ${getDayName(
-                deliveryStatus !== null,
-              )}.`}
+              На вашем счете отрицательный баланс. К сожалению, заказ еды
+              недоступен.
             </Typography>
           </Box>
-        ) : null}
-        <Typography className={classes.pageTitle} component="div" variant="h6">
-          {getDayName(deliveryStatus !== null)}
-          {otherDayFlag || deliveryStatus ? '(предварительный заказ)' : ''}
-        </Typography>
-        <Grid container spacing={2} justifyContent="center">
-          <TodayLunches />
-          <Grid
-            item
-            className={classes.root}
-            container
-            sm={12}
-            md={12}
-            lg={12}
-            justifyContent="flex-end"
-            alignItems="baseline"
-          >
+        ) : (
+          <>
+            {otherDayFlag || deliveryStatus ? (
+              <Box className={classes.attention}>
+                <Typography variant="body1" className={classes.attentionText}>
+                  {`Внимание! На сегодня заказы больше не принимаются, но можно
+                  сделать предварительный заказ на ${getDayName(
+                    deliveryStatus !== null,
+                  )}.`}
+                </Typography>
+              </Box>
+            ) : null}
             <Typography
-              component="span"
+              className={classes.pageTitle}
+              component="div"
               variant="h6"
-              className={(classes.item, classes.total)}
             >
-              Итого:{' '}
-              <strong>
-                {calculatedPrice}
-                <Ruble />
-              </strong>
+              {getDayName(deliveryStatus !== null)}
+              {otherDayFlag || deliveryStatus ? '(предварительный заказ)' : ''}
             </Typography>
-            {order?.id && (
-              <Button
-                className={classes.item}
-                variant="outlined"
-                color="secondary"
-                onClick={onDeleteOrder}
+            <Grid container spacing={2} justifyContent="center">
+              <TodayLunches />
+              <Grid
+                item
+                className={classes.root}
+                container
+                sm={12}
+                md={12}
+                lg={12}
+                justifyContent="flex-end"
+                alignItems="baseline"
               >
-                Отменить заказ
-              </Button>
-            )}
-            <Button
-              variant="contained"
-              color="primary"
-              className={classes.item}
-              disabled={!calculatedPrice || sendLoading || !currentUser}
-              onClick={onCreateOrderSubmit}
-            >
-              {order?.id ? 'Обновить заказ' : 'Заказать'}
-            </Button>
-          </Grid>
-        </Grid>
+                <Typography
+                  component="span"
+                  variant="h6"
+                  className={(classes.item, classes.total)}
+                >
+                  Итого:{' '}
+                  <strong>
+                    {calculatedPrice}
+                    <Ruble />
+                  </strong>
+                </Typography>
+                {order?.id && (
+                  <Button
+                    className={classes.item}
+                    variant="outlined"
+                    color="secondary"
+                    onClick={onDeleteOrder}
+                  >
+                    Отменить заказ
+                  </Button>
+                )}
+                <Button
+                  variant="contained"
+                  color="primary"
+                  className={classes.item}
+                  disabled={!calculatedPrice || sendLoading || !currentUser}
+                  onClick={onCreateOrderSubmit}
+                >
+                  {order?.id ? 'Обновить заказ' : 'Заказать'}
+                </Button>
+              </Grid>
+            </Grid>
+          </>
+        )}
       </StyledPaper>
     </MainLayout>
   );

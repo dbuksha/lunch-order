@@ -94,6 +94,10 @@ const useStyles = makeStyles(() =>
       minWidth: 100,
       color: '#df5989',
     },
+    waiting: {
+      minWidth: 100,
+      color: '#e97a18',
+    },
     hidden: {
       display: 'none',
     },
@@ -138,7 +142,7 @@ const Profile: FC = () => {
                 {currentUser.email || ''}
               </Typography>
               <Box className={classes.paramsContainer}>
-                {currentUser.slack_name ? (
+                {currentUser.slack_id ? (
                   <Box className={classes.balance}>
                     <img
                       src={SlackIcon}
@@ -150,7 +154,7 @@ const Profile: FC = () => {
                       variant="body2"
                       className={classes.balanceText}
                     >
-                      {currentUser.slack_name}
+                      {currentUser.slack_id}
                     </Typography>
                   </Box>
                 ) : null}
@@ -206,6 +210,21 @@ const Profile: FC = () => {
                   )}`}
                   <Ruble />
                 </button>
+                {transactions.some((el) => el.type === 'waiting') ? (
+                  <button
+                    className={`btn-filter btn-filter__waiting ${
+                      filterStatus === 'waiting'
+                        ? 'btn-filter__waiting--active'
+                        : ''
+                    }`}
+                    onClick={() => setFilterStatus('waiting')}
+                  >
+                    {`В ожидании списания Σ = ${numberWithSpaces(
+                      getSum(transactions, 'waiting'),
+                    )}`}
+                    <Ruble />
+                  </button>
+                ) : null}
               </Box>
               <TableContainer>
                 <Table aria-label="simple table">
@@ -244,9 +263,12 @@ const Profile: FC = () => {
                         </TableCell>
                         <TableCell
                           className={
+                            // eslint-disable-next-line no-nested-ternary
                             el.type === 'refill'
                               ? classes.refill
-                              : classes.ordered
+                              : el.type === 'ordered'
+                              ? classes.ordered
+                              : classes.waiting
                           }
                         >
                           <b>

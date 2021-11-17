@@ -1,12 +1,10 @@
-import { createAction, createAsyncThunk } from '@reduxjs/toolkit';
+import { createAsyncThunk } from '@reduxjs/toolkit';
 import firebaseInstance, {
   Collections,
   getCollectionEntries,
-  DocumentReference,
-  DocumentData,
 } from 'utils/firebase';
 // store
-import { showLoader, hideLoader, showSnackBar, StatusTypes } from 'store/app';
+import { showLoader, hideLoader } from 'store/app';
 import { UsersState } from 'store/users';
 // entities
 import { Transaction } from 'entities/Transaction';
@@ -15,6 +13,7 @@ import { OrderFirebase } from 'entities/Order';
 import * as deliveryDataHelper from 'pages/OrdersDelivery/collectDeliveryDataHelper';
 import { DishesState } from 'store/dishes';
 import dayjs from 'dayjs';
+import { getStatusOfTransaction } from '../../utils/time-helper';
 
 enum ActionTypes {
   GET_TRANSACTIONS = 'transactions/getTransactions',
@@ -76,7 +75,7 @@ export const getTransactions = createAsyncThunk(
         }));
         return {
           ...order,
-          type: 'ordered',
+          type: getStatusOfTransaction(order.date.toMillis()),
           description: `Сделан заказ: ${dishesList.map(
             (el) => ` ${el.dish.name}`,
           )}`,
