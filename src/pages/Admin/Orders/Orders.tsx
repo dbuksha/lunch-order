@@ -15,19 +15,22 @@ import {
 
 import { getIsLoading } from 'store/app';
 import { getUserSelector } from 'store/users';
+import { getDeliveryInfoSelector } from 'store/delivery';
+import { getDepositModeSelector } from 'store/settings';
 
 import AdminLayout from 'components/AdminComponents/Layout/AdminLayout';
 import OrderCard from 'components/Cards/OrderCard';
-import { getDeliveryInfoSelector } from 'store/delivery';
-
-const ordersCollection = firebaseInstance.collection(Collections.Orders);
 
 const Orders: FC = () => {
   const dispatch = useDispatch();
   const isLoading = useSelector(getIsLoading);
   const orders = useSelector(getOrdersList);
   const currentUser = useSelector(getUserSelector);
+  const depositMode = useSelector(getDepositModeSelector);
   const deliveryStatus = useSelector(getDeliveryInfoSelector);
+  const ordersCollection = firebaseInstance.collection(
+    depositMode ? 'orders_deposit' : 'orders',
+  );
 
   useEffect(() => {
     dispatch(fetchOrders());

@@ -19,6 +19,7 @@ import { UsersState } from 'store/users';
 import { Order, OrderFirebase } from 'entities/Order';
 import { UserNew } from 'entities/User';
 import { DeliveryState } from 'store/delivery';
+import { SettingsState } from 'store/settings';
 
 enum ActionTypes {
   FETCH_ORDERS = 'orders/fetchOrders',
@@ -46,8 +47,6 @@ const isTodayOrTomorrowOrderExists = (
     : dayjs(date).isSameOrAfter(tomorrow);
 };
 
-const collectionRef = firebaseInstance.collection(Collections.Orders);
-
 export const addOrder = createAsyncThunk(
   ActionTypes.ADD_ORDER,
   async (
@@ -56,7 +55,12 @@ export const addOrder = createAsyncThunk(
   ) => {
     const {
       dishes: { dishesMap },
-    } = getState() as { dishes: DishesState };
+      settings: { deposit },
+    } = getState() as { dishes: DishesState; settings: SettingsState };
+
+    const collectionRef = firebaseInstance.collection(
+      deposit ? 'orders_deposit' : 'orders',
+    );
 
     try {
       let result: DocumentReference<DocumentData> | null = null;
@@ -103,11 +107,17 @@ export const getUserOrder = createAsyncThunk(
       users: { currentUser },
       dishes: { dishesMap },
       delivery: { deliveryInfo },
+      settings: { deposit },
     } = getState() as {
       users: UsersState;
       dishes: DishesState;
       delivery: DeliveryState;
+      settings: SettingsState;
     };
+
+    const collectionRef = firebaseInstance.collection(
+      deposit ? 'orders_deposit' : 'orders',
+    );
 
     // FIXME: should I show an error message?
     if (!currentUser) return null;
@@ -155,7 +165,16 @@ export const getOptionOrder = createAsyncThunk(
     const {
       dishes: { dishesMap },
       delivery: { deliveryInfo },
-    } = getState() as { dishes: DishesState; delivery: DeliveryState };
+      settings: { deposit },
+    } = getState() as {
+      dishes: DishesState;
+      delivery: DeliveryState;
+      settings: SettingsState;
+    };
+
+    const collectionRef = firebaseInstance.collection(
+      deposit ? 'orders_deposit' : 'orders',
+    );
 
     // FIXME: should I show an error message?
     if (!id) return null;
@@ -195,7 +214,12 @@ export const fetchOrders = createAsyncThunk(
   async (_, { getState, dispatch }) => {
     const {
       dishes: { dishesMap },
-    } = getState() as { users: UsersState; dishes: DishesState };
+      settings: { deposit },
+    } = getState() as { dishes: DishesState; settings: SettingsState };
+
+    const collectionRef = firebaseInstance.collection(
+      deposit ? 'orders_deposit' : 'orders',
+    );
 
     dispatch(showLoader());
 
@@ -229,7 +253,12 @@ export const fetchHistoryOrders = createAsyncThunk(
   async (_, { getState, dispatch }) => {
     const {
       dishes: { dishesMap },
-    } = getState() as { users: UsersState; dishes: DishesState };
+      settings: { deposit },
+    } = getState() as { dishes: DishesState; settings: SettingsState };
+
+    const collectionRef = firebaseInstance.collection(
+      deposit ? 'orders_deposit' : 'orders',
+    );
 
     dispatch(showLoader());
 
@@ -262,7 +291,15 @@ export const fetchHistoryOrders = createAsyncThunk(
 
 export const deleteOrder = createAsyncThunk(
   ActionTypes.DELETE_ORDER,
-  async (id: string, { dispatch }) => {
+  async (id: string, { getState, dispatch }) => {
+    const {
+      settings: { deposit },
+    } = getState() as { settings: SettingsState };
+
+    const collectionRef = firebaseInstance.collection(
+      deposit ? 'orders_deposit' : 'orders',
+    );
+
     dispatch(showLoader());
     try {
       await collectionRef.doc(id).delete();

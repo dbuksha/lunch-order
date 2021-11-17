@@ -4,6 +4,7 @@ import { Redirect } from 'react-router-dom';
 import { createStyles, makeStyles } from '@material-ui/core';
 
 import { getUserSelector } from 'store/users';
+import { getDepositModeSelector } from 'store/settings';
 
 import DashboardNavbar from './DashboardNavbar';
 import DashboardSidebar from './DashboardSidebar';
@@ -46,6 +47,7 @@ const useStyles = makeStyles(() =>
 const AdminLayout: FC = ({ children }) => {
   const classes = useStyles();
   const user = useSelector(getUserSelector);
+  const depositMode = useSelector(getDepositModeSelector);
 
   if (user && user.role !== 'admin') {
     return <Redirect to={{ pathname: '/' }} />;
@@ -57,7 +59,7 @@ const AdminLayout: FC = ({ children }) => {
         <DashboardNavbar />
       </div>
       <div className={classes.menu}>
-        <DashboardSidebar />
+        <DashboardSidebar depositMode={depositMode} />
       </div>
       <div className={classes.wrapper}>
         <div className={classes.content}>{children}</div>

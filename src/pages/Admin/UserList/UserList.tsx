@@ -20,6 +20,7 @@ import {
   getAllUserSelector,
   getUserSelector,
 } from 'store/users';
+import { getDepositModeSelector } from 'store/settings';
 
 import AdminLayout from '../../../components/AdminComponents/Layout/AdminLayout';
 import UserRow from './UserRow';
@@ -28,10 +29,13 @@ const UserList: FC = () => {
   const dispatch = useDispatch();
   const users = useSelector(getAllUserSelector);
   const currentUser = useSelector(getUserSelector);
+  const depositMode = useSelector(getDepositModeSelector);
 
   useEffect(() => {
     dispatch(fetchAllUsers());
   }, [dispatch]);
+
+  console.log(depositMode);
 
   return (
     <AdminLayout>
@@ -62,9 +66,11 @@ const UserList: FC = () => {
                   <TableCell>
                     <b>Email</b>
                   </TableCell>
-                  <TableCell>
-                    <b>Баланс</b>
-                  </TableCell>
+                  {depositMode ? (
+                    <TableCell>
+                      <b>Баланс</b>
+                    </TableCell>
+                  ) : null}
                   <TableCell>
                     <b>Slack ID</b>
                   </TableCell>
@@ -81,6 +87,7 @@ const UserList: FC = () => {
                       user={el}
                       key={el.id}
                       admin={currentUser.email === el.email}
+                      depositMode={depositMode}
                     />
                   ))}
               </TableBody>

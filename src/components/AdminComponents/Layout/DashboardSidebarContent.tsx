@@ -23,6 +23,8 @@ import {
 import { getUserSelector } from 'store/users';
 import NavItem from './NavItem';
 
+import { Props } from './DashboardSidebar';
+
 const menuItem = [
   {
     href: '/admin',
@@ -96,7 +98,7 @@ const useStyles = makeStyles(() =>
   }),
 );
 
-const DashboardSidebarContent: FC = () => {
+const DashboardSidebarContent: FC<Props> = ({ depositMode }) => {
   const classes = useStyles();
   const user = useSelector(getUserSelector);
 
@@ -119,14 +121,17 @@ const DashboardSidebarContent: FC = () => {
       <Divider />
       <Box sx={{ p: 2 }}>
         <List>
-          {menuItem.map((item) => (
-            <NavItem
-              href={item.href}
-              key={item.title}
-              title={item.title}
-              Icon={item.Icon}
-            />
-          ))}
+          {menuItem.map((item) => {
+            if (!depositMode && item.href === '/admin/refill') return null;
+            return (
+              <NavItem
+                href={item.href}
+                key={item.title}
+                title={item.title}
+                Icon={item.Icon}
+              />
+            );
+          })}
         </List>
       </Box>
       <Box sx={{ flexGrow: 1 }} />

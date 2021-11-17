@@ -2,6 +2,7 @@ import { configureStore, combineReducers } from '@reduxjs/toolkit';
 
 // modules
 import app from './app';
+import settings from './settings';
 import dishes from './dishes';
 import lunches from './lunches';
 import users from './users';
@@ -11,6 +12,7 @@ import transactions from './transactions';
 
 const rootReducer = combineReducers({
   app,
+  settings,
   dishes,
   lunches,
   users,

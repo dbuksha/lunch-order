@@ -11,6 +11,7 @@ import { Redirect, Route, RouteProps } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
 
 import { RootState } from 'store';
+import { fetchSettings } from 'store/settings/settings-actions';
 import { fetchDishes } from 'store/dishes';
 import { fetchLunches } from 'store/lunches';
 import { fetchDeliveryInfo } from 'store/delivery';
@@ -47,6 +48,7 @@ const AuthRoute: FC<RoutePropsWithSubRoutes> = (props) => {
           logout();
         }
       });
+      await dispatch(fetchSettings());
       await dispatch(fetchDishes());
       await dispatch(fetchLunches());
       await dispatch(fetchDeliveryInfo());

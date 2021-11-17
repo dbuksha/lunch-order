@@ -1,3 +1,4 @@
+/* eslint-disable no-nested-ternary */
 import React, { FC } from 'react';
 import { useSelector } from 'react-redux';
 import { Link as RouterLink } from 'react-router-dom';
@@ -20,6 +21,7 @@ import ExitToAppIcon from '@material-ui/icons/ExitToApp';
 import { logout } from 'utils/auth';
 
 import LogoImg from 'assets/images/logo.svg';
+import { getDepositModeSelector } from 'store/settings';
 
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
@@ -86,6 +88,7 @@ const useStyles = makeStyles((theme: Theme) =>
 const SiteHeader: FC = () => {
   const classes = useStyles();
   const user = useSelector(getUserSelector);
+  const depositMode = useSelector(getDepositModeSelector);
 
   return (
     <AppBar elevation={0}>
@@ -101,18 +104,33 @@ const SiteHeader: FC = () => {
           {user ? (
             <>
               {window.location.pathname !== '/profile' ? (
-                <RouterLink to="/profile" className={classes.container}>
-                  {user.avatar ? (
-                    <Avatar src={user.avatar} className={classes.avatar} />
-                  ) : null}
-                  <Typography
-                    color="textPrimary"
-                    variant="h5"
-                    className={classes.name}
-                  >
-                    {user.name || ''}
-                  </Typography>
-                </RouterLink>
+                depositMode ? (
+                  <RouterLink to="/profile" className={classes.container}>
+                    {user.avatar ? (
+                      <Avatar src={user.avatar} className={classes.avatar} />
+                    ) : null}
+                    <Typography
+                      color="textPrimary"
+                      variant="h5"
+                      className={classes.name}
+                    >
+                      {user.name || ''}
+                    </Typography>
+                  </RouterLink>
+                ) : (
+                  <>
+                    {user.avatar ? (
+                      <Avatar src={user.avatar} className={classes.avatar} />
+                    ) : null}
+                    <Typography
+                      color="textPrimary"
+                      variant="h5"
+                      className={classes.name}
+                    >
+                      {user.name || ''}
+                    </Typography>
+                  </>
+                )
               ) : null}
               <Button className={classes.btnExit} onClick={() => logout()}>
                 <ExitToAppIcon className={classes.exit} />

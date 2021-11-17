@@ -7,6 +7,7 @@ export const getMessage = (
   totalSum: number,
   orders: Order[],
   users: UserNew[],
+  depositMode: boolean,
 ): string => {
   let message = '';
 
@@ -21,12 +22,11 @@ export const getMessage = (
   });
 
   message += `Обед заказан :cool_doge: \nВсего получилось - ${totalSum}руб.:\n${ordersStr}`;
-  message += `Деньги за обед отдает >>> ${
-    user!.name || 'Пользователь неизвестен'
-  }.`;
-  // message += `Деньги за обед отдаем/переводим (желательно наличными) >>> ${
-  //   user!.name || 'Пользователь неизвестен'
-  // }.`;
+  message += depositMode
+    ? `Деньги за обед отдает >>> ${user!.name || 'Пользователь неизвестен'}.`
+    : `Деньги за обед отдаем/переводим (желательно наличными) >>> ${
+        user!.name || 'Пользователь неизвестен'
+      }.`;
 
   return message;
 };

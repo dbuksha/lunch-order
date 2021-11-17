@@ -20,7 +20,7 @@ import { Alert } from '@material-ui/lab';
 import dayjs from 'utils/dayjs';
 import axios from 'axios';
 
-import { DeliveryData, DeliveryDataFirebase } from 'entities/Delivery';
+import { DeliveryData } from 'entities/Delivery';
 import { UserNew } from 'entities/User';
 import { Order } from 'entities/Order';
 
@@ -33,6 +33,7 @@ import {
   getUserSelector,
 } from 'store/users';
 import { fetchOrders, getOrdersList } from 'store/orders';
+import { getDepositModeSelector } from 'store/settings';
 
 import { getMessage } from 'utils/message';
 import { calculatePriceCard } from 'utils/orders';
@@ -70,24 +71,23 @@ const useStyles = makeStyles(() =>
 
 const getNameUser = (arr: Array<UserNew>, id: string): string => {
   let name = '';
-
   arr.forEach((el: UserNew) => {
     if (el.id === id) {
       name = el.name || '';
     }
   });
-
   return name;
 };
 
+// testing
 async function updateUsersBalances(orders: Array<Order>) {
   // eslint-disable-next-line no-restricted-syntax
   for (const order of orders) {
-    // console.log(
-    //   order.person?.id,
-    //   order!.person!.balance,
-    //   calculatePriceCard(order.dishes),
-    // );
+    console.log(
+      order.person?.id,
+      order!.person!.balance,
+      calculatePriceCard(order.dishes),
+    );
     // eslint-disable-next-line no-await-in-loop
     usersCollection.doc(order.person?.id).update({
       balance: order!.person!.balance - calculatePriceCard(order.dishes),
@@ -95,11 +95,12 @@ async function updateUsersBalances(orders: Array<Order>) {
   }
 }
 
-const OrdersDelivery: FC = () => {
+const OrdersDeliveryWithoutDeposit: FC = () => {
   const dispatch = useDispatch();
   const classes = useStyles();
   const isLoading = useSelector(getIsLoading);
   const currentUser = useSelector(getUserSelector);
+  const depositMode = useSelector(getDepositModeSelector);
   const gropedDishes = useGroupedDishes();
   const deliveryPrice = useCalculatedDeliveryPrice(gropedDishes);
   const deliveryData = usePreparedDeliveryData(gropedDishes);
@@ -108,23 +109,21 @@ const OrdersDelivery: FC = () => {
   const users = useSelector(getAllUserSelector);
   const orders = useSelector(getOrdersList);
   const [deliveryCompleted, setDeliveryCompleted] = useState(false);
-  const [payer, setPayer] = useState('83o4aNGJBk6lLLNlR6KN');
+  const [tempPayer, setTempPayer] = useState('');
+  const [payer, setPayer] = useState('default');
   const [dialogStatus, setDialogStatus] = useState('');
 
   useEffect(() => {
     if (globalDelivery === null) {
       dispatch(fetchDeliveryInfo());
     }
-
     dispatch(fetchOrders());
-
     dispatch(fetchAllUsers());
   }, [dispatch]);
 
   useEffect(() => {
     if (globalDelivery && globalDelivery.id) {
       setDeliveryCompleted(true);
-
       if (globalDelivery.payer && globalDelivery.payer.id) {
         setPayer(globalDelivery.payer.id);
       }
@@ -143,38 +142,41 @@ const OrdersDelivery: FC = () => {
 
   const toggleDialogHandler = (state: string) => () => {
     if (deliveryCompleted && state === 'delivery') return;
-
     setDialogStatus(state);
   };
 
   const payerChange = (event: React.ChangeEvent<any>) => {
-    setPayer(event.target.value as string);
+    setTempPayer(event.target.value as string);
+    setDialogStatus('payer');
   };
 
   const confirmDeliveryCompleted = async () => {
     await setDeliveryCompleted(true);
     await toggleDialogHandler('')();
-
-    const deliveryRecord: DeliveryDataFirebase = {
+    const deliveryRecord: DeliveryData = {
       createDate: firebase.firestore.Timestamp.fromDate(dayjs().toDate()),
-      payer: firebaseInstance.doc(`${Collections.Users}/${payer}`),
+      payer: null,
       dishes: deliveryData,
       total: deliveryPrice,
     };
-
     await deliveryCollection.add(deliveryRecord);
-
     await dispatch(fetchDeliveryInfo());
+    // await dispatch(fetchUserInfo(currentUser.email!));
+  };
 
-    await updateUsersBalances(orders);
+  const confirmSelectPayer = async () => {
+    await setPayer(tempPayer);
+    await setTempPayer('');
+    await toggleDialogHandler('')();
 
-    currentUser && (await dispatch(fetchUserInfo(currentUser.email as string)));
+    await deliveryCollection.doc(globalDelivery!.id).update({
+      payer: firebaseInstance.doc(`${Collections.Users}/${tempPayer}`),
+    });
 
     try {
       const data = {
-        text: getMessage(payer, deliveryPrice, orders, users),
+        text: getMessage(tempPayer, deliveryPrice, orders, users, depositMode),
       };
-
       await axios.post(
         `${process.env.REACT_APP_SLACK_URL}`,
         JSON.stringify(data),
@@ -186,6 +188,10 @@ const OrdersDelivery: FC = () => {
 
   const cancelSelectedPayer = () => {
     toggleDialogHandler('')();
+    if (dialogStatus === 'payer') {
+      setTempPayer('');
+      setPayer('default');
+    }
   };
 
   return (
@@ -212,30 +218,6 @@ const OrdersDelivery: FC = () => {
             ))}
             <TableRow>
               <TableCell align="left">
-                <b>Получатель:</b>
-              </TableCell>
-              <TableCell align="right">
-                <Select
-                  native
-                  value={payer}
-                  onChange={payerChange}
-                  variant="outlined"
-                  fullWidth
-                  inputProps={{
-                    name: 'user',
-                  }}
-                  disabled={deliveryCompleted}
-                >
-                  {users.length
-                    ? users.map((el: UserNew) => (
-                        <option value={el.id}>{el.name}</option>
-                      ))
-                    : null}
-                </Select>
-              </TableCell>
-            </TableRow>
-            <TableRow>
-              <TableCell align="left">
                 <b className={classes.caption}>
                   Итого: {deliveryPrice}
                   <Ruble />
@@ -254,12 +236,43 @@ const OrdersDelivery: FC = () => {
                 />
               </TableCell>
             </TableRow>
+            <TableRow>
+              <TableCell align="left">
+                <b>Получатель:</b>
+              </TableCell>
+              <TableCell align="right">
+                <Select
+                  native
+                  value={payer}
+                  onChange={payerChange}
+                  variant="outlined"
+                  fullWidth
+                  inputProps={{
+                    name: 'user',
+                  }}
+                  disabled={payer !== 'default' || !deliveryCompleted}
+                >
+                  <option value="default">Выберите пользователя</option>
+                  {users.length
+                    ? users.map((el: UserNew) => (
+                        <option value={el.id}>{el.name}</option>
+                      ))
+                    : null}
+                </Select>
+              </TableCell>
+            </TableRow>
           </TableBody>
         </Table>
       </TableContainer>
       <DeleteAlert
         status={dialogStatus !== ''}
-        title="Вы уверены, что вы заказали еду по телефону?"
+        title={`${
+          dialogStatus === 'delivery'
+            ? 'Вы уверены, что вы заказали еду по телефону?'
+            : `Вы уверены, что хотите выбрать ${
+                users ? getNameUser(users, tempPayer) : 'этого пользователя'
+              }?`
+        }`}
         desc={`${
           dialogStatus === 'delivery'
             ? 'После того, как подтвердите действие, заказ еды на сегодняшний день будет недоступен'
@@ -270,10 +283,13 @@ const OrdersDelivery: FC = () => {
             ? toggleDialogHandler('')
             : cancelSelectedPayer
         }
-        confirmEvent={confirmDeliveryCompleted}
+        confirmEvent={
+          dialogStatus === 'delivery'
+            ? confirmDeliveryCompleted
+            : confirmSelectPayer
+        }
       />
     </MainLayout>
   );
 };
-
-export default OrdersDelivery;
+export default OrdersDeliveryWithoutDeposit;

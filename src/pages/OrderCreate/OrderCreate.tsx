@@ -37,6 +37,7 @@ import {
 } from 'utils/time-helper';
 import { fetchUserInfo } from 'store/users';
 import { getDeliveryInfoSelector } from 'store/delivery';
+import { getDepositModeSelector } from 'store/settings';
 import Ruble from 'components/Ruble';
 import AccountBalanceWalletOutlined from '@material-ui/icons/AccountBalanceWalletOutlined';
 
@@ -95,6 +96,7 @@ const OrderCreate: FC = () => {
   const classes = useStyles();
   const history = useHistory();
   const currentUser = useSelector(getUserSelector);
+  const depositMode = useSelector(getDepositModeSelector);
   const order = useSelector(getCurrentOrder);
   const selectedDishes = useSelector(selectedOrderDishesIdsSet);
   const deliveryStatus = useSelector(getDeliveryInfoSelector);
@@ -179,14 +181,16 @@ const OrderCreate: FC = () => {
   return (
     <MainLayout>
       <StyledPaper className={classes.main}>
-        <Box className={classes.balance}>
-          <AccountBalanceWalletOutlined color="primary" />
-          <Typography variant="body1" className={classes.balanceText}>
-            {currentUser?.balance}
-            <Ruble />
-          </Typography>
-        </Box>
-        {currentUser && currentUser?.balance < 0 ? (
+        {depositMode ? (
+          <Box className={classes.balance}>
+            <AccountBalanceWalletOutlined color="primary" />
+            <Typography variant="body1" className={classes.balanceText}>
+              {currentUser?.balance}
+              <Ruble />
+            </Typography>
+          </Box>
+        ) : null}
+        {depositMode && currentUser && currentUser?.balance < 0 ? (
           <Box className={classes.attention}>
             <Typography variant="body1" className={classes.attentionText}>
               На вашем счете отрицательный баланс. К сожалению, заказ еды

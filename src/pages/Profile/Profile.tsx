@@ -19,8 +19,9 @@ import AccountBalanceWalletOutlined from '@material-ui/icons/AccountBalanceWalle
 
 import { Transaction } from 'entities/Transaction';
 
-import { getUserSelector } from 'store/users';
+import { fetchUserInfo, getUserSelector } from 'store/users';
 import { getTransactions, getTransactionsSelector } from 'store/transactions';
+import { getDepositModeSelector } from 'store/settings';
 
 import MainLayout from 'components/SiteLayout/MainLayout';
 import Ruble from 'components/Ruble';
@@ -119,12 +120,18 @@ const Profile: FC = () => {
   const classes = useStyles();
   const dispatch = useDispatch();
   const currentUser = useSelector(getUserSelector);
+  const depositMode = useSelector(getDepositModeSelector);
   const transactions = useSelector(getTransactionsSelector);
   const [filterStatus, setFilterStatus] = useState('all');
 
   useEffect(() => {
+    dispatch(fetchUserInfo(currentUser!.email!));
     dispatch(getTransactions());
   }, [dispatch]);
+
+  if (!depositMode) {
+    window.location.href = '/';
+  }
 
   return (
     <MainLayout>
@@ -141,35 +148,37 @@ const Profile: FC = () => {
               <Typography color="textSecondary" variant="body2">
                 {currentUser.email || ''}
               </Typography>
-              <Box className={classes.paramsContainer}>
-                {currentUser.slack_id ? (
+              {depositMode ? (
+                <Box className={classes.paramsContainer}>
+                  {currentUser.slack_id ? (
+                    <Box className={classes.balance}>
+                      <img
+                        src={SlackIcon}
+                        alt="slack-logo"
+                        className={classes.slackIcon}
+                      />
+                      <Typography
+                        color="textSecondary"
+                        variant="body2"
+                        className={classes.balanceText}
+                      >
+                        {currentUser.slack_id}
+                      </Typography>
+                    </Box>
+                  ) : null}
                   <Box className={classes.balance}>
-                    <img
-                      src={SlackIcon}
-                      alt="slack-logo"
-                      className={classes.slackIcon}
-                    />
+                    <AccountBalanceWalletOutlined color="primary" />
                     <Typography
                       color="textSecondary"
                       variant="body2"
                       className={classes.balanceText}
                     >
-                      {currentUser.slack_id}
+                      {numberWithSpaces(currentUser.balance) || 0}
+                      <Ruble />
                     </Typography>
                   </Box>
-                ) : null}
-                <Box className={classes.balance}>
-                  <AccountBalanceWalletOutlined color="primary" />
-                  <Typography
-                    color="textSecondary"
-                    variant="body2"
-                    className={classes.balanceText}
-                  >
-                    {numberWithSpaces(currentUser.balance) || 0}
-                    <Ruble />
-                  </Typography>
                 </Box>
-              </Box>
+              ) : null}
             </Box>
           ) : null}
 

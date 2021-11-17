@@ -25,6 +25,7 @@ import dayjs from 'utils/dayjs';
 import { UserNew } from 'entities/User';
 
 import { fetchAllUsers, getAllUserSelector } from 'store/users';
+import { getDepositModeSelector } from 'store/settings';
 
 import Ruble from 'components/Ruble';
 import AdminLayout from '../../../components/AdminComponents/Layout/AdminLayout';
@@ -71,6 +72,7 @@ const Refill: FC = () => {
   const dispatch = useDispatch();
   const classes = useStyles();
   const users = useSelector(getAllUserSelector);
+  const depositMode = useSelector(getDepositModeSelector);
   const [userBalance, setUserBalance] = useState(0);
 
   useEffect(() => {
@@ -78,6 +80,10 @@ const Refill: FC = () => {
       dispatch(fetchAllUsers());
     }
   }, [dispatch]);
+
+  if (!depositMode) {
+    window.location.href = '/admin';
+  }
 
   const validationSchema = yup.object({
     user: yup.string().required('Необходимо выбрать пользователя'),

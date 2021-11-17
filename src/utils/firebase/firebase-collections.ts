@@ -3,7 +3,8 @@ export enum Collections {
   Users = 'users',
   Lunches = 'dishsets',
   OldOrders = 'orders',
-  Orders = 'orders_new',
+  Orders = 'orders_deposit',
   Delivery = 'delivery',
   Refill = 'refill',
+  Settings = 'settings',
 }

@@ -51,11 +51,12 @@ const useStyles = makeStyles(() =>
 interface Props {
   user: UserNew;
   admin: boolean;
+  depositMode: boolean;
 }
 
 const usersCollection = firebaseInstance.collection(Collections.Users);
 
-const UserRow: FC<Props> = ({ user, admin }) => {
+const UserRow: FC<Props> = ({ user, admin, depositMode }) => {
   const classes = useStyles();
   const dispatch = useDispatch();
   const [slackID, setSlackID] = useState(user.slack_id || '');
@@ -95,10 +96,12 @@ const UserRow: FC<Props> = ({ user, admin }) => {
         </Box>
       </TableCell>
       <TableCell>{user.email}</TableCell>
-      <TableCell>
-        {numberWithSpaces(user.balance)}
-        <Ruble />
-      </TableCell>
+      {depositMode ? (
+        <TableCell>
+          {numberWithSpaces(user.balance)}
+          <Ruble />
+        </TableCell>
+      ) : null}
       <TableCell>
         <Box className={classes.slackBlock}>
           <TextField

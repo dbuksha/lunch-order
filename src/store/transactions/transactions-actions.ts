@@ -6,6 +6,7 @@ import firebaseInstance, {
 // store
 import { showLoader, hideLoader } from 'store/app';
 import { UsersState } from 'store/users';
+import { SettingsState } from 'store/settings';
 // entities
 import { Transaction } from 'entities/Transaction';
 import { OrderFirebase } from 'entities/Order';
@@ -20,7 +21,6 @@ enum ActionTypes {
 }
 
 const collectionRefill = firebaseInstance.collection(Collections.Refill);
-const collectionOrders = firebaseInstance.collection(Collections.Orders);
 
 export const getTransactions = createAsyncThunk(
   ActionTypes.GET_TRANSACTIONS,
@@ -28,10 +28,16 @@ export const getTransactions = createAsyncThunk(
     const {
       users: { currentUser },
       dishes: { dishesMap },
+      settings: { deposit },
     } = getState() as {
       users: UsersState;
       dishes: DishesState;
+      settings: SettingsState;
     };
+
+    const collectionOrders = firebaseInstance.collection(
+      deposit ? 'orders_deposit' : 'orders',
+    );
 
     // FIXME: should I show an error message?
     if (!currentUser) return [];
