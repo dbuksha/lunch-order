@@ -115,7 +115,9 @@ const DashboardSidebarContent: FC<Props> = ({ depositMode }) => {
           <Typography color="textSecondary" variant="body2">
             {user.email || ''}
           </Typography>
-          <RouterLink to="/profile" className={classes.profileLink} />
+          {depositMode ? (
+            <RouterLink to="/profile" className={classes.profileLink} />
+          ) : null}
         </Box>
       ) : null}
       <Divider />
