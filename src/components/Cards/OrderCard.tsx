@@ -115,7 +115,7 @@ const OrderCard: FC<OrderCardProps> = ({
       order.id &&
       order.person &&
       order.person.id &&
-      deleteOrder(order.id, order.person.id); // rewrite
+      deleteOrder(order.id, order.person.id);
   };
 
   const EditButton =

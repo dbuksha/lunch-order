@@ -35,8 +35,6 @@ const UserList: FC = () => {
     dispatch(fetchAllUsers());
   }, [dispatch]);
 
-  console.log(depositMode);
-
   return (
     <AdminLayout>
       <Helmet>

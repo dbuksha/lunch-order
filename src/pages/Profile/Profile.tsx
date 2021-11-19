@@ -193,32 +193,36 @@ const Profile: FC = () => {
                 >
                   Все
                 </button>
-                <button
-                  className={`btn-filter btn-filter__refill ${
-                    filterStatus === 'refill'
-                      ? 'btn-filter__refill--active'
-                      : ''
-                  }`}
-                  onClick={() => setFilterStatus('refill')}
-                >
-                  {`Пополнения Σ = ${numberWithSpaces(
-                    getSum(transactions, 'refill'),
-                  )}`}
-                  <Ruble />
-                </button>
-                <button
-                  className={`btn-filter btn-filter__ordered ${
-                    filterStatus === 'ordered'
-                      ? 'btn-filter__ordered--active'
-                      : ''
-                  }`}
-                  onClick={() => setFilterStatus('ordered')}
-                >
-                  {`Траты Σ = ${numberWithSpaces(
-                    getSum(transactions, 'ordered'),
-                  )}`}
-                  <Ruble />
-                </button>
+                {transactions.some((el) => el.type === 'refill') ? (
+                  <button
+                    className={`btn-filter btn-filter__refill ${
+                      filterStatus === 'refill'
+                        ? 'btn-filter__refill--active'
+                        : ''
+                    }`}
+                    onClick={() => setFilterStatus('refill')}
+                  >
+                    {`Пополнения Σ = ${numberWithSpaces(
+                      getSum(transactions, 'refill'),
+                    )}`}
+                    <Ruble />
+                  </button>
+                ) : null}
+                {transactions.some((el) => el.type === 'ordered') ? (
+                  <button
+                    className={`btn-filter btn-filter__ordered ${
+                      filterStatus === 'ordered'
+                        ? 'btn-filter__ordered--active'
+                        : ''
+                    }`}
+                    onClick={() => setFilterStatus('ordered')}
+                  >
+                    {`Траты Σ = ${numberWithSpaces(
+                      getSum(transactions, 'ordered'),
+                    )}`}
+                    <Ruble />
+                  </button>
+                ) : null}
                 {transactions.some((el) => el.type === 'waiting') ? (
                   <button
                     className={`btn-filter btn-filter__waiting ${

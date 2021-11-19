@@ -84,11 +84,6 @@ const getNameUser = (arr: Array<UserNew>, id: string): string => {
 async function updateUsersBalances(orders: Array<Order>) {
   // eslint-disable-next-line no-restricted-syntax
   for (const order of orders) {
-    // console.log(
-    //   order.person?.id,
-    //   order!.person!.balance,
-    //   calculatePriceCard(order.dishes),
-    // );
     // eslint-disable-next-line no-await-in-loop
     usersCollection.doc(order.person?.id).update({
       balance: order!.person!.balance - calculatePriceCard(order.dishes),

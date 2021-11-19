@@ -1,3 +1,5 @@
+import { Console } from 'console';
+import { DeliveryData } from 'entities/Delivery';
 import dayjs from 'utils/dayjs';
 
 export const isTimeForTodayLunch = (): boolean => {
@@ -58,14 +60,17 @@ export const getDayName = (deliveryStatus: boolean): string =>
     .weekday(getOrderDayNumberNew(deliveryStatus) - 1)
     .format('dddd');
 
-export const getStatusOfTransaction = (date: number): string => {
+export const getStatusOfTransaction = (
+  date: number,
+  deliveryToday: boolean,
+) => {
   const tomorrow = dayjs().add(1, 'd').startOf('d');
   const todayStatus =
     dayjs().format('DD.MM.YYYY') === dayjs(date).format('DD.MM.YYYY');
   const orderTomorrowStatus =
     dayjs(tomorrow).format('DD.MM.YYYY') === dayjs(date).format('DD.MM.YYYY');
 
-  if (orderTomorrowStatus || (todayStatus && isTimeForTodayLunch())) {
+  if (orderTomorrowStatus || (todayStatus && !deliveryToday)) {
     return 'waiting';
   }
 

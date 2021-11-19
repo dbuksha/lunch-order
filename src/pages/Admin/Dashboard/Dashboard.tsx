@@ -1,11 +1,10 @@
-import React, { FC, useEffect, useState } from 'react';
+import React, { FC, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { Helmet } from 'react-helmet';
 import {
   Box,
   Container,
   Grid,
-  Typography,
   Checkbox,
   FormControlLabel,
 } from '@material-ui/core';
@@ -19,16 +18,13 @@ const Dashboard: FC = () => {
   const dispatch = useDispatch();
   const depositMode = useSelector(getDepositModeSelector);
   const [confirmStatus, setConfirmStatus] = useState(false);
-  // const [depositMode, setDepositMode] = useState(currentDepositMode);
 
   const toggleConfirm = () => {
     setConfirmStatus(!confirmStatus);
   };
 
   const changeDepositMode = async () => {
-    console.log(!depositMode);
     await dispatch(setDeposit(!depositMode));
-    // await setDepositMode(!depositMode);
     toggleConfirm();
   };
 

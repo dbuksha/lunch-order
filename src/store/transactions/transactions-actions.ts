@@ -10,6 +10,7 @@ import { SettingsState } from 'store/settings';
 // entities
 import { Transaction } from 'entities/Transaction';
 import { OrderFirebase } from 'entities/Order';
+import { DeliveryData } from 'entities/Delivery';
 
 import * as deliveryDataHelper from 'pages/OrdersDelivery/collectDeliveryDataHelper';
 import { DishesState } from 'store/dishes';
@@ -21,6 +22,7 @@ enum ActionTypes {
 }
 
 const collectionRefill = firebaseInstance.collection(Collections.Refill);
+const collectionDelivery = firebaseInstance.collection(Collections.Delivery);
 
 export const getTransactions = createAsyncThunk(
   ActionTypes.GET_TRANSACTIONS,
@@ -60,6 +62,18 @@ export const getTransactions = createAsyncThunk(
       )
       .get();
 
+    const deliveryResult = await collectionDelivery
+      .orderBy('createDate', 'desc')
+      .limit(1)
+      .get();
+
+    const deliveryLast = getCollectionEntries<DeliveryData>(deliveryResult);
+
+    const deliveryDate = deliveryLast[0].createDate.toMillis();
+
+    const deliveryToday =
+      dayjs(deliveryDate).format('DD/MM/YYYY') === dayjs().format('DD/MM/YYYY');
+
     dispatch(hideLoader());
 
     const refills = getCollectionEntries<Transaction>(refillResult).map(
@@ -81,7 +95,7 @@ export const getTransactions = createAsyncThunk(
         }));
         return {
           ...order,
-          type: getStatusOfTransaction(order.date.toMillis()),
+          type: getStatusOfTransaction(order.date.toMillis(), deliveryToday),
           description: `Сделан заказ: ${dishesList.map(
             (el) => ` ${el.dish.name}`,
           )}`,
