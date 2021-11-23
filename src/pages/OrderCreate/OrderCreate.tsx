@@ -12,6 +12,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import { useHistory } from 'react-router-dom';
 import firebase from 'firebase/app';
 import dayjs from 'dayjs';
+import { colors } from 'utils/colors';
 
 import firebaseInstance, { Collections } from 'utils/firebase';
 
@@ -71,7 +72,7 @@ const useStyles = makeStyles((theme: Theme) =>
     attention: {
       border: '1px solid #f50057',
       borderRadius: 8,
-      backgroundColor: 'rgba(255,255,255,.2)',
+      backgroundColor: colors.highOpacityWhite,
       padding: '15px 30px',
       marginBottom: 20,
       textAlign: 'center',

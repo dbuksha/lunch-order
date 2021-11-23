@@ -18,6 +18,7 @@ import AccountBalanceWalletOutlined from '@material-ui/icons/AccountBalanceWalle
 import { DeliveryData } from 'entities/Delivery';
 import Ruble from 'components/Ruble';
 import dayjs from 'utils/dayjs';
+import { colors } from 'utils/colors';
 
 type DeliveryCardProps = {
   delivery: DeliveryData;
@@ -32,7 +33,7 @@ const useStyles = makeStyles({
   tableCell: {
     minWidth: 74,
     fontSize: 12,
-    color: 'rgba(0, 0, 0, 0.54)',
+    color: colors.mediumGray,
   },
   table: {
     width: '100%',

@@ -17,6 +17,7 @@ import {
 import { UserNew } from 'entities/User';
 
 import { formatCurrency } from 'utils/orders/calculateDishesPrice';
+import { colors } from 'utils/colors';
 import { showSnackBar } from 'store/app';
 
 import SaveIcon from '@material-ui/icons/Save';
@@ -34,7 +35,7 @@ const useStyles = makeStyles(() =>
     },
     adminAvatar: {
       marginRight: 8,
-      border: '2px solid #3f51b5',
+      border: `2px solid ${colors.blue}`,
     },
     slackBlock: {
       display: 'flex',

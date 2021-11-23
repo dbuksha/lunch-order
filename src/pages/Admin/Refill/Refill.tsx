@@ -20,6 +20,7 @@ import {
   Breadcrumbs,
 } from '@material-ui/core';
 import dayjs from 'utils/dayjs';
+import { colors } from 'utils/colors';
 
 import { UserNew } from 'entities/User';
 
@@ -54,7 +55,7 @@ const useStyles = makeStyles((theme: Theme) =>
       top: 58,
       left: 15,
       fontSize: 12,
-      color: '#f44336',
+      color: colors.red,
     },
     formControl: {
       margin: theme.spacing(1),

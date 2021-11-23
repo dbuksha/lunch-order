@@ -47,11 +47,12 @@ import {
   getOrderDayNumberNew,
   isTimeForTodayLunch,
 } from 'utils/time-helper';
+import { colors } from 'utils/colors';
+
 import { useTodayLunches } from 'use/useTodayLunches';
 import { getDeliveryInfoSelector } from 'store/delivery';
 
 import Ruble from 'components/Ruble';
-
 import ListDishes from 'components/ListDishes';
 import Loader from '../../../components/StyledLoader';
 import AdminLayout from '../../../components/AdminComponents/Layout/AdminLayout';
@@ -85,7 +86,7 @@ const useStyles = makeStyles((theme: Theme) =>
     attention: {
       border: '1px solid #f50057',
       borderRadius: 8,
-      backgroundColor: 'rgba(255,255,255,.2)',
+      backgroundColor: colors.highOpacityWhite,
       padding: '15px 30px',
       marginBottom: 20,
       textAlign: 'center',
@@ -119,7 +120,7 @@ const useStyles = makeStyles((theme: Theme) =>
       top: 58,
       left: 15,
       fontSize: 12,
-      color: '#f44336',
+      color: colors.red,
     },
     formControl: {
       margin: theme.spacing(1),

@@ -7,6 +7,7 @@ import {
   createStyles,
   makeStyles,
 } from '@material-ui/core';
+import { colors } from 'utils/colors';
 import type { Icon } from 'react-feather';
 import { OverridableComponent } from '@material-ui/core/OverridableComponent';
 
@@ -31,7 +32,7 @@ const useStyles = makeStyles(() =>
       letterSpacing: 0,
       textTransform: 'none',
       width: '100%',
-      color: '#6b778c',
+      color: colors.gray,
     },
     icon: {
       width: 24,
@@ -55,7 +56,7 @@ const NavItem: FC<Props> = ({ href, Icon, title }) => {
         className={classes.link}
         style={{
           ...(active && {
-            color: '#5664d2',
+            color: colors.blue,
           }),
         }}
         to={href}
