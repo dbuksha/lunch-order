@@ -13,13 +13,13 @@ export const getMessage = (
 
   const user = users.find((el: UserNew) => el.id === userID);
 
-  let ordersStr = '';
-
-  orders.forEach((el: Order) => {
-    ordersStr += `${el.person!.name}${
-      el.person!.slack_id ? ` (<@${el.person!.slack_id}>)` : ''
-    } - ${calculatePriceCard(el.dishes)}руб.\n`;
-  });
+  const ordersStr = orders.reduce((strAcc: string, el: Order) => {
+    const slackUser = el.person!.slack_id ? ` (<@${el.person?.slack_id}>)` : '';
+    strAcc = `${el.person!.name}${slackUser} - ${calculatePriceCard(
+      el.dishes,
+    )}руб.\n`;
+    return strAcc;
+  }, '');
 
   message += `Обед заказан :cool_doge: \nВсего получилось - ${totalSum}руб.:\n${ordersStr}`;
   message += depositMode

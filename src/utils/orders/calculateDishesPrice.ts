@@ -16,6 +16,6 @@ export const calculatePriceCard = (dishes: OrderDish[]): number => {
   );
 };
 
-export const numberWithSpaces = (x: number): string => {
-  return x.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ' ');
+export const formatCurrency = (x: number): string => {
+  return String(x).replace(/\B(?=(\d{3})+(?!\d))/g, ' ');
 };

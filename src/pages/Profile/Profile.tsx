@@ -26,11 +26,9 @@ import { getDepositModeSelector } from 'store/settings';
 import MainLayout from 'components/SiteLayout/MainLayout';
 import Ruble from 'components/Ruble';
 
-import { numberWithSpaces } from '../../utils/orders/calculateDishesPrice';
+import { formatCurrency } from '../../utils/orders/calculateDishesPrice';
 
 import SlackIcon from '../../assets/images/slack-logo.svg';
-
-import './profile.scss';
 
 const useStyles = makeStyles(() =>
   createStyles({
@@ -99,6 +97,64 @@ const useStyles = makeStyles(() =>
       minWidth: 100,
       color: '#e97a18',
     },
+    btnFilter: {
+      padding: '4px 8px',
+      marginRight: 12,
+      transition: 'all .25s ease-in-out',
+      background: 'transparent',
+      borderRadius: 8,
+      borderWidth: 1,
+      borderStyle: 'solid',
+      cursor: 'pointer',
+    },
+    grayBtn: {
+      color: 'gray',
+      borderColor: 'gray',
+      '&:hover': {
+        color: '#fff',
+        background: 'gray',
+      },
+    },
+    grayBtnActive: {
+      color: '#fff',
+      background: 'gray',
+    },
+    refillBtn: {
+      color: '#3f51b5',
+      borderColor: '#3f51b5',
+      '&:hover': {
+        color: '#fff',
+        background: '#3f51b5',
+      },
+    },
+    refillBtnActive: {
+      color: '#fff',
+      background: '#3f51b5',
+    },
+    orderedBtn: {
+      color: '#df5989',
+      borderColor: '#df5989',
+      '&:hover': {
+        color: '#fff',
+        background: '#df5989',
+      },
+    },
+    orderedBtnActive: {
+      color: '#fff',
+      background: '#df5989',
+    },
+    waitingBtn: {
+      color: '#e97a18',
+      borderColor: '#e97a18',
+      '&:hover': {
+        color: '#fff',
+        background: '#e97a18',
+      },
+    },
+    waitingBtnActive: {
+      color: '#fff',
+      background: '#e97a18',
+    },
     hidden: {
       display: 'none',
     },
@@ -109,7 +165,7 @@ const getSum = (arr: Transaction[], type: string): number => {
   let sum = 0;
 
   sum = arr.reduce((sum, el) => {
-    el.type === type ? (sum += el.summa) : sum;
+    el.type === type ? (sum += el.amount) : sum;
     return sum;
   }, sum);
 
@@ -173,7 +229,7 @@ const Profile: FC = () => {
                       variant="body2"
                       className={classes.balanceText}
                     >
-                      {numberWithSpaces(currentUser.balance) || 0}
+                      {formatCurrency(currentUser.balance) || 0}
                       <Ruble />
                     </Typography>
                   </Box>
@@ -186,23 +242,25 @@ const Profile: FC = () => {
             <Box className={classes.userTransactions}>
               <Box className={classes.btnContainer}>
                 <button
-                  className={`btn-filter btn-filter__all ${
-                    filterStatus === 'all' ? 'btn-filter__all--active' : ''
-                  }`}
                   onClick={() => setFilterStatus('all')}
+                  className={[
+                    classes.btnFilter,
+                    classes.grayBtn,
+                    filterStatus === 'all' ? classes.grayBtnActive : '',
+                  ].join(' ')}
                 >
                   Все
                 </button>
                 {transactions.some((el) => el.type === 'refill') ? (
                   <button
-                    className={`btn-filter btn-filter__refill ${
-                      filterStatus === 'refill'
-                        ? 'btn-filter__refill--active'
-                        : ''
-                    }`}
                     onClick={() => setFilterStatus('refill')}
+                    className={[
+                      classes.btnFilter,
+                      classes.refillBtn,
+                      filterStatus === 'refill' ? classes.refillBtnActive : '',
+                    ].join(' ')}
                   >
-                    {`Пополнения Σ = ${numberWithSpaces(
+                    {`Пополнения Σ = ${formatCurrency(
                       getSum(transactions, 'refill'),
                     )}`}
                     <Ruble />
@@ -210,14 +268,16 @@ const Profile: FC = () => {
                 ) : null}
                 {transactions.some((el) => el.type === 'ordered') ? (
                   <button
-                    className={`btn-filter btn-filter__ordered ${
-                      filterStatus === 'ordered'
-                        ? 'btn-filter__ordered--active'
-                        : ''
-                    }`}
                     onClick={() => setFilterStatus('ordered')}
+                    className={[
+                      classes.btnFilter,
+                      classes.orderedBtn,
+                      filterStatus === 'ordered'
+                        ? classes.orderedBtnActive
+                        : '',
+                    ].join(' ')}
                   >
-                    {`Траты Σ = ${numberWithSpaces(
+                    {`Траты Σ = ${formatCurrency(
                       getSum(transactions, 'ordered'),
                     )}`}
                     <Ruble />
@@ -225,17 +285,18 @@ const Profile: FC = () => {
                 ) : null}
                 {transactions.some((el) => el.type === 'waiting') ? (
                   <button
-                    className={`btn-filter btn-filter__waiting ${
-                      filterStatus === 'waiting'
-                        ? 'btn-filter__waiting--active'
-                        : ''
-                    }`}
                     onClick={() => setFilterStatus('waiting')}
+                    className={[
+                      classes.btnFilter,
+                      classes.waitingBtn,
+                      filterStatus === 'waiting'
+                        ? classes.waitingBtnActive
+                        : '',
+                    ].join(' ')}
                   >
-                    {`В ожидании списания Σ = ${numberWithSpaces(
+                    {`В ожидании списания Σ = ${formatCurrency(
                       getSum(transactions, 'waiting'),
                     )}`}
-                    <Ruble />
                   </button>
                 ) : null}
               </Box>
@@ -287,7 +348,7 @@ const Profile: FC = () => {
                           <b>
                             {`${
                               el.type === 'refill' ? '+' : '-'
-                            } ${numberWithSpaces(el.summa)}`}
+                            } ${formatCurrency(el.amount)}`}
                             <Ruble />
                           </b>
                         </TableCell>

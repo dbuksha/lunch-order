@@ -2,11 +2,11 @@ import React, { FC } from 'react';
 import { Drawer, Hidden } from '@material-ui/core';
 import DashboardSidebarContent from './DashboardSidebarContent';
 
-export type Props = {
+export type HasDepositProps = {
   depositMode: boolean;
 };
 
-const DashboardSidebar: FC<Props> = ({ depositMode }) => {
+const DashboardSidebar: FC<HasDepositProps> = ({ depositMode }) => {
   return (
     <>
       <Hidden>

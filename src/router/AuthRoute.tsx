@@ -44,14 +44,14 @@ const AuthRoute: FC<RoutePropsWithSubRoutes> = (props) => {
       await firebase.auth().onAuthStateChanged((user) => {
         if (user && user.email) {
           dispatch(fetchUserInfo(user.email));
+          dispatch(fetchSettings());
+          dispatch(fetchDeliveryInfo());
         } else {
           logout();
         }
       });
-      await dispatch(fetchSettings());
       await dispatch(fetchDishes());
       await dispatch(fetchLunches());
-      await dispatch(fetchDeliveryInfo());
       await dispatch(fetchOrders());
     }
 

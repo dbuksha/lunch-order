@@ -46,7 +46,7 @@ export const getTransactions = createAsyncThunk(
 
     dispatch(showLoader());
 
-    const refillResult = await collectionRefill
+    const refillResult = collectionRefill
       .where(
         'user',
         '==',
@@ -54,7 +54,7 @@ export const getTransactions = createAsyncThunk(
       )
       .get();
 
-    const ordersResult = await collectionOrders
+    const ordersResult = collectionOrders
       .where(
         'person',
         '==',
@@ -62,69 +62,81 @@ export const getTransactions = createAsyncThunk(
       )
       .get();
 
-    const deliveryResult = await collectionDelivery
+    const deliveryResult = collectionDelivery
       .orderBy('createDate', 'desc')
       .limit(1)
       .get();
 
-    const deliveryLast = getCollectionEntries<DeliveryData>(deliveryResult);
+    return Promise.all([refillResult, ordersResult, deliveryResult])
+      .then((data) => {
+        // работа с доставкой
+        const deliveryLast = getCollectionEntries<DeliveryData>(data[2]);
+        const deliveryDate = deliveryLast[0].createDate.toMillis();
+        const deliveryToday =
+          dayjs(deliveryDate).format('DD/MM/YYYY') ===
+          dayjs().format('DD/MM/YYYY');
 
-    const deliveryDate = deliveryLast[0].createDate.toMillis();
+        // работа с пополнениями
+        const refills = getCollectionEntries<Transaction>(data[0]).map(
+          ({ ...refill }) => {
+            return {
+              ...refill,
+              type: 'refill',
+              description: 'Пополнение баланса',
+              date: refill.date.toMillis(),
+            };
+          },
+        );
 
-    const deliveryToday =
-      dayjs(deliveryDate).format('DD/MM/YYYY') === dayjs().format('DD/MM/YYYY');
+        // работа с заказами (траты и ожидания списания)
+        const orders = getCollectionEntries<OrderFirebase>(data[1]).map(
+          ({ ...order }) => {
+            const dishesList = order.dishes.map(({ quantity, dishRef }) => ({
+              quantity,
+              dish: dishesMap[dishRef.id],
+            }));
+            return {
+              ...order,
+              type: getStatusOfTransaction(
+                order.date.toMillis(),
+                deliveryToday,
+              ),
+              description: `Сделан заказ: ${dishesList.map(
+                (el) => ` ${el.dish.name}`,
+              )}`,
+              date: order.date.toMillis(),
+              amount: deliveryDataHelper.calculateDeliveryPrice(dishesList),
+            };
+          },
+        );
 
-    dispatch(hideLoader());
+        if (!refills.length && !orders.length) return [];
 
-    const refills = getCollectionEntries<Transaction>(refillResult).map(
-      ({ ...refill }) => {
-        return {
-          ...refill,
-          type: 'refill',
-          description: 'Пополнение баланса',
-          date: refill.date.toMillis(),
-        };
-      },
-    );
+        const joinOperations = [...refills, ...orders];
 
-    const orders = getCollectionEntries<OrderFirebase>(ordersResult).map(
-      ({ ...order }) => {
-        const dishesList = order.dishes.map(({ quantity, dishRef }) => ({
-          quantity,
-          dish: dishesMap[dishRef.id],
-        }));
-        return {
-          ...order,
-          type: getStatusOfTransaction(order.date.toMillis(), deliveryToday),
-          description: `Сделан заказ: ${dishesList.map(
-            (el) => ` ${el.dish.name}`,
-          )}`,
-          date: order.date.toMillis(),
-          summa: deliveryDataHelper.calculateDeliveryPrice(dishesList),
-        };
-      },
-    );
+        const transactions = joinOperations.map((el) => {
+          const temp: any = {
+            id: el.id,
+            date: el.date,
+            type: el.type,
+            description: el.description,
+            amount: el.amount,
+          };
 
-    if (!refills.length && !orders.length) return [];
+          return temp;
+        });
 
-    const joinOperations = [...refills, ...orders];
+        transactions.sort((a, b) =>
+          dayjs(a.date).isAfter(dayjs(b.date)) ? 1 : -1,
+        );
 
-    const transactions = joinOperations.map((el) => {
-      const temp: any = {
-        id: el.id,
-        date: el.date,
-        type: el.type,
-        description: el.description,
-        summa: el.summa,
-      };
+        dispatch(hideLoader());
 
-      return temp;
-    });
-
-    transactions.sort((a, b) =>
-      dayjs(a.date).isAfter(dayjs(b.date)) ? 1 : -1,
-    );
-
-    return transactions.reverse();
+        return transactions.reverse();
+      })
+      .catch((error) => {
+        console.log(error);
+        return [];
+      });
   },
 );

@@ -4,6 +4,6 @@ export type Transaction = {
   id: string;
   date: firebase.firestore.Timestamp;
   description: string;
-  summa: number;
+  amount: number;
   type: string;
 };

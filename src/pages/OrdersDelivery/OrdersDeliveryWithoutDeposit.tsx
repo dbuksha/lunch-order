@@ -22,21 +22,14 @@ import axios from 'axios';
 
 import { DeliveryData } from 'entities/Delivery';
 import { UserNew } from 'entities/User';
-import { Order } from 'entities/Order';
 
 import { getIsLoading } from 'store/app';
 import { fetchDeliveryInfo, getDeliveryInfoSelector } from 'store/delivery';
-import {
-  fetchAllUsers,
-  fetchUserInfo,
-  getAllUserSelector,
-  getUserSelector,
-} from 'store/users';
+import { fetchAllUsers, getAllUserSelector } from 'store/users';
 import { fetchOrders, getOrdersList } from 'store/orders';
 import { getDepositModeSelector } from 'store/settings';
 
 import { getMessage } from 'utils/message';
-import { calculatePriceCard } from 'utils/orders';
 
 import DeleteAlert from 'components/AdminComponents/Alerts/DeleteAlert';
 import MainLayout from 'components/SiteLayout/MainLayout';
@@ -48,7 +41,6 @@ import { usePreparedDeliveryData } from './usePreparedDeliveryData';
 import { useCalculatedDeliveryPrice } from './useCalculatedDeliveryPrice';
 
 const deliveryCollection = firebaseInstance.collection(Collections.Delivery);
-const usersCollection = firebaseInstance.collection(Collections.Users);
 
 const useStyles = makeStyles(() =>
   createStyles({
@@ -69,32 +61,20 @@ const useStyles = makeStyles(() =>
   }),
 );
 
-const getNameUser = (arr: Array<UserNew>, id: string): string => {
-  let name = '';
-  arr.forEach((el: UserNew) => {
+const getNameUser = (arr: Array<UserNew>, id: string) => {
+  return arr.reduce((acc: string, el: UserNew) => {
     if (el.id === id) {
-      name = el.name || '';
+      acc = el.name || '';
     }
-  });
-  return name;
-};
 
-// testing
-async function updateUsersBalances(orders: Array<Order>) {
-  // eslint-disable-next-line no-restricted-syntax
-  for (const order of orders) {
-    // eslint-disable-next-line no-await-in-loop
-    usersCollection.doc(order.person?.id).update({
-      balance: order!.person!.balance - calculatePriceCard(order.dishes),
-    });
-  }
-}
+    return acc;
+  }, '');
+};
 
 const OrdersDeliveryWithoutDeposit: FC = () => {
   const dispatch = useDispatch();
   const classes = useStyles();
   const isLoading = useSelector(getIsLoading);
-  const currentUser = useSelector(getUserSelector);
   const depositMode = useSelector(getDepositModeSelector);
   const gropedDishes = useGroupedDishes();
   const deliveryPrice = useCalculatedDeliveryPrice(gropedDishes);
@@ -156,7 +136,6 @@ const OrdersDeliveryWithoutDeposit: FC = () => {
     };
     await deliveryCollection.add(deliveryRecord);
     await dispatch(fetchDeliveryInfo());
-    // await dispatch(fetchUserInfo(currentUser.email!));
   };
 
   const confirmSelectPayer = async () => {
@@ -172,6 +151,7 @@ const OrdersDeliveryWithoutDeposit: FC = () => {
       const data = {
         text: getMessage(tempPayer, deliveryPrice, orders, users, depositMode),
       };
+
       await axios.post(
         `${process.env.REACT_APP_SLACK_URL}`,
         JSON.stringify(data),

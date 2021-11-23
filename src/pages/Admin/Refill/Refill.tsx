@@ -1,9 +1,8 @@
 /* eslint-disable guard-for-in */
 import React, { FC, useState, useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import { Link, useHistory, useParams } from 'react-router-dom';
+import { Link } from 'react-router-dom';
 import { Helmet } from 'react-helmet';
-import Autocomplete from '@material-ui/lab/Autocomplete';
 import { hideLoader, showLoader, showSnackBar, StatusTypes } from 'store/app';
 import { useFormik } from 'formik';
 import * as yup from 'yup';
@@ -105,7 +104,7 @@ const Refill: FC = () => {
 
         const refill = {
           date: firebase.firestore.Timestamp.fromDate(dayjs().toDate()),
-          summa: values.summa,
+          amount: values.summa,
           user: firebaseInstance.doc(`${Collections.Users}/${values.user}`),
         };
 

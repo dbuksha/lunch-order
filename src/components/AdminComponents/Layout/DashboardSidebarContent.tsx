@@ -23,7 +23,7 @@ import {
 import { getUserSelector } from 'store/users';
 import NavItem from './NavItem';
 
-import { Props } from './DashboardSidebar';
+import { HasDepositProps } from './DashboardSidebar';
 
 const menuItem = [
   {
@@ -98,7 +98,7 @@ const useStyles = makeStyles(() =>
   }),
 );
 
-const DashboardSidebarContent: FC<Props> = ({ depositMode }) => {
+const DashboardSidebarContent: FC<HasDepositProps> = ({ depositMode }) => {
   const classes = useStyles();
   const user = useSelector(getUserSelector);
 

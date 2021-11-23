@@ -69,18 +69,6 @@ const useStyles = makeStyles(() =>
   }),
 );
 
-const getNameUser = (arr: Array<UserNew>, id: string): string => {
-  let name = '';
-
-  arr.forEach((el: UserNew) => {
-    if (el.id === id) {
-      name = el.name || '';
-    }
-  });
-
-  return name;
-};
-
 async function updateUsersBalances(orders: Array<Order>) {
   // eslint-disable-next-line no-restricted-syntax
   for (const order of orders) {

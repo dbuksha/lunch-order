@@ -21,5 +21,5 @@ export type OrderFirebase = {
   person: DocumentReference<DocumentData>;
   date: firebase.firestore.Timestamp;
   type?: string;
-  summa?: number;
+  amount?: number;
 };

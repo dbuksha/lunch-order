@@ -41,7 +41,7 @@ import { getDepositModeSelector } from 'store/settings';
 import Ruble from 'components/Ruble';
 import AccountBalanceWalletOutlined from '@material-ui/icons/AccountBalanceWalletOutlined';
 
-import { numberWithSpaces } from '../../utils/orders/calculateDishesPrice';
+import { formatCurrency } from '../../utils/orders/calculateDishesPrice';
 
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
@@ -187,7 +187,7 @@ const OrderCreate: FC = () => {
           <Box className={classes.balance}>
             <AccountBalanceWalletOutlined color="primary" />
             <Typography variant="body1" className={classes.balanceText}>
-              {numberWithSpaces(currentUser!.balance)}
+              {formatCurrency(currentUser!.balance)}
               <Ruble />
             </Typography>
           </Box>

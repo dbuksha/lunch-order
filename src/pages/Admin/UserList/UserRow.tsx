@@ -16,7 +16,7 @@ import {
 
 import { UserNew } from 'entities/User';
 
-import { numberWithSpaces } from 'utils/orders/calculateDishesPrice';
+import { formatCurrency } from 'utils/orders/calculateDishesPrice';
 import { showSnackBar } from 'store/app';
 
 import SaveIcon from '@material-ui/icons/Save';
@@ -98,7 +98,7 @@ const UserRow: FC<Props> = ({ user, admin, depositMode }) => {
       <TableCell>{user.email}</TableCell>
       {depositMode ? (
         <TableCell>
-          {numberWithSpaces(user.balance)}
+          {formatCurrency(user.balance)}
           <Ruble />
         </TableCell>
       ) : null}

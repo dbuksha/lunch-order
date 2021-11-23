@@ -1,5 +1,3 @@
-import { Console } from 'console';
-import { DeliveryData } from 'entities/Delivery';
 import dayjs from 'utils/dayjs';
 
 export const isTimeForTodayLunch = (): boolean => {

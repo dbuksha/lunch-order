@@ -1,4 +1,3 @@
-/* eslint-disable no-nested-ternary */
 import React, { FC } from 'react';
 import { useSelector } from 'react-redux';
 import { Link as RouterLink } from 'react-router-dom';
@@ -22,6 +21,15 @@ import { logout } from 'utils/auth';
 
 import LogoImg from 'assets/images/logo.svg';
 import { getDepositModeSelector } from 'store/settings';
+import { UserNew } from 'entities/User';
+
+type PropsInfo = {
+  user: UserNew;
+  depositMode?: boolean;
+  classes: {
+    [key: string]: string;
+  };
+};
 
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
@@ -85,6 +93,31 @@ const useStyles = makeStyles((theme: Theme) =>
   }),
 );
 
+const ProfileInfo: FC<PropsInfo> = ({ user, depositMode, classes }) => {
+  const UserInfo = () => (
+    <>
+      {user.avatar ? (
+        <Avatar src={user.avatar} className={classes.avatar} />
+      ) : null}
+      <Typography color="textPrimary" variant="h5" className={classes.name}>
+        {user.name || ''}
+      </Typography>
+    </>
+  );
+
+  return (
+    <>
+      {depositMode ? (
+        <RouterLink to="/profile" className={classes.container}>
+          <UserInfo />
+        </RouterLink>
+      ) : (
+        <UserInfo />
+      )}
+    </>
+  );
+};
+
 const SiteHeader: FC = () => {
   const classes = useStyles();
   const user = useSelector(getUserSelector);
@@ -104,33 +137,11 @@ const SiteHeader: FC = () => {
           {user ? (
             <>
               {window.location.pathname !== '/profile' ? (
-                depositMode ? (
-                  <RouterLink to="/profile" className={classes.container}>
-                    {user.avatar ? (
-                      <Avatar src={user.avatar} className={classes.avatar} />
-                    ) : null}
-                    <Typography
-                      color="textPrimary"
-                      variant="h5"
-                      className={classes.name}
-                    >
-                      {user.name || ''}
-                    </Typography>
-                  </RouterLink>
-                ) : (
-                  <>
-                    {user.avatar ? (
-                      <Avatar src={user.avatar} className={classes.avatar} />
-                    ) : null}
-                    <Typography
-                      color="textPrimary"
-                      variant="h5"
-                      className={classes.name}
-                    >
-                      {user.name || ''}
-                    </Typography>
-                  </>
-                )
+                <ProfileInfo
+                  user={user}
+                  depositMode={depositMode}
+                  classes={classes}
+                />
               ) : null}
               <Button className={classes.btnExit} onClick={() => logout()}>
                 <ExitToAppIcon className={classes.exit} />

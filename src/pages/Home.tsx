@@ -12,15 +12,17 @@ import {
 
 import MainLayout from 'components/SiteLayout/MainLayout';
 
-import { fetchUserInfo, getUserSelector } from 'store/users';
+import { getUserSelector } from 'store/users';
 import {
   fetchOrders,
   getCurrentOrder,
-  getOrdersList,
   getTodayOrders,
   getUserOrder,
 } from 'store/orders';
 import * as deliveryDataHelper from 'pages/OrdersDelivery/collectDeliveryDataHelper';
+
+import Ruble from 'components/Ruble';
+
 import { useGroupedDishes } from './OrdersDelivery/useGroupedDishes';
 import { useCalculatedDeliveryPrice } from './OrdersDelivery/useCalculatedDeliveryPrice';
 
@@ -53,7 +55,6 @@ export const Home: FC = () => {
   const classes = useStyles();
   const dispatch = useDispatch();
   const currentUser = useSelector(getUserSelector);
-  const orders = useSelector(getOrdersList);
   const gropedDishes = useGroupedDishes();
   const deliveryPrice = useCalculatedDeliveryPrice(gropedDishes);
   const userOrder = useSelector(getCurrentOrder);
@@ -88,7 +89,10 @@ export const Home: FC = () => {
           >
             Сделать Заказ
             {userOrder && userOrder.dishes.length ? (
-              <span className={classes.pinInfo}>{calculatedPrice} руб.</span>
+              <span className={classes.pinInfo}>
+                {calculatedPrice}
+                <Ruble />
+              </span>
             ) : null}
           </Button>
 
@@ -114,11 +118,14 @@ export const Home: FC = () => {
           >
             Заказать доставку
             {todayOrders && todayOrders.length > 0 ? (
-              <span className={classes.pinInfo}>{deliveryPrice} руб.</span>
+              <span className={classes.pinInfo}>
+                {deliveryPrice}
+                <Ruble />
+              </span>
             ) : null}
           </Button>
 
-          {currentUser && currentUser.role === 'admin' ? (
+          {currentUser?.role === 'admin' ? (
             <Button
               component={Link}
               to="/admin"
