@@ -2,7 +2,7 @@ import React, { FC, useEffect } from 'react';
 import { Helmet } from 'react-helmet';
 import { useDispatch, useSelector } from 'react-redux';
 import { Link } from 'react-router-dom';
-import firebaseInstance, { Collections } from 'utils/firebase';
+import firebaseInstance from 'utils/firebase';
 import { Box, Button, Container, Grid, Typography } from '@material-ui/core';
 import { Alert } from '@material-ui/lab';
 
@@ -11,26 +11,42 @@ import {
   clearOrdersList,
   getOrdersList,
   resetOrder,
+  clearOptionOrder,
 } from 'store/orders';
 
 import { getIsLoading } from 'store/app';
 import { getUserSelector } from 'store/users';
+import { getDeliveryInfoSelector } from 'store/delivery';
+import { getDepositModeSelector } from 'store/settings';
 
 import AdminLayout from 'components/AdminComponents/Layout/AdminLayout';
 import OrderCard from 'components/Cards/OrderCard';
-import { getDeliveryInfoSelector } from 'store/delivery';
 
-const ordersCollection = firebaseInstance.collection(Collections.Orders);
+const AddButton = () => (
+  <Button
+    component={Link}
+    to="/admin/order-new"
+    variant="contained"
+    color="primary"
+  >
+    Добавить
+  </Button>
+);
 
 const Orders: FC = () => {
   const dispatch = useDispatch();
   const isLoading = useSelector(getIsLoading);
   const orders = useSelector(getOrdersList);
   const currentUser = useSelector(getUserSelector);
+  const depositMode = useSelector(getDepositModeSelector);
   const deliveryStatus = useSelector(getDeliveryInfoSelector);
+  const ordersCollection = firebaseInstance.collection(
+    depositMode ? 'orders_deposit' : 'orders',
+  );
 
   useEffect(() => {
     dispatch(fetchOrders());
+    dispatch(clearOptionOrder());
 
     return () => {
       dispatch(clearOrdersList());
@@ -59,21 +75,17 @@ const Orders: FC = () => {
       >
         <Container maxWidth={false}>
           {!orders.length && !isLoading ? (
-            <Alert variant="outlined" severity="info">
-              Текущие заказы отсутствуют
-            </Alert>
+            <Box display="flex" justifyContent="space-between">
+              <Alert variant="outlined" severity="info">
+                Текущие заказы отсутствуют
+              </Alert>
+              <AddButton />
+            </Box>
           ) : (
             <>
               <Box display="flex" justifyContent="space-between">
                 <Typography variant="h4">Текущие заказы</Typography>
-                <Button
-                  component={Link}
-                  to="/admin/order-new"
-                  variant="contained"
-                  color="primary"
-                >
-                  Добавить
-                </Button>
+                <AddButton />
               </Box>
               <Box sx={{ pt: 3 }}>
                 <Grid container spacing={3}>

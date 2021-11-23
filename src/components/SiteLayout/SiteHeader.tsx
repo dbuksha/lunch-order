@@ -20,6 +20,16 @@ import ExitToAppIcon from '@material-ui/icons/ExitToApp';
 import { logout } from 'utils/auth';
 
 import LogoImg from 'assets/images/logo.svg';
+import { getDepositModeSelector } from 'store/settings';
+import { UserNew } from 'entities/User';
+
+type PropsInfo = {
+  user: UserNew;
+  depositMode?: boolean;
+  classes: {
+    [key: string]: string;
+  };
+};
 
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
@@ -83,9 +93,35 @@ const useStyles = makeStyles((theme: Theme) =>
   }),
 );
 
+const ProfileInfo: FC<PropsInfo> = ({ user, depositMode, classes }) => {
+  const UserInfo = () => (
+    <>
+      {user.avatar ? (
+        <Avatar src={user.avatar} className={classes.avatar} />
+      ) : null}
+      <Typography color="textPrimary" variant="h5" className={classes.name}>
+        {user.name || ''}
+      </Typography>
+    </>
+  );
+
+  return (
+    <>
+      {depositMode ? (
+        <RouterLink to="/profile" className={classes.container}>
+          <UserInfo />
+        </RouterLink>
+      ) : (
+        <UserInfo />
+      )}
+    </>
+  );
+};
+
 const SiteHeader: FC = () => {
   const classes = useStyles();
   const user = useSelector(getUserSelector);
+  const depositMode = useSelector(getDepositModeSelector);
 
   return (
     <AppBar elevation={0}>
@@ -100,16 +136,13 @@ const SiteHeader: FC = () => {
         <Box className={classes.userBlock}>
           {user ? (
             <>
-              {user.avatar ? (
-                <Avatar src={user.avatar} className={classes.avatar} />
+              {window.location.pathname !== '/profile' ? (
+                <ProfileInfo
+                  user={user}
+                  depositMode={depositMode}
+                  classes={classes}
+                />
               ) : null}
-              <Typography
-                color="textPrimary"
-                variant="h5"
-                className={classes.name}
-              >
-                {user.name || ''}
-              </Typography>
               <Button className={classes.btnExit} onClick={() => logout()}>
                 <ExitToAppIcon className={classes.exit} />
               </Button>

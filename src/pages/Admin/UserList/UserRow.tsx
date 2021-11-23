@@ -14,10 +14,14 @@ import {
   createStyles,
 } from '@material-ui/core';
 
+import { UserNew } from 'entities/User';
+
+import { formatCurrency } from 'utils/orders/calculateDishesPrice';
+import { showSnackBar } from 'store/app';
+
 import SaveIcon from '@material-ui/icons/Save';
 
-import { UserNew } from 'entities/User';
-import { showSnackBar } from 'store/app';
+import Ruble from 'components/Ruble';
 
 const useStyles = makeStyles(() =>
   createStyles({
@@ -47,14 +51,15 @@ const useStyles = makeStyles(() =>
 interface Props {
   user: UserNew;
   admin: boolean;
+  depositMode: boolean;
 }
 
 const usersCollection = firebaseInstance.collection(Collections.Users);
 
-const UserRow: FC<Props> = ({ user, admin }) => {
+const UserRow: FC<Props> = ({ user, admin, depositMode }) => {
   const classes = useStyles();
   const dispatch = useDispatch();
-  const [slackName, setSlackName] = useState(user.slack_name || '');
+  const [slackID, setSlackID] = useState(user.slack_id || '');
   const [role, setRole] = useState(user.role || 'user');
 
   const changeRole = (role: string) => {
@@ -62,12 +67,12 @@ const UserRow: FC<Props> = ({ user, admin }) => {
     usersCollection.doc(user.id).update({ role });
   };
 
-  const changeSlackName = (event: React.ChangeEvent<HTMLInputElement>) => {
-    setSlackName(event.target.value);
+  const changeSlackID = (event: React.ChangeEvent<HTMLInputElement>) => {
+    setSlackID(event.target.value);
   };
 
-  const saveSlackName = () => {
-    usersCollection.doc(user.id).update({ slack_name: slackName });
+  const saveSlackID = () => {
+    usersCollection.doc(user.id).update({ slack_id: slackID });
     dispatch(
       showSnackBar({
         status: 'success',
@@ -91,21 +96,27 @@ const UserRow: FC<Props> = ({ user, admin }) => {
         </Box>
       </TableCell>
       <TableCell>{user.email}</TableCell>
+      {depositMode ? (
+        <TableCell>
+          {formatCurrency(user.balance)}
+          <Ruble />
+        </TableCell>
+      ) : null}
       <TableCell>
         <Box className={classes.slackBlock}>
           <TextField
             variant="outlined"
             label="Slack ID"
-            defaultValue={slackName || ''}
-            onChange={changeSlackName}
+            defaultValue={slackID || ''}
+            onChange={changeSlackID}
           />
           <Button
             className={classes.saveBtn}
-            onClick={saveSlackName}
-            disabled={slackName === user.slack_name}
+            onClick={saveSlackID}
+            disabled={slackID === user.slack_id}
           >
             <SaveIcon
-              color={slackName === user.slack_name ? 'disabled' : 'primary'}
+              color={slackID === user.slack_id ? 'disabled' : 'primary'}
             />
           </Button>
         </Box>

@@ -102,9 +102,10 @@ const LoginForm: FC = () => {
             email: user.email,
             phone: `${user.phoneNumber}`,
             name: user.displayName,
-            slack_name: null,
+            slack_id: null,
             role: 'user',
             uid: user.uid,
+            balance: 0,
           };
 
           dispatch(addNewUser(userData));

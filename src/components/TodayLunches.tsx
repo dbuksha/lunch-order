@@ -13,7 +13,7 @@ import ListDishes from 'components/ListDishes';
 // entities
 import { Lunch } from 'entities/Lunch';
 import { Dish } from 'entities/Dish';
-// import { useTodayLunches } from 'use/useTodayLunches';
+
 import { useTodayLunchesNew } from 'use/useTodayLunchesNew';
 
 const findLunchById = (lunches: Lunch[], lunchId: string): Lunch | null =>

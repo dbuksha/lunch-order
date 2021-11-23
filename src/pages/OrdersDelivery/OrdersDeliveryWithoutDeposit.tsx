@@ -27,6 +27,7 @@ import { getIsLoading } from 'store/app';
 import { fetchDeliveryInfo, getDeliveryInfoSelector } from 'store/delivery';
 import { fetchAllUsers, getAllUserSelector } from 'store/users';
 import { fetchOrders, getOrdersList } from 'store/orders';
+import { getDepositModeSelector } from 'store/settings';
 
 import { getMessage } from 'utils/message';
 
@@ -38,6 +39,8 @@ import DeliveryItem from './DeliveryItem';
 import { useGroupedDishes } from './useGroupedDishes';
 import { usePreparedDeliveryData } from './usePreparedDeliveryData';
 import { useCalculatedDeliveryPrice } from './useCalculatedDeliveryPrice';
+
+const deliveryCollection = firebaseInstance.collection(Collections.Delivery);
 
 const useStyles = makeStyles(() =>
   createStyles({
@@ -58,24 +61,21 @@ const useStyles = makeStyles(() =>
   }),
 );
 
-const getNameUser = (arr: Array<UserNew>, id: string): string => {
-  let name = '';
-
-  arr.forEach((el: UserNew) => {
+const getNameUser = (arr: Array<UserNew>, id: string) => {
+  return arr.reduce((acc: string, el: UserNew) => {
     if (el.id === id) {
-      name = el.name || '';
+      acc = el.name || '';
     }
-  });
 
-  return name;
+    return acc;
+  }, '');
 };
 
-const deliveryCollection = firebaseInstance.collection(Collections.Delivery);
-
-const OrdersDelivery: FC = () => {
+const OrdersDeliveryWithoutDeposit: FC = () => {
   const dispatch = useDispatch();
   const classes = useStyles();
   const isLoading = useSelector(getIsLoading);
+  const depositMode = useSelector(getDepositModeSelector);
   const gropedDishes = useGroupedDishes();
   const deliveryPrice = useCalculatedDeliveryPrice(gropedDishes);
   const deliveryData = usePreparedDeliveryData(gropedDishes);
@@ -92,18 +92,13 @@ const OrdersDelivery: FC = () => {
     if (globalDelivery === null) {
       dispatch(fetchDeliveryInfo());
     }
-
     dispatch(fetchOrders());
-
-    if (!users.length) {
-      dispatch(fetchAllUsers());
-    }
+    dispatch(fetchAllUsers());
   }, [dispatch]);
 
   useEffect(() => {
     if (globalDelivery && globalDelivery.id) {
       setDeliveryCompleted(true);
-
       if (globalDelivery.payer && globalDelivery.payer.id) {
         setPayer(globalDelivery.payer.id);
       }
@@ -122,7 +117,6 @@ const OrdersDelivery: FC = () => {
 
   const toggleDialogHandler = (state: string) => () => {
     if (deliveryCompleted && state === 'delivery') return;
-
     setDialogStatus(state);
   };
 
@@ -134,16 +128,13 @@ const OrdersDelivery: FC = () => {
   const confirmDeliveryCompleted = async () => {
     await setDeliveryCompleted(true);
     await toggleDialogHandler('')();
-
     const deliveryRecord: DeliveryData = {
       createDate: firebase.firestore.Timestamp.fromDate(dayjs().toDate()),
       payer: null,
       dishes: deliveryData,
       total: deliveryPrice,
     };
-
     await deliveryCollection.add(deliveryRecord);
-
     await dispatch(fetchDeliveryInfo());
   };
 
@@ -158,7 +149,7 @@ const OrdersDelivery: FC = () => {
 
     try {
       const data = {
-        text: getMessage(tempPayer, deliveryPrice, orders, users),
+        text: getMessage(tempPayer, deliveryPrice, orders, users, depositMode),
       };
 
       await axios.post(
@@ -172,7 +163,6 @@ const OrdersDelivery: FC = () => {
 
   const cancelSelectedPayer = () => {
     toggleDialogHandler('')();
-
     if (dialogStatus === 'payer') {
       setTempPayer('');
       setPayer('default');
@@ -277,5 +267,4 @@ const OrdersDelivery: FC = () => {
     </MainLayout>
   );
 };
-
-export default OrdersDelivery;
+export default OrdersDeliveryWithoutDeposit;

@@ -1,5 +1,6 @@
 import React, { FC } from 'react';
 import { useSelector } from 'react-redux';
+import { Link as RouterLink } from 'react-router-dom';
 import {
   Avatar,
   Box,
@@ -17,9 +18,12 @@ import {
   Bookmark as BookmarkIcon,
   Clock as ClockIcon,
   CheckCircle as CheckCircleIcon,
+  DollarSign as DollarSignIcon,
 } from 'react-feather';
 import { getUserSelector } from 'store/users';
 import NavItem from './NavItem';
+
+import { HasDepositProps } from './DashboardSidebar';
 
 const menuItem = [
   {
@@ -57,6 +61,11 @@ const menuItem = [
     Icon: AccountCircleOutlinedIcon,
     title: 'Пользователи',
   },
+  {
+    href: '/admin/refill',
+    Icon: DollarSignIcon,
+    title: 'Пополнение баланса',
+  },
 ];
 
 const useStyles = makeStyles(() =>
@@ -72,23 +81,31 @@ const useStyles = makeStyles(() =>
       alignItems: 'center',
       display: 'flex',
       flexDirection: 'column',
+      position: 'relative',
     },
     avatar: {
-      width: 80,
-      height: 80,
-      marginBottom: 12,
+      width: 70,
+      height: 70,
+      marginBottom: 10,
+    },
+    profileLink: {
+      width: '100%',
+      height: '100%',
+      position: 'absolute',
+      top: 0,
+      left: 0,
     },
   }),
 );
 
-const DashboardSidebarContent: FC = () => {
+const DashboardSidebarContent: FC<HasDepositProps> = ({ depositMode }) => {
   const classes = useStyles();
   const user = useSelector(getUserSelector);
 
   return (
     <Box className={classes.container}>
       {user ? (
-        <Box className={classes.content} sx={{ p: 2 }}>
+        <Box className={classes.content} sx={{ p: 1 }}>
           {user.avatar ? (
             <Avatar src={user.avatar} className={classes.avatar} />
           ) : null}
@@ -98,19 +115,25 @@ const DashboardSidebarContent: FC = () => {
           <Typography color="textSecondary" variant="body2">
             {user.email || ''}
           </Typography>
+          {depositMode ? (
+            <RouterLink to="/profile" className={classes.profileLink} />
+          ) : null}
         </Box>
       ) : null}
       <Divider />
       <Box sx={{ p: 2 }}>
         <List>
-          {menuItem.map((item) => (
-            <NavItem
-              href={item.href}
-              key={item.title}
-              title={item.title}
-              Icon={item.Icon}
-            />
-          ))}
+          {menuItem.map((item) => {
+            if (!depositMode && item.href === '/admin/refill') return null;
+            return (
+              <NavItem
+                href={item.href}
+                key={item.title}
+                title={item.title}
+                Icon={item.Icon}
+              />
+            );
+          })}
         </List>
       </Box>
       <Box sx={{ flexGrow: 1 }} />

@@ -35,9 +35,13 @@ import {
   getOrderDayNumberNew,
   isTimeForTodayLunch,
 } from 'utils/time-helper';
-import Ruble from 'components/Ruble';
 import { fetchUserInfo } from 'store/users';
 import { getDeliveryInfoSelector } from 'store/delivery';
+import { getDepositModeSelector } from 'store/settings';
+import Ruble from 'components/Ruble';
+import AccountBalanceWalletOutlined from '@material-ui/icons/AccountBalanceWalletOutlined';
+
+import { formatCurrency } from '../../utils/orders/calculateDishesPrice';
 
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
@@ -80,6 +84,12 @@ const useStyles = makeStyles((theme: Theme) =>
         fontSize: 12,
       },
     },
+    balance: {
+      display: 'flex',
+      justifyContent: 'flex-end',
+      marginBottom: 20,
+    },
+    balanceText: {},
   }),
 );
 
@@ -88,6 +98,7 @@ const OrderCreate: FC = () => {
   const classes = useStyles();
   const history = useHistory();
   const currentUser = useSelector(getUserSelector);
+  const depositMode = useSelector(getDepositModeSelector);
   const order = useSelector(getCurrentOrder);
   const selectedDishes = useSelector(selectedOrderDishesIdsSet);
   const deliveryStatus = useSelector(getDeliveryInfoSelector);
@@ -172,64 +183,88 @@ const OrderCreate: FC = () => {
   return (
     <MainLayout>
       <StyledPaper className={classes.main}>
-        {otherDayFlag || deliveryStatus ? (
-          <Box className={classes.attention}>
-            <Typography variant="body1" className={classes.attentionText}>
-              {`Внимание! На сегодня заказы больше не принимаются, но можно
-              сделать предварительный заказ на ${getDayName(
-                deliveryStatus !== null,
-              )}.`}
+        {depositMode ? (
+          <Box className={classes.balance}>
+            <AccountBalanceWalletOutlined color="primary" />
+            <Typography variant="body1" className={classes.balanceText}>
+              {formatCurrency(currentUser!.balance)}
+              <Ruble />
             </Typography>
           </Box>
         ) : null}
-        <Typography className={classes.pageTitle} component="div" variant="h6">
-          {getDayName(deliveryStatus !== null)}
-          {otherDayFlag || deliveryStatus ? '(предварительный заказ)' : ''}
-        </Typography>
-        <Grid container spacing={2} justifyContent="center">
-          <TodayLunches />
-          <Grid
-            item
-            className={classes.root}
-            container
-            sm={12}
-            md={12}
-            lg={12}
-            justifyContent="flex-end"
-            alignItems="baseline"
-          >
-            <Typography
-              component="span"
-              variant="h6"
-              className={(classes.item, classes.total)}
-            >
-              Итого:{' '}
-              <strong>
-                {calculatedPrice}
-                <Ruble />
-              </strong>
+        {depositMode && currentUser && currentUser?.balance < 0 ? (
+          <Box className={classes.attention}>
+            <Typography variant="body1" className={classes.attentionText}>
+              На вашем счете отрицательный баланс. К сожалению, заказ еды
+              недоступен.
             </Typography>
-            {order?.id && (
-              <Button
-                className={classes.item}
-                variant="outlined"
-                color="secondary"
-                onClick={onDeleteOrder}
-              >
-                Отменить заказ
-              </Button>
-            )}
-            <Button
-              variant="contained"
-              color="primary"
-              className={classes.item}
-              disabled={!calculatedPrice || sendLoading || !currentUser}
-              onClick={onCreateOrderSubmit}
+          </Box>
+        ) : (
+          <>
+            {otherDayFlag || deliveryStatus ? (
+              <Box className={classes.attention}>
+                <Typography variant="body1" className={classes.attentionText}>
+                  {`Внимание! На сегодня заказы больше не принимаются, но можно
+                  сделать предварительный заказ на ${getDayName(
+                    deliveryStatus !== null,
+                  )}.`}
+                </Typography>
+              </Box>
+            ) : null}
+            <Typography
+              className={classes.pageTitle}
+              component="div"
+              variant="h6"
             >
-              {order?.id ? 'Обновить заказ' : 'Заказать'}
-            </Button>
-          </Grid>
-        </Grid>
+              {getDayName(deliveryStatus !== null)}
+              {otherDayFlag || deliveryStatus ? '(предварительный заказ)' : ''}
+            </Typography>
+            <Grid container spacing={2} justifyContent="center">
+              <TodayLunches />
+              <Grid
+                item
+                className={classes.root}
+                container
+                sm={12}
+                md={12}
+                lg={12}
+                justifyContent="flex-end"
+                alignItems="baseline"
+              >
+                <Typography
+                  component="span"
+                  variant="h6"
+                  className={(classes.item, classes.total)}
+                >
+                  Итого:{' '}
+                  <strong>
+                    {calculatedPrice}
+                    <Ruble />
+                  </strong>
+                </Typography>
+                {order?.id && (
+                  <Button
+                    className={classes.item}
+                    variant="outlined"
+                    color="secondary"
+                    onClick={onDeleteOrder}
+                  >
+                    Отменить заказ
+                  </Button>
+                )}
+                <Button
+                  variant="contained"
+                  color="primary"
+                  className={classes.item}
+                  disabled={!calculatedPrice || sendLoading || !currentUser}
+                  onClick={onCreateOrderSubmit}
+                >
+                  {order?.id ? 'Обновить заказ' : 'Заказать'}
+                </Button>
+              </Grid>
+            </Grid>
+          </>
+        )}
       </StyledPaper>
     </MainLayout>
   );

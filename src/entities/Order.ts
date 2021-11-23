@@ -20,4 +20,6 @@ export type OrderFirebase = {
   }[];
   person: DocumentReference<DocumentData>;
   date: firebase.firestore.Timestamp;
+  type?: string;
+  amount?: number;
 };

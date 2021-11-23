@@ -19,6 +19,10 @@ interface Props {
 
 const useStyles = makeStyles(() =>
   createStyles({
+    root: {
+      paddingTop: 5,
+      paddingBottom: 5,
+    },
     link: {
       fontWeight: 600,
       display: 'flex',
@@ -45,7 +49,7 @@ const NavItem: FC<Props> = ({ href, Icon, title }) => {
   const active = location.pathname === href;
 
   return (
-    <ListItem disableGutters>
+    <ListItem disableGutters className={classes.root}>
       <Button
         component={RouterLink}
         className={classes.link}
