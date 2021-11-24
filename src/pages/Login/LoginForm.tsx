@@ -17,6 +17,7 @@ import LogoImg from 'assets/images/logo.svg';
 import LogoGoogle from 'assets/images/google-icon.svg';
 
 import { UserNew } from 'entities/User';
+import { colors } from 'utils/colors';
 
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
@@ -58,15 +59,15 @@ const useStyles = makeStyles((theme: Theme) =>
       fontWeight: 700,
       color: '#000',
       marginLeft: '12px',
-      textDeraration: 'none',
+      textDeration: 'none',
     },
     btn: {
       width: '100%',
       textTransform: 'none',
-      backgroundColor: '#eee',
+      backgroundColor: colors.grayness,
       padding: '6px 12px',
       '&:hover': {
-        backgroundColor: '#ebebeb',
+        backgroundColor: colors.lightGray,
       },
     },
     googleLogo: {

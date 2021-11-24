@@ -12,6 +12,7 @@ import {
   makeStyles,
 } from '@material-ui/core';
 import dayjs from 'dayjs';
+import { colors } from 'utils/colors';
 
 import { Lunch } from 'entities/Lunch';
 
@@ -26,7 +27,7 @@ interface Props {
 const useStyles = makeStyles(() =>
   createStyles({
     link: {
-      color: 'rgba(0, 0, 0, 0.5)',
+      color: colors.mediumGray,
       textDecoration: 'none',
       cursor: 'pointer',
     },

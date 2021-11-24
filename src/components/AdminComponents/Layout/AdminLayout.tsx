@@ -6,6 +6,8 @@ import { createStyles, makeStyles } from '@material-ui/core';
 import { getUserSelector } from 'store/users';
 import { getDepositModeSelector } from 'store/settings';
 
+import { colors } from 'utils/colors';
+
 import DashboardNavbar from './DashboardNavbar';
 import DashboardSidebar from './DashboardSidebar';
 
@@ -17,7 +19,7 @@ const useStyles = makeStyles(() =>
       width: '100%',
       overflow: 'hidden',
       position: 'relative',
-      backgroundColor: '#f4f6f8',
+      backgroundColor: colors.blueness,
     },
     navigation: {
       position: 'fixed',

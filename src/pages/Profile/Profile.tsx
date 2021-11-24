@@ -27,6 +27,7 @@ import MainLayout from 'components/SiteLayout/MainLayout';
 import Ruble from 'components/Ruble';
 
 import { formatCurrency } from '../../utils/orders/calculateDishesPrice';
+import { colors } from '../../utils/colors';
 
 import SlackIcon from '../../assets/images/slack-logo.svg';
 
@@ -87,15 +88,15 @@ const useStyles = makeStyles(() =>
     },
     refill: {
       minWidth: 100,
-      color: '#3f51b5',
+      color: colors.blue,
     },
     ordered: {
       minWidth: 100,
-      color: '#df5989',
+      color: colors.lightRed,
     },
     waiting: {
       minWidth: 100,
-      color: '#e97a18',
+      color: colors.orange,
     },
     btnFilter: {
       padding: '4px 8px',
@@ -120,40 +121,40 @@ const useStyles = makeStyles(() =>
       background: 'gray',
     },
     refillBtn: {
-      color: '#3f51b5',
-      borderColor: '#3f51b5',
+      color: colors.blue,
+      borderColor: colors.blue,
       '&:hover': {
         color: '#fff',
-        background: '#3f51b5',
+        background: colors.blue,
       },
     },
     refillBtnActive: {
       color: '#fff',
-      background: '#3f51b5',
+      background: colors.blue,
     },
     orderedBtn: {
-      color: '#df5989',
-      borderColor: '#df5989',
+      color: colors.lightRed,
+      borderColor: colors.lightRed,
       '&:hover': {
         color: '#fff',
-        background: '#df5989',
+        background: colors.lightRed,
       },
     },
     orderedBtnActive: {
       color: '#fff',
-      background: '#df5989',
+      background: colors.lightRed,
     },
     waitingBtn: {
-      color: '#e97a18',
-      borderColor: '#e97a18',
+      color: colors.orange,
+      borderColor: colors.orange,
       '&:hover': {
         color: '#fff',
-        background: '#e97a18',
+        background: colors.orange,
       },
     },
     waitingBtnActive: {
       color: '#fff',
-      background: '#e97a18',
+      background: colors.orange,
     },
     hidden: {
       display: 'none',

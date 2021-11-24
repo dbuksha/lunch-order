@@ -20,6 +20,8 @@ import {
   Breadcrumbs,
 } from '@material-ui/core';
 
+import { colors } from 'utils/colors';
+
 import Loader from '../../../components/StyledLoader';
 import AdminLayout from '../../../components/AdminComponents/Layout/AdminLayout';
 
@@ -62,7 +64,7 @@ const useStyles = makeStyles((theme: Theme) =>
       top: 58,
       left: 15,
       fontSize: 12,
-      color: '#f44336',
+      color: colors.red,
     },
     formControl: {
       margin: theme.spacing(1),

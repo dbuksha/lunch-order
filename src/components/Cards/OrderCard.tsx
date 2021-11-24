@@ -22,6 +22,7 @@ import { Order } from 'entities/Order';
 import OrderDishItem from 'pages/OrdersList/OrderDishItem';
 import Ruble from 'components/Ruble';
 import dayjs from 'utils/dayjs';
+import { colors } from 'utils/colors';
 
 import EditIcon from '@material-ui/icons/Edit';
 import DeleteIcon from '@material-ui/icons/Delete';
@@ -43,7 +44,7 @@ const useStyles = makeStyles({
   },
   tableCell: {
     fontSize: 12,
-    color: 'rgba(0, 0, 0, 0.54)',
+    color: colors.mediumGray,
   },
   table: {
     width: '100%',

@@ -11,6 +11,8 @@ import {
   makeStyles,
 } from '@material-ui/core';
 
+import { colors } from 'utils/colors';
+
 import { Dish } from 'entities/Dish';
 
 import DeleteIcon from '@material-ui/icons/Delete';
@@ -24,7 +26,7 @@ const useStyles = makeStyles(() =>
       position: 'relative',
     },
     link: {
-      color: 'rgba(0, 0, 0, 0.5)',
+      color: colors.mediumGray,
       textDecoration: 'none',
       cursor: 'pointer',
     },

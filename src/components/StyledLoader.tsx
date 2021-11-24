@@ -1,6 +1,7 @@
 import React, { FC } from 'react';
 import CircularProgress from '@material-ui/core/CircularProgress';
 import { Box, createStyles, makeStyles } from '@material-ui/core';
+import { colors } from 'utils/colors';
 
 const useStyles = makeStyles(() =>
   createStyles({
@@ -8,7 +9,7 @@ const useStyles = makeStyles(() =>
       display: 'flex',
       justifyContent: 'center',
       alignItems: 'center',
-      background: 'rgba(255, 255, 255, 0.5)',
+      background: colors.mediumOpacityWhite,
       position: 'absolute',
       top: 0,
       bottom: 0,

@@ -23,6 +23,8 @@ import * as deliveryDataHelper from 'pages/OrdersDelivery/collectDeliveryDataHel
 
 import Ruble from 'components/Ruble';
 
+import { colors } from 'utils/colors';
+
 import { useGroupedDishes } from './OrdersDelivery/useGroupedDishes';
 import { useCalculatedDeliveryPrice } from './OrdersDelivery/useCalculatedDeliveryPrice';
 
@@ -43,7 +45,7 @@ const useStyles = makeStyles((theme: Theme) =>
       padding: '0 8px',
       marginLeft: 12,
       backgroundColor: '#fff',
-      color: '#3f51b5',
+      color: colors.blue,
       borderRadius: 6,
       fontWeight: 700,
       textTransform: 'lowercase',
