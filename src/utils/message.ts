@@ -15,7 +15,7 @@ export const getMessage = (
 
   const ordersStr = orders.reduce((strAcc: string, el: Order) => {
     const slackUser = el.person!.slack_id ? ` (<@${el.person?.slack_id}>)` : '';
-    strAcc = `${el.person!.name}${slackUser} - ${calculatePriceCard(
+    strAcc += `${el.person!.name}${slackUser} - ${calculatePriceCard(
       el.dishes,
     )}руб.\n`;
     return strAcc;
