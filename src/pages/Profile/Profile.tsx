@@ -5,6 +5,7 @@ import {
   Avatar,
   Box,
   Container,
+  Theme,
   Typography,
   TableContainer,
   Table,
@@ -31,7 +32,7 @@ import { colors } from '../../utils/colors';
 
 import SlackIcon from '../../assets/images/slack-logo.svg';
 
-const useStyles = makeStyles(() =>
+const useStyles = makeStyles((theme: Theme) =>
   createStyles({
     root: {
       padding: 20,
@@ -80,6 +81,9 @@ const useStyles = makeStyles(() =>
     userTransactions: {
       width: 600,
       margin: '0 auto',
+      [theme.breakpoints.down('sm')]: {
+        width: '100%',
+      },
     },
     row: {
       display: 'flex',
