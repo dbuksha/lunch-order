@@ -110,6 +110,8 @@ export const getTransactions = createAsyncThunk(
           },
         );
 
+        dispatch(hideLoader());
+
         if (!refills.length && !orders.length) return [];
 
         const joinOperations = [...refills, ...orders];
@@ -129,8 +131,6 @@ export const getTransactions = createAsyncThunk(
         transactions.sort((a, b) =>
           dayjs(a.date).isAfter(dayjs(b.date)) ? 1 : -1,
         );
-
-        dispatch(hideLoader());
 
         return transactions.reverse();
       })
