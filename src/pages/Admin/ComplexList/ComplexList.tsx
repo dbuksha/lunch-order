@@ -46,7 +46,11 @@ const ComplexList: FC = () => {
             </Alert>
           ) : (
             <>
-              <Box display="flex" justifyContent="space-between">
+              <Box
+                display="flex"
+                justifyContent="space-between"
+                alignItems="center"
+              >
                 <Typography variant="h4">Комплексы</Typography>
                 <Button
                   component={Link}
