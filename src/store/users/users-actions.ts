@@ -1,4 +1,4 @@
-import { createAsyncThunk } from '@reduxjs/toolkit';
+import { createAction, createAsyncThunk } from '@reduxjs/toolkit';
 import firebaseInstance, {
   Collections,
   getCollectionEntries,
@@ -11,6 +11,8 @@ enum ActionTypes {
   ADD_NEW_USER = 'users/addNewUser',
   FETCH_USER_INFO = 'users/fetchUserInfo',
   FETCH_ALL_USERS = 'users/fetchAllUsers',
+  FETCH_OTHER_USER = 'users/fetchOtherUser',
+  RESET_OTHER_USER = 'users/resetOtherUser',
 }
 
 const collectionRef = firebaseInstance.collection(Collections.Users);
@@ -91,3 +93,27 @@ export const fetchAllUsers = createAsyncThunk(
     }
   },
 );
+
+export const fetchOtherUser = createAsyncThunk(
+  ActionTypes.FETCH_OTHER_USER,
+  async (id: string, { dispatch }) => {
+    try {
+      const data = await collectionRef.get();
+      const userData = getCollectionEntries<UserNew>(data);
+
+      const selectedUser = userData.filter((el) => el.id === id);
+
+      return selectedUser[0];
+    } catch (err) {
+      dispatch(
+        showSnackBar({
+          status: StatusTypes.error,
+          message: err.message.data.message,
+        }),
+      );
+      return err.message.data;
+    }
+  },
+);
+
+export const resetOtherUser = createAction(ActionTypes.RESET_OTHER_USER);

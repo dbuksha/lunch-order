@@ -20,3 +20,12 @@ export const getAllUserSelector = createSelector<
   (state) => state.users,
   (state) => state.users,
 );
+
+export const getOtherUserSelector = createSelector<
+  RootState,
+  UsersState,
+  UserNew | null
+>(
+  (state) => state.users,
+  (state) => state.otherUser,
+);

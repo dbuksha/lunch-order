@@ -129,6 +129,10 @@ const useStyles = makeStyles((theme: Theme) =>
     formBlock: {
       width: 320,
       marginTop: 40,
+
+      [theme.breakpoints.down(360)]: {
+        width: '100%',
+      },
     },
   }),
 );

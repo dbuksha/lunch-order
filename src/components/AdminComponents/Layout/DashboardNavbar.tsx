@@ -4,7 +4,6 @@ import {
   AppBar,
   Avatar,
   Box,
-  Hidden,
   IconButton,
   Toolbar,
   Typography,
@@ -13,8 +12,13 @@ import {
   Theme,
 } from '@material-ui/core';
 import MenuIcon from '@material-ui/icons/Menu';
-import InputIcon from '@material-ui/icons/Input';
+import CloseIcon from '@material-ui/icons/Close';
 import LogoImg from 'assets/images/logo.svg';
+
+type Props = {
+  mobileMenu: boolean;
+  changeMobileMenu: () => void;
+};
 
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
@@ -41,10 +45,15 @@ const useStyles = makeStyles((theme: Theme) =>
         fontSize: 16,
       },
     },
+    burger: {
+      [theme.breakpoints.up('md')]: {
+        display: 'none',
+      },
+    },
   }),
 );
 
-const DashboardNavbar: FC = () => {
+const DashboardNavbar: FC<Props> = ({ mobileMenu, changeMobileMenu }) => {
   const classes = useStyles();
 
   return (
@@ -57,16 +66,23 @@ const DashboardNavbar: FC = () => {
           </Typography>
         </RouterLink>
         <Box sx={{ flexGrow: 1 }} />
-        <Hidden lgDown>
-          <IconButton color="inherit">
-            <InputIcon />
+        {mobileMenu ? (
+          <IconButton
+            color="inherit"
+            onClick={changeMobileMenu}
+            className={classes.burger}
+          >
+            <CloseIcon />
           </IconButton>
-        </Hidden>
-        <Hidden lgUp>
-          <IconButton color="inherit">
+        ) : (
+          <IconButton
+            color="inherit"
+            onClick={changeMobileMenu}
+            className={classes.burger}
+          >
             <MenuIcon />
           </IconButton>
-        </Hidden>
+        )}
       </Toolbar>
     </AppBar>
   );

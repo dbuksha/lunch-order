@@ -23,6 +23,7 @@ import {
   SvgIcon,
   createStyles,
   makeStyles,
+  Theme,
 } from '@material-ui/core';
 import ClearIcon from '@material-ui/icons/Clear';
 import { Search as SearchIcon } from 'react-feather';
@@ -40,7 +41,7 @@ const minLengthSearch = 3;
 
 const dishesCollection = firebaseInstance.collection(Collections.Dishes);
 
-const useStyles = makeStyles(() =>
+const useStyles = makeStyles((theme: Theme) =>
   createStyles({
     container: {
       width: '100%',
@@ -55,6 +56,9 @@ const useStyles = makeStyles(() =>
     },
     fieldSearch: {
       width: 300,
+      [theme.breakpoints.down(360)]: {
+        width: 252,
+      },
     },
     clearBtn: {
       width: 20,
@@ -208,7 +212,11 @@ const Dashboard: FC = () => {
             </Alert>
           ) : (
             <>
-              <Box display="flex" justifyContent="space-between">
+              <Box
+                display="flex"
+                justifyContent="space-between"
+                alignItems="center"
+              >
                 <Typography variant="h4">Список блюд</Typography>
                 <Button
                   component={Link}
