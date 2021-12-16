@@ -26,7 +26,7 @@ const collectionDelivery = firebaseInstance.collection(Collections.Delivery);
 
 export const getTransactions = createAsyncThunk(
   ActionTypes.GET_TRANSACTIONS,
-  async (_, { getState, dispatch }) => {
+  async (userID: string | null, { getState, dispatch }) => {
     const {
       users: { currentUser },
       dishes: { dishesMap },
@@ -44,13 +44,15 @@ export const getTransactions = createAsyncThunk(
     // FIXME: should I show an error message?
     if (!currentUser) return [];
 
+    const resultUserID = userID || currentUser.id;
+
     dispatch(showLoader());
 
     const refillResult = collectionRefill
       .where(
         'user',
         '==',
-        firebaseInstance.doc(`${Collections.Users}/${currentUser.id}`),
+        firebaseInstance.doc(`${Collections.Users}/${resultUserID}`),
       )
       .get();
 
@@ -58,7 +60,7 @@ export const getTransactions = createAsyncThunk(
       .where(
         'person',
         '==',
-        firebaseInstance.doc(`${Collections.Users}/${currentUser.id}`),
+        firebaseInstance.doc(`${Collections.Users}/${resultUserID}`),
       )
       .get();
 
@@ -102,7 +104,10 @@ export const getTransactions = createAsyncThunk(
                 deliveryToday,
               ),
               description: `Сделан заказ: ${dishesList.map(
-                (el) => ` ${el.dish.name}`,
+                (el) =>
+                  ` ${el.dish.name}${
+                    el.quantity === 1 ? '' : ` - ${el.quantity}`
+                  }`,
               )}`,
               date: order.date.toMillis(),
               amount: deliveryDataHelper.calculateDeliveryPrice(dishesList),

@@ -119,6 +119,10 @@ export const routes: RouteProp[] = [
         component: UserList,
       },
       {
+        path: '/admin/profile/:id',
+        component: Profile,
+      },
+      {
         path: '/admin/refill',
         component: Refill,
       },

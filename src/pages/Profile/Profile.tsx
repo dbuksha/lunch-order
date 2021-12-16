@@ -1,5 +1,6 @@
 import React, { FC, useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
+import { Link, useParams } from 'react-router-dom';
 import dayjs from 'dayjs';
 import {
   Avatar,
@@ -20,7 +21,13 @@ import AccountBalanceWalletOutlined from '@material-ui/icons/AccountBalanceWalle
 
 import { Transaction } from 'entities/Transaction';
 
-import { fetchUserInfo, getUserSelector } from 'store/users';
+import {
+  fetchUserInfo,
+  fetchOtherUser,
+  getUserSelector,
+  getOtherUserSelector,
+  resetOtherUser,
+} from 'store/users';
 import { getTransactions, getTransactionsSelector } from 'store/transactions';
 import { getDepositModeSelector } from 'store/settings';
 
@@ -32,10 +39,18 @@ import { colors } from '../../utils/colors';
 
 import SlackIcon from '../../assets/images/slack-logo.svg';
 
+interface IParamsURL {
+  id?: string;
+}
+
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
     root: {
       padding: 20,
+    },
+    backLink: {
+      color: colors.blue,
+      textDecoration: 'none',
     },
     link: {
       fontSize: 14,
@@ -45,6 +60,7 @@ const useStyles = makeStyles((theme: Theme) =>
     avatar: {
       width: 90,
       height: 90,
+      marginTop: 20,
       marginBottom: 10,
     },
     paramsContainer: {
@@ -180,24 +196,43 @@ const getSum = (arr: Transaction[], type: string): number => {
 const Profile: FC = () => {
   const classes = useStyles();
   const dispatch = useDispatch();
-  const currentUser = useSelector(getUserSelector);
+  const paramsUrl = useParams() as IParamsURL;
+  const ownUser = useSelector(getUserSelector);
+  const otherUser = useSelector(getOtherUserSelector);
   const depositMode = useSelector(getDepositModeSelector);
   const transactions = useSelector(getTransactionsSelector);
   const [filterStatus, setFilterStatus] = useState('all');
 
   useEffect(() => {
-    dispatch(fetchUserInfo(currentUser!.email!));
-    dispatch(getTransactions());
+    if (paramsUrl?.id) {
+      dispatch(fetchOtherUser(paramsUrl?.id));
+      dispatch(getTransactions(paramsUrl?.id));
+    } else {
+      dispatch(fetchUserInfo(ownUser!.email!));
+      dispatch(getTransactions(null));
+    }
+
+    return () => {
+      paramsUrl?.id && dispatch(resetOtherUser());
+    };
   }, [dispatch]);
 
   if (!depositMode) {
     window.location.href = '/';
   }
 
+  const currentUser = paramsUrl?.id ? otherUser : ownUser;
+
   return (
     <MainLayout>
       <Container className={classes.root}>
         <Box>
+          {paramsUrl?.id ? (
+            <Link to="/admin/user-list" className={classes.backLink}>
+              К списку пользователей
+            </Link>
+          ) : null}
+
           {currentUser ? (
             <Box className={classes.userInfoContainer}>
               {currentUser.avatar ? (

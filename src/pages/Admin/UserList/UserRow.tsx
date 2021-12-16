@@ -1,5 +1,6 @@
 import React, { FC, useState } from 'react';
 import { useDispatch } from 'react-redux';
+import { Link } from 'react-router-dom';
 import firebaseInstance, { Collections } from 'utils/firebase';
 import {
   Avatar,
@@ -30,6 +31,11 @@ const useStyles = makeStyles((theme: Theme) =>
     user: {
       display: 'flex',
       alignItems: 'center',
+    },
+    link: {
+      display: 'flex',
+      alignItems: 'center',
+      textDecoration: 'none',
     },
     avatar: {
       marginRight: 8,
@@ -99,13 +105,17 @@ const UserRow: FC<Props> = ({ user, admin, depositMode }) => {
       <TableCell>{user.id}</TableCell>
       <TableCell>
         <Box className={classes.user}>
-          <Avatar
-            src={user.avatar!}
-            className={role === 'admin' ? classes.adminAvatar : classes.avatar}
-          />
-          <Typography color="textPrimary" variant="body2">
-            {user.name}
-          </Typography>
+          <Link to={`/admin/profile/${user.id}`} className={classes.link}>
+            <Avatar
+              src={user.avatar!}
+              className={
+                role === 'admin' ? classes.adminAvatar : classes.avatar
+              }
+            />
+            <Typography color="textPrimary" variant="body2">
+              {user.name}
+            </Typography>
+          </Link>
         </Box>
       </TableCell>
       <TableCell>{user.email}</TableCell>
